@@ -9,7 +9,7 @@ var tabStyle = new Style( { font: "bold 15px", color:"white" } );
 
 //tab template
 var buttonTemplate = BUTTONS.Button.template(function($){ return{
-	left: $.leftPos, width:$.width, top: $.top, height:20, name:$.name, skin:blackSkin,
+	left: $.leftPos, width:$.width, bottom:$.bottom, height:20, name:$.name, skin:blackSkin,
 	contents: [
 		new Label({left:0, right:0, height:20, string:$.textForLabel, style: tabStyle})
 		],
@@ -23,9 +23,9 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 }});
 
 //tabs
-var hamper = new buttonTemplate({leftPos:80,width:80, bottom:0,  textForLabel: "Hamper"});
-var machines = new buttonTemplate({leftPos:160, width:80, bottom:0, textForLabel: "Machines"});
-var credits = new buttonTemplate({leftPos:240, width:80, bottom:0, textForLabel:"Credits"});
+var hamper = new buttonTemplate({leftPos:0,width:107, bottom:0,  textForLabel: "Hamper"});
+var machines = new buttonTemplate({leftPos:107, width:107, bottom:0, textForLabel: "Machines"});
+var credits = new buttonTemplate({leftPos:214, width:108, bottom:0, textForLabel:"Credits"});
 
 var containerTemplate = Container.template(function($) { return {
 	left: 0, right: 0, top: 0, bottom: $.bottom, skin: whiteSkin, active: true,
