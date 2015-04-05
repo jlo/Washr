@@ -15,7 +15,36 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 		],
 	behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
 		onTap: { value: function(content){
+			if ($.textForLabel == "Hamper") {
+				if (machinesCon.container) {
+					mainContainer.remove(machinesCon);
+				} else if (creditsCon.container) {
+					mainContainer.remove(creditsCon);
+				}
+				if (!hamperCon.container) {
+					mainContainer.add(hamperCon);
+				}
+			} else if ($.textForLabel == "Machines") {
+				if (hamperCon.container) {
+					mainContainer.remove(hamperCon);
+				} else if (creditsCon.container) {
+					mainContainer.remove(creditsCon);
+				}
+				if (!machinesCon.container) {
+					mainContainer.add(machinesCon);
+				}
 			
+			}else if ($.textForLabel == "Credits") {
+				if (hamperCon.container) {
+					mainContainer.remove(hamperCon);
+				} else if (machinesCon.container) {
+					mainContainer.remove(machinesCon);
+				}
+				if (!creditsCon.container) {
+					mainContainer.add(creditsCon);
+				}
+			
+			}
 		}},
 		onComplete: { value: function(content, message, json){
 		}}
