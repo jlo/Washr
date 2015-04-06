@@ -8,7 +8,12 @@ var SCROLLER = require('mobile/scroller');
 var whiteSkin = new Skin( { fill:"white" } );
 var blackSkin = new Skin( { fill:"black" } );
 var separatorSkin = new Skin({ fill: 'silver',});
-
+var labelStyle = new Style( { font: "bold 30px", color:"black" } );
+var whiteBorderSkin = new Skin({
+  fill:"white", 
+  borders:{bottom:5}, 
+  stroke:"black"
+});
 //styles
 var tabStyle = new Style( { font: "bold 15px", color:"white" } );
 
@@ -98,19 +103,17 @@ var machines = new buttonTemplate({leftPos:107, width:107, bottom:0, textForLabe
 var credits = new buttonTemplate({leftPos:214, width:108, bottom:0, textForLabel:"Credits"});
 
 var containerTemplate = Container.template(function($) { return {
-	left: 0, right: 0, top: 0, bottom: $.bottom, skin: whiteSkin, active: true,
+	left: 0, right: 0, top: 0, bottom: $.bottom, skin: whiteSkin, active: true, contents:$.contents,
 	behavior: Object.create(Container.prototype, {
 		onTouchEnded: { value: function(content){
 			content.focus();
 		}}
 	})
 }});
-
+var titleLabel =  new Label({left:105,top:0, right:0, height: 40, string: "Washr", style: labelStyle});
 var scroller = SCROLLER.VerticalScroller.template(function($){ return{
     contents: $.contents
 }});
-
-
 var scrollableCon = new scroller({ name: "comicScroller", left: 0, right: 0, 
     contents: [
         new Column({name: "comic", top: 0, left: 0, right: 0, skin:blackSkin,
@@ -126,14 +129,43 @@ var scrollableCon = new scroller({ name: "comicScroller", left: 0, right: 0,
 var machinesCon = new containerTemplate({bottom: 20});
 machinesCon.add(scrollableCon);
 //machinesCon.add(ListPane);
-var hamperCon = new containerTemplate({bottom:20});
+var hamperCon = new containerTemplate({bottom:20,
+    contents:[
+        titleLabel,
+        new Label({left:0, right:0, top: 45, height: 30, string: "My Loads", style: labelStyle, skin: whiteBorderSkin}),
+        new scroller({ name: "comicScroller", top:70, left: 0, right: 0, 
+            contents: [
+                new Column({name: "comic",left: 0, right: 0, skin:blackSkin,
+                    contents: [
+                        new Line({left:0, right:0, skin:blackSkin, contents:[
+                            new Picture({left:0, right:0,height:50, url:"./green.jpeg"}),
+                            new Label({left:0, right:0, string: "alkjdflajdflaf", style:tabStyle})
+                            ]}),
+                        new Line({left:0, right:0, skin:blackSkin, contents:[
+                            new Picture({left:0, right:0,height:50, url:"./green.jpeg"}),
+                            new Label({left:0, right:0, string: "alkjdflajdflaf", style:tabStyle})
+                            ]}),
+                        new Line({left:0, right:0, skin:blackSkin, contents:[
+                            new Picture({left:0, right:0,height:50, url:"./orange.jpeg"}),
+                            new Label({left:0, right:0, string: "alkjdflajdflaf", style:tabStyle})
+                            ]}),
+                        new Line({left:0, right:0, skin:blackSkin, contents:[
+                            new Picture({left:0, right:0,height:50, url:"./red.jpeg"}),
+                            new Label({left:0, right:0, string: "alkjdflajdflaf", style:tabStyle})
+                            ]}),
+                            
+                    ]
+                    }),
+            ]
+        }),        
+]});
 var creditsCon = new containerTemplate({bottom:20});
 
 var mainContainer = new containerTemplate({bottom:0});
 mainContainer.add(hamper);
 mainContainer.add(machines);
 mainContainer.add(credits);
-mainContainer.add(machinesCon);
+mainContainer.add(hamperCon);
 application.add(mainContainer);
 
 var ApplicationBehavior = Behavior.template({
