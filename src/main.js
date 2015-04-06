@@ -12,6 +12,42 @@ var separatorSkin = new Skin({ fill: 'silver',});
 //styles
 var tabStyle = new Style( { font: "bold 15px", color:"white" } );
 
+Handler.bind("/discover", Behavior({
+	onInvoke: function(handler, message){
+		deviceURL = JSON.parse(message.requestText).url;
+		handler.invoke(new Message(deviceURL + "getAllInfo"), Message.JSON);
+	},
+	onComplete: function(content, message, json){
+		// Update stuff here
+     	application.invoke( new Message("/startPolling"));
+	}	
+}));
+
+Handler.bind("/forget", Behavior({
+	onInvoke: function(handler, message){
+		deviceURL = "";
+	}
+}));
+
+Handler.bind("/startPolling", {
+    onInvoke: function(handler, message){
+		handler.invoke(new Message(deviceURL + "getAllInfo"), Message.JSON);
+	},
+	onComplete: function(content, message, json){
+		// Update stuff here too
+     	application.invoke( new Message("/delay"));
+    }
+});
+
+Handler.bind("/delay", {
+    onInvoke: function(handler, message){
+        handler.wait(1000); //will call onComplete after 1 second
+    },
+    onComplete: function(handler, message){
+        handler.invoke(new Message("/startPolling"));
+    }
+});
+
 //tab template
 var buttonTemplate = BUTTONS.Button.template(function($){ return{
 	left: $.leftPos, width:$.width, bottom:$.bottom, height:20, name:$.name, skin:blackSkin,
@@ -99,3 +135,14 @@ mainContainer.add(machines);
 mainContainer.add(credits);
 mainContainer.add(machinesCon);
 application.add(mainContainer);
+
+var ApplicationBehavior = Behavior.template({
+	onDisplayed: function(application) {
+		application.discover("washdevice.app");
+	},
+	onQuit: function(application) {
+		application.forget("washdevice.app");
+	},
+})
+
+application.behavior = new ApplicationBehavior();
