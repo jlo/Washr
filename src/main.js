@@ -1,10 +1,15 @@
 // KPR Script file
 var THEME = require('themes/sample/theme');
 var BUTTONS = require("controls/buttons");
+var SCREEN = require('mobile/screen');
+var SCROLLER = require('mobile/scroller');
 
+//skins
 var whiteSkin = new Skin( { fill:"white" } );
 var blackSkin = new Skin( { fill:"black" } );
+var separatorSkin = new Skin({ fill: 'silver',});
 
+//styles
 var tabStyle = new Style( { font: "bold 15px", color:"white" } );
 
 //tab template
@@ -60,14 +65,31 @@ var containerTemplate = Container.template(function($) { return {
 	left: 0, right: 0, top: 0, bottom: $.bottom, skin: whiteSkin, active: true,
 	behavior: Object.create(Container.prototype, {
 		onTouchEnded: { value: function(content){
-			KEYBOARD.hide();
 			content.focus();
 		}}
 	})
 }});
 
+var scroller = SCROLLER.VerticalScroller.template(function($){ return{
+    contents: $.contents
+}});
+
+
+var scrollableCon = new scroller({ name: "comicScroller", left: 0, right: 0, 
+    contents: [
+        new Column({name: "comic", top: 0, left: 0, right: 0, skin:blackSkin,
+        	contents: [
+        		new Label({left:0, right:0, string: "alkjdflajdflaf", style:tabStyle}),
+        		new Label({left:0, right:0, string: "alkjdflajdflaf", style:tabStyle}),
+        	]}) 
+    ]
+})
+
+
 //containers
 var machinesCon = new containerTemplate({bottom: 20});
+machinesCon.add(scrollableCon);
+//machinesCon.add(ListPane);
 var hamperCon = new containerTemplate({bottom:20});
 var creditsCon = new containerTemplate({bottom:20});
 
@@ -75,4 +97,5 @@ var mainContainer = new containerTemplate({bottom:0});
 mainContainer.add(hamper);
 mainContainer.add(machines);
 mainContainer.add(credits);
+mainContainer.add(machinesCon);
 application.add(mainContainer);
