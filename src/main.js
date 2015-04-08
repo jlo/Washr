@@ -23,6 +23,7 @@ var thinBorderSkin = new Skin({
 });
 //styles
 var tabStyle = new Style( { font: "bold 15px", color:"white" } );
+var creditStyle = new Style( { font: "bold 15px", color:"black" } );
 
 washerTimeOne = 0;
 washerInUseOne = 0;
@@ -146,8 +147,8 @@ var scrollableCon = new scroller({ name: "comicScroller", left: 0, right: 0,
     contents: [
         new Column({name: "comic", top: 0, left: 0, right: 0, skin:blackSkin,
         	contents: [
-        		new Label({left:0, right:0, string: "alkjdflajdflaf", style:tabStyle}),
-        		new Label({left:0, right:0, string: "alkjdflajdflaf", style:tabStyle}),
+        		new Label({left:0, right:0, string: "Washer 1", style:tabStyle}),
+        		new Label({left:0, right:0, string: "Dryer 1", style:tabStyle}),
         	]}) 
     ]
 })
@@ -187,6 +188,27 @@ var hamperCon = new containerTemplate({bottom:20,
             ]
         }),        
 ]});
+
+// Credits Resources
+var bigText = new Style({font:"bold 55px", color:"#333333"});
+
+var cardButtonTemplate = BUTTONS.Button.template(function($){ return{
+	left: $.leftPos, width:$.width, bottom:$.bottom, height:20, name:$.name, skin:whiteSkin,
+	contents: [
+		new Label({left:0, right:0, height:20, string:$.textForLabel, style: creditStyle})
+		],
+	behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
+		onTap: { value: function(content){
+			trace("Button was tapped.\n");
+		} },
+		onComplete: { value: function(content, message, json){
+		} }
+	})
+}});
+
+
+//var button = new buttonTemplate({left:10, right:10, top:10, textForLabel:"Click Me!"});
+
 var creditsCon = new containerTemplate({bottom:20,
 	contents:[
 		new Label({left:110,top:0, right:0, height: 40, string: "Credits", style: labelStyle}),
@@ -194,11 +216,33 @@ var creditsCon = new containerTemplate({bottom:20,
 		new Label({left:10, right:0, top: 150, height:30, string: " Payment Methods", style: subLabelStyle, skin: whiteBorderSkin}),
 		new Line({left:0, right:0, top: 180, height:50, 
 			contents: [
-				new Label({left:10, right:0, height:30, string: " VISA **** **** **** 1234", style: textLabelStyle, skin: thinBorderSkin}),
-			]
-		}),
+				// new scroller({ name: "comicScroller", left: 0, right: 0, 
+            	//	contents: [
+               	new Column({name: "comic", top:20, left: 0, right: 0, skin:blackSkin,
+                    contents: [
+                    	new Line({left:0, right:0, skin:whiteSkin, 
+                    		contents:[
+                            	new cardButtonTemplate({leftPos:0, width:200, bottom:20, name:"card 1", textForLabel:" VISA **** **** **** 1234"}),
+                            ]
+                        }),
+                       	new Line({left:0, right:0, skin:whiteSkin, 
+                    		contents:[
+                            	new cardButtonTemplate({leftPos:0, width:200, bottom:20, name:"card 2", textForLabel:" VISA **** **** **** 5678"}),
+                            ]
+                      	}),
+                       	new Line({left:0, right:0, skin:whiteSkin, 
+                    		contents:[
+                            	new cardButtonTemplate({leftPos:0, width:200, bottom:20, name:"add card", textForLabel:"Add Credit Card"}),
+                           	]
+                       	}),
+						// new Label({left:10, right:0, height:30, string: " VISA **** **** **** 1234", style: textLabelStyle, skin: thinBorderSkin}),
+                 	]
+             	}),
+            ]
+        }),
+
 	]
-});
+})
 
 var mainContainer = new containerTemplate({bottom:0});
 mainContainer.add(hamper);
