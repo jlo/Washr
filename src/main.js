@@ -11,6 +11,7 @@ var separatorSkin = new Skin({ fill: 'silver',});
 
 //styles
 var tabStyle = new Style( { font: "bold 15px", color:"white" } );
+var titleStyle = new Style({font: "bold 30px", color:"black"});
 
 Handler.bind("/discover", Behavior({
 	onInvoke: function(handler, message){
@@ -98,7 +99,7 @@ var machines = new buttonTemplate({leftPos:107, width:107, bottom:0, textForLabe
 var credits = new buttonTemplate({leftPos:214, width:108, bottom:0, textForLabel:"Credits"});
 
 var containerTemplate = Container.template(function($) { return {
-	left: 0, right: 0, top: 0, bottom: $.bottom, skin: whiteSkin, active: true,
+	left: 0, right: 0, top: 0, bottom: $.bottom, skin: whiteSkin, active: true, contents: $.contents,
 	behavior: Object.create(Container.prototype, {
 		onTouchEnded: { value: function(content){
 			content.focus();
@@ -127,7 +128,10 @@ var machinesCon = new containerTemplate({bottom: 20});
 machinesCon.add(scrollableCon);
 //machinesCon.add(ListPane);
 var hamperCon = new containerTemplate({bottom:20});
-var creditsCon = new containerTemplate({bottom:20});
+var creditsCon = new containerTemplate({bottom:20,
+	contents:[
+		new Label({left:0, right:0, top:10, string: "Credits", style: titleStyle})
+	]});
 
 var mainContainer = new containerTemplate({bottom:0});
 mainContainer.add(hamper);
