@@ -9,9 +9,16 @@ var whiteSkin = new Skin( { fill:"white" } );
 var blackSkin = new Skin( { fill:"black" } );
 var separatorSkin = new Skin({ fill: 'silver',});
 var labelStyle = new Style( { font: "bold 30px", color:"black" } );
+var subLabelStyle = new Style( { font: "bold 20px", color:"black" } );
+var textLabelStyle = new Style( { font: "15px", color:"black" } );
 var whiteBorderSkin = new Skin({
   fill:"white", 
   borders:{bottom:5}, 
+  stroke:"black"
+});
+var thinBorderSkin = new Skin({
+  fill:"white", 
+  borders:{bottom:2}, 
   stroke:"black"
 });
 //styles
@@ -159,13 +166,24 @@ var hamperCon = new containerTemplate({bottom:20,
             ]
         }),        
 ]});
-var creditsCon = new containerTemplate({bottom:20});
+var creditsCon = new containerTemplate({bottom:20,
+	contents:[
+		new Label({left:110,top:0, right:0, height: 40, string: "Credits", style: labelStyle}),
+		new Label({left:10, right:0, top: 45, height: 30, string: " Available Credits", style: subLabelStyle, skin: whiteBorderSkin}),
+		new Label({left:10, right:0, top: 150, height:30, string: " Payment Methods", style: subLabelStyle, skin: whiteBorderSkin}),
+		new Line({left:0, right:0, top: 180, height:50, 
+			contents: [
+				new Label({left:10, right:0, height:30, string: " VISA **** **** **** 1234", style: textLabelStyle, skin: thinBorderSkin}),
+			]
+		}),
+	]
+});
 
 var mainContainer = new containerTemplate({bottom:0});
 mainContainer.add(hamper);
 mainContainer.add(machines);
 mainContainer.add(credits);
-mainContainer.add(hamperCon);
+mainContainer.add(creditsCon);
 application.add(mainContainer);
 
 var ApplicationBehavior = Behavior.template({
