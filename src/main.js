@@ -112,6 +112,17 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 					mainContainer.add(creditsCon);
 				}
 			
+			} else if ($.textForLabel == "Washers") {
+				if (!washersCon.container && dryersCon.container) {
+					machinesCon.remove(dryersCon);
+					machinesCon.add(washersCon);
+				} 
+				
+			} else if ($.textForLabel == "Dryers") {
+				if (!dryersCon.container && washersCon.container) {
+					machinesCon.remove(washersCon);
+					machinesCon.add(dryersCon);
+				}
 			}
 		}},
 		onComplete: { value: function(content, message, json){
@@ -123,6 +134,11 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 var hamper = new buttonTemplate({leftPos:0,width:107, bottom:0,  textForLabel: "Hamper"});
 var machines = new buttonTemplate({leftPos:107, width:107, bottom:0, textForLabel: "Machines"});
 var credits = new buttonTemplate({leftPos:214, width:108, bottom:0, textForLabel:"Credits"});
+
+var washers = new buttonTemplate({leftPos:0,width:161, bottom:496,  textForLabel: "Washers"});
+var dryers = new buttonTemplate({leftPos:161, width:161, bottom:496, textForLabel: "Dryers"});
+
+
 
 var containerTemplate = Container.template(function($) { return {
 	left: 0, right: 0, top: 0, bottom: $.bottom, skin: whiteSkin, active: true, contents:$.contents,
@@ -138,7 +154,7 @@ var scroller = SCROLLER.VerticalScroller.template(function($){ return{
 }});
 var scrollableCon = new scroller({ name: "comicScroller", left: 0, right: 0, 
     contents: [
-        new Column({name: "comic", top: 0, left: 0, right: 0, skin:blackSkin,
+        new Column({name: "comic", top: 60, left: 0, right: 0, skin:blackSkin,
         	contents: [
         		new Label({left:0, right:0, string: "alkjdflajdflaf", style:tabStyle}),
         		new Label({left:0, right:0, string: "alkjdflajdflaf", style:tabStyle}),
@@ -149,9 +165,14 @@ var scrollableCon = new scroller({ name: "comicScroller", left: 0, right: 0,
 
 //containers
 var machinesCon = new containerTemplate({bottom: 20});
-machinesCon.add(scrollableCon);
+//machinesCon.add(scrollableCon);
+machinesCon.add(washers);
+machinesCon.add(dryers);
 //machinesCon.add(ListPane);
-
+//var machinesSubCon = new containerTemplate({bottom: 20});
+var washersCon = new containerTemplate({top:20, bottom: 20});
+machinesCon.add(washersCon);
+var dryersCon = new containerTemplate({top:20, bottom: 20});
 var hamperCon = new containerTemplate({bottom:20});
 var creditsCon = new containerTemplate({bottom:20,
 	contents:[
