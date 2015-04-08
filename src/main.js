@@ -24,13 +24,34 @@ var thinBorderSkin = new Skin({
 //styles
 var tabStyle = new Style( { font: "bold 15px", color:"white" } );
 
+washerTimeOne = 0;
+washerInUseOne = 0;
+washerTimeTwo = 0;
+washerInUseTwo = 0;
+dryerTimeOne = 0;
+washerInUseOne = 0;
+dryerTimeTwo = 0;
+washerInUseTwo = 0;
+
+var update = function(json){
+	// Use this function to update UI elements instantly/live
+	washerTimeOne = json.washerTimeOne;
+	washerInUseOne = json.washerInUseOne;
+	washerTimeTwo = json.washerTimeTwo;
+	washerInUseTwo = json.washerInUseTwo;
+	dryerTimeOne = json.dryerTimeOne;
+	washerInUseOne = json.washerInUseOne;
+	dryerTimeTwo = json.dryerTimeTwo;
+	washerInUseTwo = json.washerInUseTwo;
+}
+
 Handler.bind("/discover", Behavior({
 	onInvoke: function(handler, message){
 		deviceURL = JSON.parse(message.requestText).url;
 		handler.invoke(new Message(deviceURL + "getAllInfo"), Message.JSON);
 	},
 	onComplete: function(content, message, json){
-		// Update stuff here
+		update(json);
      	application.invoke( new Message("/startPolling"));
 	}	
 }));
@@ -46,7 +67,7 @@ Handler.bind("/startPolling", {
 		handler.invoke(new Message(deviceURL + "getAllInfo"), Message.JSON);
 	},
 	onComplete: function(content, message, json){
-		// Update stuff here too
+		update(json);
      	application.invoke( new Message("/delay"));
     }
 });
