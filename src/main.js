@@ -3,7 +3,6 @@ var THEME = require('themes/sample/theme');
 var BUTTONS = require("controls/buttons");
 var SCREEN = require('mobile/screen');
 var SCROLLER = require('mobile/scroller');
-
 //skins
 var whiteSkin = new Skin( { fill:"white" } );
 var blackSkin = new Skin( { fill:"black" } );
@@ -22,9 +21,14 @@ washerInUseOne = 0;
 washerTimeTwo = 0;
 washerInUseTwo = 0;
 dryerTimeOne = 0;
-washerInUseOne = 0;
+dryerInUseOne = 0;
 dryerTimeTwo = 0;
-washerInUseTwo = 0;
+dryerInUseTwo = 0;
+washerOneBool = false;
+washerTwoBool = false;
+dryerOneBool = false;
+dryerTwoBool = false;
+
 
 var update = function(json){
 	// Use this function to update UI elements instantly/live
@@ -33,9 +37,10 @@ var update = function(json){
 	washerTimeTwo = json.washerTimeTwo;
 	washerInUseTwo = json.washerInUseTwo;
 	dryerTimeOne = json.dryerTimeOne;
-	washerInUseOne = json.washerInUseOne;
+    dryerInUseOne = json.dryerInUseOne;
 	dryerTimeTwo = json.dryerTimeTwo;
-	washerInUseTwo = json.washerInUseTwo;
+	dryerInUseTwo = json.dryerInUseTwo;
+	addLoads();
 }
 
 Handler.bind("/discover", Behavior({
@@ -45,6 +50,7 @@ Handler.bind("/discover", Behavior({
 	},
 	onComplete: function(content, message, json){
 		update(json);
+        addLoads();
      	application.invoke( new Message("/startPolling"));
 	}	
 }));
@@ -154,32 +160,59 @@ var hamperCon = new containerTemplate({bottom:20,
     contents:[
         titleLabel,
         new Label({left:0, right:0, top: 45, height: 30, string: "My Loads", style: labelStyle, skin: whiteBorderSkin}),
-        new scroller({ name: "comicScroller", top:70, left: 0, right: 0, 
+        new scroller({ name: "hamperScroller", top:70, left: 0, right: 0, 
             contents: [
-                new Column({name: "comic",left: 0, right: 0, skin:blackSkin,
-                    contents: [
-                        new Line({left:0, right:0, skin:blackSkin, contents:[
-                            new Picture({left:0, right:0,height:50, url:"./green.jpeg"}),
-                            new Label({left:0, right:0, string: "alkjdflajdflaf", style:tabStyle})
-                            ]}),
-                        new Line({left:0, right:0, skin:blackSkin, contents:[
-                            new Picture({left:0, right:0,height:50, url:"./green.jpeg"}),
-                            new Label({left:0, right:0, string: "alkjdflajdflaf", style:tabStyle})
-                            ]}),
-                        new Line({left:0, right:0, skin:blackSkin, contents:[
-                            new Picture({left:0, right:0,height:50, url:"./orange.jpeg"}),
-                            new Label({left:0, right:0, string: "alkjdflajdflaf", style:tabStyle})
-                            ]}),
-                        new Line({left:0, right:0, skin:blackSkin, contents:[
-                            new Picture({left:0, right:0,height:50, url:"./red.jpeg"}),
-                            new Label({left:0, right:0, string: "alkjdflajdflaf", style:tabStyle})
-                            ]}),
-                            
-                    ]
-                    }),
+                //new Column({name: "hamperList",left: 0, right: 0, skin:blackSkin}),
             ]
         }),        
 ]});
+var hamperList = new Column({left: 0, right: 0, skin:blackSkin});
+var loads = Line.template(function($){return{
+    left:0, right:0, skin:blackSkin, contents:[
+        Picture($,{
+            left:0, right:0,height:50, url:$.yurl
+        }),
+        Label($,{
+            left:0, right:0, height: 40, string:$.text, style:tabStyle,
+        }),
+        
+    ]
+}});
+
+
+
+var addLoads = function(){
+    var washer1 = new loads({yurl:"./orange.jpeg", text:"Washer One"});
+    var washer2 = new loads({yurl:"./orange.jpeg", text:"Washer Two"});
+    var dryer1 = new loads({yurl:"./orange.jpeg", text:"Dryer One"});
+    var dryer2 = new loads({yurl:"./orange.jpeg", text:"Dryer Two"});
+    if (washerInUseOne === 1 && washerOneBool === false){
+        hamperList.add(washer1);
+        washerOneBool = true;
+    } else if(washerInUseTwo === 1 && washerTwoBool === false){
+        hamperList.add(washer2);
+        washerTwoBool = true;
+    } else if(dryerInUseOne === 1 && dryerOneBool === false){
+        hamperList.add(dryer1);
+        dryerOneBool = true;   
+    } else if(dryerInUseTwo === 1 && dryerTwoBool === false){
+       hamperList.add(dryer1);
+       dryerTwoBool = true;
+    } else if (washerInUseOne === 0 && washerOneBool === true){
+        hamperList.remove(washer1);
+        washerOneBool = false;
+    } else if (washerInUseTwo === 0 && washerTwoBool === true){
+        hamperList.remove(washer2);
+        washerTwoBool = false;
+    } else if (dryerInUseOne === 0 && dryerOneBool === true){
+        hamperList.remove(dryer1);
+        dryerOneBool = false; 
+    } else if (dryerInUseTwo === 0 && dryerTwoBool === true){
+        hamperList.remove(dryer2);
+        dryerTwoBool = false; 
+    }
+}
+
 var creditsCon = new containerTemplate({bottom:20});
 
 var mainContainer = new containerTemplate({bottom:0});
@@ -187,6 +220,8 @@ mainContainer.add(hamper);
 mainContainer.add(machines);
 mainContainer.add(credits);
 mainContainer.add(hamperCon);
+//hamperList.add(new loads({yurl:"./orange.jpeg", text:"Washer One"}));
+hamperCon.add(hamperList);
 application.add(mainContainer);
 
 var ApplicationBehavior = Behavior.template({
