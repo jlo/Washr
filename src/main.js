@@ -8,10 +8,36 @@ var SCROLLER = require('mobile/scroller');
 var whiteSkin = new Skin( { fill:"white" } );
 var blackSkin = new Skin( { fill:"black" } );
 var separatorSkin = new Skin({ fill: 'silver',});
-
+var labelStyle = new Style( { font: "bold 30px", color:"black" } );
+var whiteBorderSkin = new Skin({
+  fill:"white", 
+  borders:{bottom:5}, 
+  stroke:"black"
+});
 //styles
 var tabStyle = new Style( { font: "bold 15px", color:"white" } );
 var titleStyle = new Style({font: "bold 30px", color:"black"});
+
+washerTimeOne = 0;
+washerInUseOne = 0;
+washerTimeTwo = 0;
+washerInUseTwo = 0;
+dryerTimeOne = 0;
+washerInUseOne = 0;
+dryerTimeTwo = 0;
+washerInUseTwo = 0;
+
+var update = function(json){
+	// Use this function to update UI elements instantly/live
+	washerTimeOne = json.washerTimeOne;
+	washerInUseOne = json.washerInUseOne;
+	washerTimeTwo = json.washerTimeTwo;
+	washerInUseTwo = json.washerInUseTwo;
+	dryerTimeOne = json.dryerTimeOne;
+	washerInUseOne = json.washerInUseOne;
+	dryerTimeTwo = json.dryerTimeTwo;
+	washerInUseTwo = json.washerInUseTwo;
+}
 
 Handler.bind("/discover", Behavior({
 	onInvoke: function(handler, message){
@@ -19,7 +45,7 @@ Handler.bind("/discover", Behavior({
 		handler.invoke(new Message(deviceURL + "getAllInfo"), Message.JSON);
 	},
 	onComplete: function(content, message, json){
-		// Update stuff here
+		update(json);
      	application.invoke( new Message("/startPolling"));
 	}	
 }));
@@ -35,7 +61,7 @@ Handler.bind("/startPolling", {
 		handler.invoke(new Message(deviceURL + "getAllInfo"), Message.JSON);
 	},
 	onComplete: function(content, message, json){
-		// Update stuff here too
+		update(json);
      	application.invoke( new Message("/delay"));
     }
 });
@@ -99,19 +125,17 @@ var machines = new buttonTemplate({leftPos:107, width:107, bottom:0, textForLabe
 var credits = new buttonTemplate({leftPos:214, width:108, bottom:0, textForLabel:"Credits"});
 
 var containerTemplate = Container.template(function($) { return {
-	left: 0, right: 0, top: 0, bottom: $.bottom, skin: whiteSkin, active: true, contents: $.contents,
+	left: 0, right: 0, top: 0, bottom: $.bottom, skin: whiteSkin, active: true, contents:$.contents,
 	behavior: Object.create(Container.prototype, {
 		onTouchEnded: { value: function(content){
 			content.focus();
 		}}
 	})
 }});
-
+var titleLabel =  new Label({left:105,top:0, right:0, height: 40, string: "Washr", style: labelStyle});
 var scroller = SCROLLER.VerticalScroller.template(function($){ return{
     contents: $.contents
 }});
-
-
 var scrollableCon = new scroller({ name: "comicScroller", left: 0, right: 0, 
     contents: [
         new Column({name: "comic", top: 0, left: 0, right: 0, skin:blackSkin,
@@ -127,17 +151,19 @@ var scrollableCon = new scroller({ name: "comicScroller", left: 0, right: 0,
 var machinesCon = new containerTemplate({bottom: 20});
 machinesCon.add(scrollableCon);
 //machinesCon.add(ListPane);
+
 var hamperCon = new containerTemplate({bottom:20});
 var creditsCon = new containerTemplate({bottom:20,
 	contents:[
 		new Label({left:0, right:0, top:10, string: "Credits", style: titleStyle})
 	]});
 
+
 var mainContainer = new containerTemplate({bottom:0});
 mainContainer.add(hamper);
 mainContainer.add(machines);
 mainContainer.add(credits);
-mainContainer.add(machinesCon);
+mainContainer.add(hamperCon);
 application.add(mainContainer);
 
 var ApplicationBehavior = Behavior.template({
