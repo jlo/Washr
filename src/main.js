@@ -41,6 +41,7 @@ var update = function(json){
 	dryerTimeTwo = json.dryerTimeTwo;
 	dryerInUseTwo = json.dryerInUseTwo;
 	addLoads();
+	timeChange();
 }
 
 Handler.bind("/discover", Behavior({
@@ -50,7 +51,6 @@ Handler.bind("/discover", Behavior({
 	},
 	onComplete: function(content, message, json){
 		update(json);
-        addLoads();
      	application.invoke( new Message("/startPolling"));
 	}	
 }));
@@ -156,72 +156,85 @@ var scrollableCon = new scroller({ name: "comicScroller", left: 0, right: 0,
 var machinesCon = new containerTemplate({bottom: 20});
 machinesCon.add(scrollableCon);
 //machinesCon.add(ListPane);
+var hamperList = new Column({left: 0, right: 0, skin:blackSkin});
 var hamperCon = new containerTemplate({bottom:20,
     contents:[
         titleLabel,
         new Label({left:0, right:0, top: 45, height: 30, string: "My Loads", style: labelStyle, skin: whiteBorderSkin}),
-        new scroller({ name: "hamperScroller", top:70, left: 0, right: 0, 
-            contents: [
-                //new Column({name: "hamperList",left: 0, right: 0, skin:blackSkin}),
+        new scroller({top:70, left: 0, right: 0, contents:[ 
+            hamperList
             ]
-        }),        
+        })
 ]});
-var hamperList = new Column({left: 0, right: 0, skin:blackSkin});
+
 var loads = Line.template(function($){return{
     left:0, right:0, skin:blackSkin, contents:[
         Picture($,{
-            left:0, right:0,height:50, url:$.yurl
+            left:0, width:100, height:50, url:$.yurl
         }),
         Label($,{
-            left:0, right:0, height: 40, string:$.text, style:tabStyle,
+            width: 100, height: 40, string:$.text, style:tabStyle,
+        }),
+        Label($,{
+             name:"myTime", width:100, height: 40, string:"Time" + $.time, style:tabStyle,
         }),
         
     ]
 }});
-
-
+var washer1 = new loads({yurl:"./orange.jpeg", text:"Washer One", time:washerTimeOne});
+var washer2 = new loads({yurl:"./orange.jpeg", text:"Washer Two", time:washerTimeTwo});
+var dryer1 = new loads({yurl:"./orange.jpeg", text:"Dryer One", time:dryerTimeOne});
+var dryer2 = new loads({yurl:"./orange.jpeg", text:"Dryer Two", time:dryerTimeTwo});
 
 var addLoads = function(){
-    var washer1 = new loads({yurl:"./orange.jpeg", text:"Washer One"});
-    var washer2 = new loads({yurl:"./orange.jpeg", text:"Washer Two"});
-    var dryer1 = new loads({yurl:"./orange.jpeg", text:"Dryer One"});
-    var dryer2 = new loads({yurl:"./orange.jpeg", text:"Dryer Two"});
     if (washerInUseOne === 1 && washerOneBool === false){
         hamperList.add(washer1);
+        washer1.add(new Label({string: "HII"}));
         washerOneBool = true;
-    } else if(washerInUseTwo === 1 && washerTwoBool === false){
+    }
+    if(washerInUseTwo === 1 && washerTwoBool === false){
         hamperList.add(washer2);
         washerTwoBool = true;
-    } else if(dryerInUseOne === 1 && dryerOneBool === false){
+    }
+    if(dryerInUseOne === 1 && dryerOneBool === false){
         hamperList.add(dryer1);
         dryerOneBool = true;   
-    } else if(dryerInUseTwo === 1 && dryerTwoBool === false){
+    }
+    if(dryerInUseTwo === 1 && dryerTwoBool === false){
        hamperList.add(dryer1);
        dryerTwoBool = true;
-    } else if (washerInUseOne === 0 && washerOneBool === true){
+    }
+    if (washerInUseOne === 0 && washerOneBool === true){
         hamperList.remove(washer1);
         washerOneBool = false;
-    } else if (washerInUseTwo === 0 && washerTwoBool === true){
+    }
+    if (washerInUseTwo === 0 && washerTwoBool === true){
         hamperList.remove(washer2);
         washerTwoBool = false;
-    } else if (dryerInUseOne === 0 && dryerOneBool === true){
+    }
+    if (dryerInUseOne === 0 && dryerOneBool === true){
         hamperList.remove(dryer1);
         dryerOneBool = false; 
-    } else if (dryerInUseTwo === 0 && dryerTwoBool === true){
+    } 
+    if (dryerInUseTwo === 0 && dryerTwoBool === true){
         hamperList.remove(dryer2);
         dryerTwoBool = false; 
     }
 }
-
+var timeChange = function(){
+    washer1.myTime.string = washerTimeOne;
+    washer2.myTime.string = washerTimeTwo;
+    dryer1.myTime.string = dryerTimeOne;
+    dryer2.myTime.string = dryerTimeTwo;
+}
 var creditsCon = new containerTemplate({bottom:20});
 
 var mainContainer = new containerTemplate({bottom:0});
 mainContainer.add(hamper);
 mainContainer.add(machines);
 mainContainer.add(credits);
+
 mainContainer.add(hamperCon);
-//hamperList.add(new loads({yurl:"./orange.jpeg", text:"Washer One"}));
-hamperCon.add(hamperList);
 application.add(mainContainer);
 
 var ApplicationBehavior = Behavior.template({
