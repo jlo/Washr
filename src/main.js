@@ -7,6 +7,7 @@ var SCROLLER = require('mobile/scroller');
 var whiteSkin = new Skin( { fill:"white" } );
 var blackSkin = new Skin( { fill:"black" } );
 var separatorSkin = new Skin({ fill: 'silver',});
+var blueSkin = new Skin( { fill:"blue" } );
 var labelStyle = new Style( { font: "bold 30px", color:"black" } );
 var whiteBorderSkin = new Skin({
   fill:"white", 
@@ -83,7 +84,7 @@ Handler.bind("/delay", {
 
 //tab template
 var buttonTemplate = BUTTONS.Button.template(function($){ return{
-	left: $.leftPos, width:$.width, bottom:$.bottom, top:$.top, height:20, name:$.name, skin:blackSkin,
+	left: $.leftPos, width:$.width, bottom:$.bottom, top:$.top, height:20, name:$.name, skin:$.skin,
 	contents: [
 		new Label({left:0, right:0, height:20, string:$.textForLabel, style: tabStyle})
 		],
@@ -118,40 +119,8 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 				if (!creditsCon.container) {
 					mainContainer.add(creditsCon);
 				}
-			
-			} else if ($.textForLabel == "Washers") {
-				if (!washersCon.column && dryersCon.column) {
-					machinesCon.remove(dryersCon);
-					machinesCon.add(washersCon);
-				} 
-				if (washerTimeOne < washerTimeTwo) {
-					var washer1;
-					if (!washerInUseOne) {
-						  washer1 = new loads({yurl:"./green.jpeg", text:"Washer One"});
-						  
-					} else {
-						 var washer1 = new loads({yurl:"./yellow.jpeg", text:"Washer One"});
-					}
-					washersCon.add(washer1);
-				} else {
-					var washer2;
-					if (!washerInUseTwo) {
-						  washer2 = new loads({yurl:"./green.jpeg", text:"Washer Two"});
-						  
-					} else {
-						 washer2 = new loads({yurl:"./yellow.jpeg", text:"Washer Two"});
-					}
-					trace("here");
-					washersCon.add(washer2);
-				}
-				
-				
-			} else if ($.textForLabel == "Dryers") {
-				if (!dryersCon.column && washersCon.column) {
-					machinesCon.remove(washersCon);
-					machinesCon.add(dryersCon);
-				}
 			}
+			
 		}},
 		onComplete: { value: function(content, message, json){
 		}}
@@ -159,12 +128,9 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 }});
 
 //tabs
-var hamper = new buttonTemplate({leftPos:0,width:107, bottom:0,  textForLabel: "Hamper"});
-var machines = new buttonTemplate({leftPos:107, width:107, bottom:0, textForLabel: "Machines"});
-var credits = new buttonTemplate({leftPos:214, width:108, bottom:0, textForLabel:"Credits"});
-
-var washers = new buttonTemplate({leftPos:0,width:161, bottom:496,  textForLabel: "Washers"});
-var dryers = new buttonTemplate({leftPos:161, width:161, bottom:496, textForLabel: "Dryers"});
+var hamper = new buttonTemplate({leftPos:0,width:107, bottom:0,  textForLabel: "Hamper", skin: blackSkin});
+var machines = new buttonTemplate({leftPos:107, width:107, bottom:0, textForLabel: "Machines", skin: blackSkin});
+var credits = new buttonTemplate({leftPos:214, width:108, bottom:0, textForLabel:"Credits", skin: blackSkin});
 
 
 
@@ -176,6 +142,7 @@ var containerTemplate = Container.template(function($) { return {
 		}}
 	})
 }});
+var content = "";
 var titleLabel =  new Label({left:105,top:0, right:0, height: 40, string: "Washr", style: labelStyle});
 var scroller = SCROLLER.VerticalScroller.template(function($){ return{
     contents: $.contents
@@ -190,41 +157,32 @@ var loadsOne = Line.template(function($){return{
         }),
         Label($,{
             left:0, right:0, height: 40, string:$.text, style:tabStyle,
-        }),
-        
+        })       
     ]
 }});
 
-var washersCon = new Column({name: "comic", top: 30, left: 0, right: 0, skin:blackSkin,
-        	contents: [
-        		new loadsOne({text1: "1", yurl:"./green.jpeg", text:"Available"}),
-        		new loadsOne({text1: "2", yurl:"./green.jpeg", text:"Available"}),
-        	]
-})
-var dryersCon = 
-        new Column({name: "comic1", top: 30, left: 0, right: 0, skin:blackSkin,
-        	contents: [
-        		new loadsOne({text1: "1", yurl:"./green.jpeg", text:"Available"}),
-        		new loadsOne({text1: "2", yurl:"./green.jpeg", text:"Available"}),
-        	] 
-})
-
-
 
 //containers
+var washersCon = new Column({left: 0, right: 0, top:80, skin:blackSkin});
+var washer1 = new loadsOne({text1: "1", yurl:"./green.jpeg", text:"Available", name:"W1"});
+var washer2 = new loadsOne({text1: "2", yurl:"./green.jpeg", text:"Available", name:"W2"});
+washersCon.add(washer1);
+washersCon.add(washer2);
+var dryersCon = new Column({left: 0, right: 0, top:300, skin:blackSkin});
+var dryer1 = new loadsOne({text1: "1", yurl:"./green.jpeg", text:"Available", name:"D1"});
+var dryer2 = new loadsOne({text1: "2", yurl:"./green.jpeg", text:"Available", name:"D2"});
+dryersCon.add(dryer1);
+dryersCon.add(dryer2);
 var machinesCon = new containerTemplate({top:0, bottom: 20, 
 	contents:[
-		new Label({left:0, right:0, top: 45, height: 30, string: "Washers", style: labelStyle, skin: whiteBorderSkin}),
-		new loadsOne({text1: "1", yurl:"./green.jpeg", text:"Available", name:"W1"}),
-        new loadsOne({text1: "2", yurl:"./green.jpeg", text:"Available", name:"W2"}),
-        new Label({left:0, right:0, top: 45, height: 30, string: "Dryers", style: labelStyle, skin: whiteBorderSkin}),
-        new loadsOne({text1: "1", yurl:"./green.jpeg", text:"Available", name:"D1"}),
-        new loadsOne({text1: "2", yurl:"./green.jpeg", text:"Available", name:"D2"}),
+		new Label({left:0, right:0, top: 30, height: 30, string: "Washers", style: labelStyle, skin: whiteBorderSkin}),
+		washersCon,
+        new Label({left:0, right:0, top: 250, height: 30, string: "Dryers", style: labelStyle, skin: whiteBorderSkin}),
+        dryersCon,
 	]});
-machinesCon.add(washersCon);
+	
+
 //machinesCon.add(scrollableCon);
-machinesCon.add(washers);
-machinesCon.add(dryers);
 //machinesCon.add(ListPane);
 //var machinesSubCon = new containerTemplate({bottom: 20});
 
