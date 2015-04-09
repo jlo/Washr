@@ -14,8 +14,14 @@ var whiteBorderSkin = new Skin({
   borders:{bottom:5}, 
   stroke:"black"
 });
+var whiteSkinWithBorders = new Skin({
+	fill: "white",
+	borders: {bottom:2},
+	stroke: "black"
+});
 //styles
 var tabStyle = new Style( { font: "bold 15px", color:"white" } );
+var washerText = new Style( { font: "bold 15px", color:"black" } );
 var titleStyle = new Style({font: "bold 30px", color:"black"});
 
 washerTimeOne = 0;
@@ -148,29 +154,39 @@ var scroller = SCROLLER.VerticalScroller.template(function($){ return{
     contents: $.contents
 }});
 var loadsOne = Line.template(function($){return{
-    left:0, right:0, skin:blackSkin, contents:[
+    left:0, right:0, height:60, skin:whiteSkinWithBorders, contents:[
      	Label($,{
-            left:5, width:7, height: 40, string:$.text1, style:tabStyle,
+            left:5, width:7, height: 40, string:$.text1, style:washerText,
         }),
         Picture($,{
             left:5, width:100, height:50, url:$.yurl
         }),
         Label($,{
-            left:0, right:0, height: 40, string:$.text, style:tabStyle,
+            left: 0, width:120, height: 40, string:$.text, style:washerText,
         })       
     ]
 }});
 
 
 //containers
-var washersCon = new Column({left: 0, right: 0, top:80, skin:blackSkin});
+var washersCon = new Column({left: 0, right: 0, top:60, skin:blackSkin});
 var washer1 = new loadsOne({text1: "1", yurl:"./green.jpeg", text:"Available", name:"W1"});
 var washer2 = new loadsOne({text1: "2", yurl:"./green.jpeg", text:"Available", name:"W2"});
+
+var use_w1 = new buttonTemplate({leftPos:5, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin});
+var use_w2 = new buttonTemplate({leftPos:5, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin});
+var use_d1 = new buttonTemplate({leftPos:5, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin});
+var use_d2 = new buttonTemplate({leftPos:5, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin});
+washer1.add(use_w1);
+washer2.add(use_w2);
+
 washersCon.add(washer1);
 washersCon.add(washer2);
-var dryersCon = new Column({left: 0, right: 0, top:300, skin:blackSkin});
+var dryersCon = new Column({left: 0, right: 0, top:280, skin:blackSkin});
 var dryer1 = new loadsOne({text1: "1", yurl:"./green.jpeg", text:"Available", name:"D1"});
+dryer1.add(use_d1);
 var dryer2 = new loadsOne({text1: "2", yurl:"./green.jpeg", text:"Available", name:"D2"});
+dryer2.add(use_d2);
 dryersCon.add(dryer1);
 dryersCon.add(dryer2);
 var machinesCon = new containerTemplate({top:0, bottom: 20, 
