@@ -49,6 +49,8 @@ var update = function(json){
 	dryerTimeTwo = json.dryerTimeTwo;
 	dryerInUseTwo = json.dryerInUseTwo;
 	addLoads();
+	timeChange();
+	picChange();
 }
 
 Handler.bind("/discover", Behavior({
@@ -58,7 +60,6 @@ Handler.bind("/discover", Behavior({
 	},
 	onComplete: function(content, message, json){
 		update(json);
-        addLoads();
      	application.invoke( new Message("/startPolling"));
 	}	
 }));
@@ -159,33 +160,34 @@ var loadsOne = Line.template(function($){return{
             left:5, width:7, height: 40, string:$.text1, style:washerText,
         }),
         Picture($,{
-            left:5, width:100, height:50, url:$.yurl
+            name: "myPic", left:5, width:100, height:50, url:$.yurl
         }),
         Label($,{
-            left: 0, width:120, height: 40, string:$.text, style:washerText,
+            name:"myTime", left:0, width:140, height: 40, string:$.text, style:washerText,
         })       
     ]
 }});
 
 
 //containers
-var washersCon = new Column({left: 0, right: 0, top:60, skin:blackSkin});
-var washer1 = new loadsOne({text1: "1", yurl:"./green.jpeg", text:"Available", name:"W1"});
-var washer2 = new loadsOne({text1: "2", yurl:"./green.jpeg", text:"Available", name:"W2"});
 
-var use_w1 = new buttonTemplate({leftPos:5, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin});
-var use_w2 = new buttonTemplate({leftPos:5, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin});
-var use_d1 = new buttonTemplate({leftPos:5, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin});
-var use_d2 = new buttonTemplate({leftPos:5, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin});
+var washersCon = new Column({left: 0, right: 0, top:60, skin:blackSkin});
+var washer1 = new loadsOne({text1: "1", yurl:"./green.jpeg", text:"Available"});
+var washer2 = new loadsOne({text1: "2", yurl:"./green.jpeg", text:"Available"});
+
+var use_w1 = new buttonTemplate({leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin});
+var use_w2 = new buttonTemplate({leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin});
+var use_d1 = new buttonTemplate({leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin});
+var use_d2 = new buttonTemplate({leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin});
 washer1.add(use_w1);
 washer2.add(use_w2);
 
 washersCon.add(washer1);
 washersCon.add(washer2);
 var dryersCon = new Column({left: 0, right: 0, top:280, skin:blackSkin});
-var dryer1 = new loadsOne({text1: "1", yurl:"./green.jpeg", text:"Available", name:"D1"});
+var dryer1 = new loadsOne({text1: "1", yurl:"./green.jpeg", text:"Available"});
+var dryer2 = new loadsOne({text1: "2", yurl:"./green.jpeg", text:"Available"});
 dryer1.add(use_d1);
-var dryer2 = new loadsOne({text1: "2", yurl:"./green.jpeg", text:"Available", name:"D2"});
 dryer2.add(use_d2);
 dryersCon.add(dryer1);
 dryersCon.add(dryer2);
@@ -200,74 +202,215 @@ var machinesCon = new containerTemplate({top:0, bottom: 20,
 
 //machinesCon.add(scrollableCon);
 //machinesCon.add(ListPane);
-//var machinesSubCon = new containerTemplate({bottom: 20});
 
+var hamperList = new Column({left: 0, right: 0, skin:blackSkin});
 var hamperCon = new containerTemplate({bottom:20, top:0, 
     contents:[
         titleLabel,
         new Label({left:0, right:0, top: 45, height: 30, string: "My Loads", style: labelStyle, skin: whiteBorderSkin}),
-        new scroller({ name: "hamperScroller", top:70, left: 0, right: 0, 
-            contents: [
-                //new Column({name: "hamperList",left: 0, right: 0, skin:blackSkin}),
+        new scroller({top:70, left: 0, right: 0, contents:[ 
+            hamperList
             ]
-        }),        
+        })
 ]});
-var hamperList = new Column({left: 0, right: 0, skin:blackSkin});
+/*
 var loads = Line.template(function($){return{
     left:0, right:0, skin:blackSkin, contents:[
         Picture($,{
-            left:0, right:0,height:50, url:$.yurl
+            name:"myPic", left:0, width:100, height:50, url:$.yurl
         }),
         Label($,{
-            left:0, right:0, height: 40, string:$.text, style:tabStyle,
+            width: 100, height: 40, string:$.text, style:tabStyle,
+        }),
+        Label($,{
+             name:"myTime", width:100, height: 40, string:"Time" + $.time, style:tabStyle,
         }),
         
     ]
 }});
 
-
+var washer1 = new loads({yurl:"./orange.jpeg", text:"Washer One", time:washerTimeOne});
+var washer2 = new loads({yurl:"./orange.jpeg", text:"Washer Two", time:washerTimeTwo});
+var dryer1 = new loads({yurl:"./orange.jpeg", text:"Dryer One", time:dryerTimeOne});
+var dryer2 = new loads({yurl:"./orange.jpeg", text:"Dryer Two", time:dryerTimeTwo});
+*/
+var hwasher1 = new loadsOne({text1: "1", yurl:"./red.jpeg", text:washerTimeOne});
+var hwasher2 = new loadsOne({text1: "2", yurl:"./red.jpeg", text:washerTimeOne});
+var hdryer1 = new loadsOne({text1: "1", yurl:"./red.jpeg", text:washerTimeOne});
+var hdryer2 = new loadsOne({text1: "2", yurl:"./red.jpeg", text:washerTimeOne});
 var addLoads = function(){
-    var washer1 = new loads({yurl:"./orange.jpeg", text:"Washer One"});
-    var washer2 = new loads({yurl:"./orange.jpeg", text:"Washer Two"});
-    var dryer1 = new loads({yurl:"./orange.jpeg", text:"Dryer One"});
-    var dryer2 = new loads({yurl:"./orange.jpeg", text:"Dryer Two"});
     if (washerInUseOne === 1 && washerOneBool === false){
-        hamperList.add(washer1);
+        hamperList.add(hwasher1);
         washerOneBool = true;
-    } else if(washerInUseTwo === 1 && washerTwoBool === false){
-        hamperList.add(washer2);
+    }
+    if(washerInUseTwo === 1 && washerTwoBool === false){
+        hamperList.add(hwasher2);
         washerTwoBool = true;
-    } else if(dryerInUseOne === 1 && dryerOneBool === false){
-        hamperList.add(dryer1);
+    }
+    if(dryerInUseOne === 1 && dryerOneBool === false){
+        hamperList.add(hdryer1);
         dryerOneBool = true;   
-    } else if(dryerInUseTwo === 1 && dryerTwoBool === false){
-       hamperList.add(dryer1);
+    }
+    if(dryerInUseTwo === 1 && dryerTwoBool === false){
+       hamperList.add(hdryer1);
        dryerTwoBool = true;
-    } else if (washerInUseOne === 0 && washerOneBool === true){
-        hamperList.remove(washer1);
+    }
+    if (washerInUseOne === 0 && washerOneBool === true){
+        hamperList.remove(hwasher1);
         washerOneBool = false;
-    } else if (washerInUseTwo === 0 && washerTwoBool === true){
-        hamperList.remove(washer2);
+    }
+    if (washerInUseTwo === 0 && washerTwoBool === true){
+        hamperList.remove(hwasher2);
         washerTwoBool = false;
-    } else if (dryerInUseOne === 0 && dryerOneBool === true){
-        hamperList.remove(dryer1);
+    }
+    if (dryerInUseOne === 0 && dryerOneBool === true){
+        hamperList.remove(hdryer1);
         dryerOneBool = false; 
-    } else if (dryerInUseTwo === 0 && dryerTwoBool === true){
-        hamperList.remove(dryer2);
+    } 
+    if (dryerInUseTwo === 0 && dryerTwoBool === true){
+        hamperList.remove(hdryer2);
         dryerTwoBool = false; 
     }
 }
-
-
+var timeChange = function(){
+    if(washerInUseOne === 0){
+        washer1.myTime.string = "Available";
+        washerTimeOne = 0;
+    } else{
+        washer1.myTime.string = "Time Left: " + washerTimeOne;
+    }
+    if(washerInUseTwo === 0){
+        washer2.myTime.string = "Available";
+        washerTimeTwo = 0;
+    } else {
+        washer2.myTime.string = "Time Left: " + washerTimeTwo;
+    }
+    if(dryerInUseOne === 0){
+        dryer1.myTime.string = "Available";
+        dryerTimeOne = 0;
+    } else{
+        dryer1.myTime.string = "Time Left: " +dryerTimeOne;
+    }
+    if(dryerInUseTwo === 0){
+        dryer2.myTime.string = "Available";
+        dryerTimeTwo = 0;
+    } else {
+        dryer2.myTime.string = "Time Left: " + dryerTimeTwo;
+    }
+    hwasher1.myTime.string = washerTimeOne;
+    hwasher2.myTime.string = washerTimeTwo;
+    hdryer1.myTime.string = dryerTimeOne;
+    hdryer2.myTime.string = dryerTimeTwo;
+}
+var picChange = function(){
+    if(washerInUseOne === 0){
+        washer1.myPic.url = "./green.jpeg";
+        if (!use_w1.visible) {
+        	use_w1.visible = true;
+        }
+        if (use_w1.first.string != "Use") {
+        	//trace("!!!" + use_w1.string);
+        	use_w1.first.string = "Use";
+        	
+        }
+    } else if(washerTimeOne<=15 && washerInUseOne === 1){
+        washer1.myPic.url = "./yellow.jpeg";
+        hwasher1.myPic.url = "./yellow.jpeg";
+        if (!use_w1.visible) {
+        	use_w1.visible = true;
+        }
+        if (use_w1.first.string != "Nudge") {
+        	use_w1.first.string = "Nudge";
+        }
+    } else if(washerTimeOne>15 && washerInUseOne === 1){
+    	if (use_w1.visible) {
+        	use_w1.visible = false;
+        }
+        washer1.myPic.url = "./red.jpeg";
+        hwasher1.myPic.url = "./red.jpeg";
+    }
+    if(washerInUseTwo === 0){
+        washer2.myPic.url = "./green.jpeg";
+        if (!use_w2.visible) {
+        	use_w2.visible = true;
+        }
+        if (use_w2.first.string != "Use") {
+        	use_w2.first.string = "Use";
+        }
+    } else if(washerTimeTwo<=15 && washerInUseTwo === 1){
+        washer2.myPic.url = "./yellow.jpeg";
+        hwasher2.myPic.url = "./yellow.jpeg";
+        if (!use_w2.visible) {
+        	use_w2.visible = true;
+        }
+        if (use_w2.first.string != "Nudge") {
+        	use_w2.first.string = "Nudge";
+        }
+    } else {
+        washer2.myPic.url = "./red.jpeg";
+        hwasher2.myPic.url = "./red.jpeg";
+        if (use_w2.visible) {
+        	use_w2.visible = false;
+        }
+    }
+    if(dryerInUseOne === 0){
+        dryer1.myPic.url = "./green.jpeg";
+         if (!use_d1.visible) {
+        	use_d1.visible = true;
+        }
+        if (use_d1.first.string != "Use") {
+        	use_d1.first.string = "Use";
+        }
+    } else if(dryerTimeOne<=15 && dryerInUseOne === 1){
+        dryer1.myPic.url = "./yellow.jpeg";
+        hdryer1.myPic.url = "./yellow.jpeg";
+        if (!use_d1.visible) {
+        	use_d1.visible = true;
+        }
+        trace("dryer one nudge");
+        if (use_d1.first.string != "Nudge") {
+        	use_d1.first.string = "Nudge";
+        }
+    } else {
+        dryer1.myPic.url = "./red.jpeg";
+        hdryer1.myPic.url = "./red.jpeg";
+        if (use_d1.visible) {
+        	use_d1.visible = false;
+        }
+    }
+    if(dryerInUseTwo === 0){
+        dryer2.myPic.url = "./green.jpeg";
+        if (!use_d2.visible) {
+        	use_d2.visible = true;
+        }
+        if (use_d1.first.string != "Use") {
+        	use_d1.first.string = "Use";
+        }
+    } else if(dryerTimeTwo<=15 && dryerInUseTwo === 1){
+        dryer2.myPic.url = "./yellow.jpeg";
+        hdryer2.myPic.url = "./yellow.jpeg";
+        if (!use_d2.visible) {
+        	use_d2.visible = true;
+        }
+        if (use_d2.first.string != "Nudge") {
+        	use_d2.first.string = "Nudge";
+        }
+    } else {
+        dryer2.myPic.url = "./red.jpeg";
+        hdryer2.myPic.url = "./red.jpeg";
+        if (use_d2.visible) {
+        	use_d2.visible = false;
+        }
+    }
+}
 var creditsCon = new containerTemplate({top:0, bottom:20});
 
 var mainContainer = new containerTemplate({top:0, bottom:0});
 mainContainer.add(hamper);
 mainContainer.add(machines);
 mainContainer.add(credits);
+
 mainContainer.add(hamperCon);
-//hamperList.add(new loads({yurl:"./orange.jpeg", text:"Washer One"}));
-hamperCon.add(hamperList);
 application.add(mainContainer);
 
 var ApplicationBehavior = Behavior.template({
