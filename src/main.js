@@ -45,9 +45,11 @@ washerTwoBool = false;
 dryerOneBool = false;
 dryerTwoBool = false;
 
+notifConShowing = false;
 
 var update = function(json){
 	// Use this function to update UI elements instantly/live
+	showNotification(json);
 	washerTimeOne = json.washerTimeOne;
 	washerInUseOne = json.washerInUseOne;
 	washerTimeTwo = json.washerTimeTwo;
@@ -191,6 +193,10 @@ var loadsOne = Line.template(function($){return{
 
 
 //containers
+var notificationCon = new containerTemplate({bottom:50, top:50,
+    contents:[
+		new Content({left:20, right:20, top:20, bottom:20, skin:whiteAllBorderSkin}),
+]});
 var washersCon = new Column({left: 0, right: 0, top:80, skin:blackSkin});
 var washer1 = new loadsOne({text1: "1", yurl:"./green.jpeg", text:"Available"});
 var washer2 = new loadsOne({text1: "2", yurl:"./green.jpeg", text:"Available"});
@@ -542,6 +548,25 @@ var picChange = function(){
         dryer2.myPic.url = "./red.jpeg";
         hdryer2.myPic.url = "./red.jpeg";
     }
+}
+
+
+// Brings up the dialog box for letting users know was is complete
+// Wash is complete when a washer/dryer goes from 1 (in use) to 0 (not in use)
+var showNotification = function(json){
+	// Use this function to update UI elements instantly/live
+	if (washerInUseOne == 1 && json.washerInUseOne == 0) {
+		if (!notifConShowing) {
+			application.add(notificationCon)
+			notifConShowing = true;
+		}
+	} else if (washerInUseTwo == 1 && json.washerInUseTwo == 0) {
+	
+	} else if (dryerInUseOne == 1 && json.dryerInUseOne == 0) {
+	
+	} else if (dryerInUseTwo == 1 && json.dryerInUseTwo == 0) {
+	
+	}
 }
 
 var mainContainer = new containerTemplate({top:0, bottom:0});
