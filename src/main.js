@@ -113,7 +113,7 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 					mainContainer.remove(creditsCon);
 				}
 				if (!machinesCon.container) {
-					trace("!!!");
+					//trace("!!!");
 					mainContainer.add(machinesCon);
 				}
 			
@@ -252,7 +252,7 @@ var addLoads = function(){
         dryerOneBool = true;   
     }
     if(dryerInUseTwo === 1 && dryerTwoBool === false){
-       hamperList.add(hdryer1);
+       hamperList.add(hdryer2);
        dryerTwoBool = true;
     }
     if (washerInUseOne === 0 && washerOneBool === true){
@@ -303,8 +303,22 @@ var timeChange = function(){
     hdryer2.myTime.string = dryerTimeTwo;
 }
 var picChange = function(){
+	var str_w1 = washer1.myPic.url.toString();
+    var url_w1 = str_w1.substring(56, str_w1.length);
+    var str_w2 = washer2.myPic.url.toString();
+    var url_w2 = str_w2.substring(56, str_w2.length);
+    var str_d1 = dryer1.myPic.url.toString();
+    var url_d1 = str_d1.substring(56, str_d1.length);
+    var str_d2 = dryer2.myPic.url.toString();
+    var url_d2 = str_d2.substring(56, str_d2.length);
+    	
     if(washerInUseOne === 0){
-        washer1.myPic.url = "./green.jpeg";
+    	
+    	//trace(url_w1);
+    	if ( url_w1 != "/green.jpeg") {
+    		//trace("hereeeee");
+        	washer1.myPic.url = "./green.jpeg";
+        }
         if (!use_w1.visible) {
         	use_w1.visible = true;
         }
@@ -313,24 +327,40 @@ var picChange = function(){
         	use_w1.first.string = "Use";
         	
         }
+        
     } else if(washerTimeOne<=15 && washerInUseOne === 1){
-        washer1.myPic.url = "./yellow.jpeg";
-        hwasher1.myPic.url = "./yellow.jpeg";
-        if (!use_w1.visible) {
-        	use_w1.visible = true;
+    	if (url_w1 != "/yellow.jpeg") {
+    		//trace("whyyy");
+    		//trace(url_w1);
+	        washer1.myPic.url = "./yellow.jpeg";
+	        hwasher1.myPic.url = "./yellow.jpeg";
         }
-        if (use_w1.first.string != "Nudge") {
-        	use_w1.first.string = "Nudge";
-        }
+        if (washerTimeOne == 0) {
+        	if (!use_w1.visible) {
+        		use_w1.visible = true;
+        	}
+	        if (use_w1.first.string != "Nudge") {
+	        	use_w1.first.string = "Nudge";
+	        }
+	    } else {
+	    	use_w1.visible = false;
+	    }
+	    
     } else if(washerTimeOne>15 && washerInUseOne === 1){
     	if (use_w1.visible) {
         	use_w1.visible = false;
         }
-        washer1.myPic.url = "./red.jpeg";
-        hwasher1.myPic.url = "./red.jpeg";
+        if (url_w1 != "/red.jpeg") {
+	        washer1.myPic.url = "./red.jpeg";
+	        hwasher1.myPic.url = "./red.jpeg";
+	    }
     }
     if(washerInUseTwo === 0){
-        washer2.myPic.url = "./green.jpeg";
+    	
+    	if (url_w2 != "/green.jpeg") {
+	    	washer2.myPic.url = "./green.jpeg";
+	        washer2.myPic.url = "./green.jpeg";
+	    }
         if (!use_w2.visible) {
         	use_w2.visible = true;
         }
@@ -338,66 +368,97 @@ var picChange = function(){
         	use_w2.first.string = "Use";
         }
     } else if(washerTimeTwo<=15 && washerInUseTwo === 1){
-        washer2.myPic.url = "./yellow.jpeg";
-        hwasher2.myPic.url = "./yellow.jpeg";
-        if (!use_w2.visible) {
-        	use_w2.visible = true;
-        }
-        if (use_w2.first.string != "Nudge") {
-        	use_w2.first.string = "Nudge";
-        }
+    	if (url_w2 != "/yellow.jpeg") {
+	        washer2.myPic.url = "./yellow.jpeg";
+	        hwasher2.myPic.url = "./yellow.jpeg";
+	    }
+        if (washerTimeTwo == 0) {
+	        if (!use_w2.visible) {
+	        	use_w2.visible = true;
+	        }
+	        if (use_w2.first.string != "Nudge") {
+	        	use_w2.first.string = "Nudge";
+	        }
+	    } else {
+	    	use_w2.visible = false;
+	    }
     } else {
-        washer2.myPic.url = "./red.jpeg";
-        hwasher2.myPic.url = "./red.jpeg";
+    	if (url_w2 != "/red.jpeg") {
+    		washer2.myPic.url = "./red.jpeg";
+        	hwasher2.myPic.url = "./red.jpeg";
+    	}
+        
         if (use_w2.visible) {
         	use_w2.visible = false;
         }
     }
     if(dryerInUseOne === 0){
-        dryer1.myPic.url = "./green.jpeg";
-         if (!use_d1.visible) {
+    	
+    	if (url_d1 != "/green.jpeg") {
+        	dryer1.myPic.url = "./green.jpeg";
+        }
+        if (!use_d1.visible) {
         	use_d1.visible = true;
         }
         if (use_d1.first.string != "Use") {
         	use_d1.first.string = "Use";
         }
     } else if(dryerTimeOne<=15 && dryerInUseOne === 1){
-        dryer1.myPic.url = "./yellow.jpeg";
-        hdryer1.myPic.url = "./yellow.jpeg";
-        if (!use_d1.visible) {
-        	use_d1.visible = true;
-        }
-        trace("dryer one nudge");
-        if (use_d1.first.string != "Nudge") {
-        	use_d1.first.string = "Nudge";
-        }
+    	if (url_d1 != "/yellow.jpeg") {
+    	
+	        dryer1.myPic.url = "./yellow.jpeg";
+	        hdryer1.myPic.url = "./yellow.jpeg";
+	    }
+        
+        if (dryerTimeOne == 0) {
+	        if (!use_d1.visible) {
+	        	use_d1.visible = true;
+	        }
+	        if (use_d1.first.string != "Nudge") {
+	        	use_d1.first.string = "Nudge";
+	        }
+	     } else {
+	     	use_d1.visible = false;
+	     }
     } else {
-        dryer1.myPic.url = "./red.jpeg";
-        hdryer1.myPic.url = "./red.jpeg";
+    	
+    	if (url_d1 != "/red.jpeg") {
+	        dryer1.myPic.url = "./red.jpeg";
+	        hdryer1.myPic.url = "./red.jpeg";
+	    }
         if (use_d1.visible) {
         	use_d1.visible = false;
         }
     }
     if(dryerInUseTwo === 0){
-        dryer2.myPic.url = "./green.jpeg";
+    	
+    	if (url_d2 != "/green.jpeg") {
+        	dryer2.myPic.url = "./green.jpeg";
+        }
         if (!use_d2.visible) {
         	use_d2.visible = true;
         }
-        if (use_d1.first.string != "Use") {
-        	use_d1.first.string = "Use";
+        if (use_d2.first.string != "Use") {
+        	use_d2.first.string = "Use";
         }
     } else if(dryerTimeTwo<=15 && dryerInUseTwo === 1){
-        dryer2.myPic.url = "./yellow.jpeg";
-        hdryer2.myPic.url = "./yellow.jpeg";
-        if (!use_d2.visible) {
-        	use_d2.visible = true;
-        }
-        if (use_d2.first.string != "Nudge") {
-        	use_d2.first.string = "Nudge";
-        }
+    	if (url_d2 != "/yellow.jpeg"){
+        	dryer2.myPic.url = "./yellow.jpeg";
+        	hdryer2.myPic.url = "./yellow.jpeg";
+       	}
+        if (dryerTimeTwo == 0) {
+	        if (!use_d2.visible) {
+	        	use_d2.visible = true;
+	        }
+	        if (use_d2.first.string != "Nudge") {
+	        	use_d2.first.string = "Nudge";
+	        }
+	    }
     } else {
-        dryer2.myPic.url = "./red.jpeg";
-        hdryer2.myPic.url = "./red.jpeg";
+    	if (url_d2 != "/red.jpeg") {
+	        dryer2.myPic.url = "./red.jpeg";
+	        hdryer2.myPic.url = "./red.jpeg";
+	    }
         if (use_d2.visible) {
         	use_d2.visible = false;
         }
