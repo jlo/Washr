@@ -6,6 +6,10 @@ var BUTTONS = require("controls/buttons");
 var SCREEN = require('mobile/screen');
 var SCROLLER = require('mobile/scroller');
 
+//image assets
+var tutorialGif = new Texture("nfc-tut.gif");
+var nfcLogo = new Texture("nfc12.gif");
+
 //skins
 var whiteSkin = new Skin( { fill:"white" } );
 var redSkin = new Skin( { fill:"red" } );
@@ -42,6 +46,15 @@ var greyWithBlackBorders = new Skin({
   borders:{bottom:2, top:2, right:2, left:2}, 
   stroke:"black"
 });
+var nfcSkin = new Skin ({
+	width: 80, height: 60, 
+	texture: nfcLogo, fill: "red"
+});
+var tutorialSkin = new Skin ({
+	width: 288, height: 180, 
+	texture: tutorialGif, fill: "white"
+});
+
 //styles
 var labelStyle = new Style( { font: "bold 30px", color:"black" } );
 var subLabelStyle = new Style( { font: "bold 20px", color:"black" } );
@@ -177,6 +190,23 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 				if (!nudgeCon.container) {
 					mainContainer.add(nudgeCon);
 				}
+			/*
+			  Adding the payment feature 
+			*/
+			} else if ($.textForLabel == "Cancel") {
+				if (useCon.container) {
+					mainContainer.remove(useCon);
+				} else if (payCon.container) {
+					mainContainer.remove(payCon);
+				}
+			} else if ($.textForLabel == "Tap to Continue") {
+				mainContainer.remove(useCon);
+				mainContainer.add(payCon);
+				/*
+				CAUSE THE PAYMENT TO OCCUR AND START THE MACHINE
+				*/
+			} else if ($.textForLabel == "Use") {
+				mainContainer.add(useCon);
 			}
 			
 		}},
@@ -257,6 +287,7 @@ var nudgeCon = new containerTemplate({ top:205, bottom:205, left:0, right:0, ski
 var washer1 = new loadsOne({text1: "1", yurl:"./green.jpeg", text:"Available"});
 var washer2 = new loadsOne({text1: "2", yurl:"./green.jpeg", text:"Available"});
 
+
 use_w1 = new buttonTemplate({leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin, style: tabStyle});
 use_w2 = new buttonTemplate({leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin, style: tabStyle});
 use_d1 = new buttonTemplate({leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin, style: tabStyle});
@@ -295,6 +326,38 @@ var hamperCon = new containerTemplate({bottom:20, top:0, skin: whiteSkin,
             ]
         })
 ]});
+
+//User is going to use a machine
+var subNfcCont = new containerTemplate({top: 0, bottom: 50, left:0, right:0, skin:whiteAllBorderSkin,
+	contents: [
+		new Text({string: "Use", left: 142, right:0, top: 0, style: alertStyle}),
+		new Text({name: "useText", string: "This will subtract $4.00 from your bank", left:7, right:0, top:50, style: alertStyle}),
+		new Content({top: 120, left:0, right:0, skin: nfcSkin}),
+		new buttonTemplate({leftPos:110, width:108, bottom:10, textForLabel: "Tap to Continue", skin: whiteSkin, style: textLabelStyle}),
+			]
+});
+
+var gifCont = new containerTemplate({top: 0, bottom: 50, left:0, right:0, skin:whiteAllBorderSkin,
+	contents: [
+		new Content({left:0, right:0, skin: tutorialSkin}),
+			]
+});
+
+var payCon = new containerTemplate({ top:80, bottom: 120, left:0, right:0, skin:whiteAllBorderSkin,
+	contents: [
+	    gifCont,
+		new buttonTemplate({leftPos:110, width:108, bottom:15, textForLabel: "Cancel", skin: redSkin, style: tabStyle}),
+	]
+});
+
+var useCon = new containerTemplate({ top:80, bottom: 120, left:0, right:0, skin:whiteAllBorderSkin,
+	contents: [
+	    subNfcCont,
+		new buttonTemplate({leftPos:110, width:108, bottom:15, textForLabel: "Cancel", skin: redSkin, style: tabStyle}),
+	]
+});
+
+
 
 // Credits Resources
 var bigText = new Style({font:"bold 55px", color:"#333333"});
