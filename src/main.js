@@ -88,6 +88,8 @@ dryerTwoBool = false;
 
 notifConShowing = false;
 
+machineToUse = "";
+
 var update = function(json){
 	// Use this function to update UI elements instantly/live
 	showNotification(json);
@@ -137,6 +139,48 @@ Handler.bind("/delay", {
     },
     onComplete: function(handler, message){
         handler.invoke(new Message("/startPolling"));
+    }
+});
+
+Handler.bind("/payAndUse", {
+	onInvoke: function(handler, message){
+        handler.wait(1000);//will call onComplete after 4 seconds
+    },
+    onComplete: function(handler, message) {
+    	/*
+    	machineObj = new Object();
+		switch(machineToUse){
+			case "Washer 1":
+				//machineObj.washerTimeOne = 30;
+				machineObj.washerInUseOne = 1;
+				//washerOneBool = false;
+				//handler.invoke(new Message(deviceURL + "startW1"), Message.TEXT);
+				break;
+			case "Washer 2":
+				//machineObj.washerTimeTwo = 30;
+				machineObj.washerInUseTwo = 1;
+				//washerTwoBool = false;
+				//handler.invoke(new Message(deviceURL + "startW2"), Message.TEXT);
+				break;
+			case "Dryer 1":
+				//machineObj.dryerTimeOne = 30;
+				machineObj.dryerInUseOne = 1;
+				//dryerOneBool = false;
+				//handler.invoke(new Message(deviceURL + "startD1"), Message.TEXT);
+				break;
+			case "Dryer 2":
+				//machineObj.dryerTimeTwo = 30;
+				machineObj.dryerInUseTwo = 1;
+				//dryerTwoBool = false;
+				//handler.invoke(new Message(deviceURL + "startD2"), Message.TEXT);
+				break;
+			default:
+				break;
+		}
+		update(JSON.stringify(machineObj));
+		*/
+		handler.wait(10000);
+		mainContainer.remove(payCon);
     }
 });
 
@@ -199,15 +243,18 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 				} else if (payCon.container) {
 					mainContainer.remove(payCon);
 				}
+				machineToUse = "";
 			} else if ($.textForLabel == "Tap to Continue") {
 				mainContainer.remove(useCon);
 				mainContainer.add(payCon);
 				/*
 				CAUSE THE PAYMENT TO OCCUR AND START THE MACHINE
 				*/
+				application.invoke(new Message("/payAndUse"));
 			} else if ($.textForLabel == "Use") {
 				mainContainer.add(useCon);
 				subNfcCont.machineUse.string = $.name;
+				machineToUse = $.name;
 			}
 			
 		}},
