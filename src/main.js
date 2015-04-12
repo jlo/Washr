@@ -8,7 +8,7 @@ var whiteSkin = new Skin( { fill:"white" } );
 var blackSkin = new Skin( { fill:"black" } );
 var separatorSkin = new Skin({ fill: 'silver',});
 var blueSkin = new Skin( { fill:"blue" } );
-var labelStyle = new Style( { font: "bold 30px", color:"black" } );
+var labelStyle = new Style( { font: "bold 30px", color:"black"});
 var whiteBorderSkin = new Skin({
   fill:"white", 
   borders:{bottom:5}, 
@@ -190,11 +190,9 @@ var hamperList = new Column({left: 0, right: 0, skin:blackSkin});
 var hamperCon = new containerTemplate({bottom:20, top:0, 
     contents:[
         titleLabel,
-        new Label({left:0, right:0, top: 45, height: 30, string: "My Loads", style: labelStyle, skin: whiteBorderSkin}),
-        new scroller({top:70, left: 0, right: 0, contents:[ 
-            hamperList
-            ]
-        })
+        new Label({left:0, right:0, top: 55, height: 30, string: "My Loads", style: labelStyle, skin: whiteBorderSkin}),
+        hamperList
+      
 ]});
 /*
 var loads = Line.template(function($){return{
