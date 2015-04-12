@@ -207,6 +207,7 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 				*/
 			} else if ($.textForLabel == "Use") {
 				mainContainer.add(useCon);
+				subNfcCont.machineUse.string = $.name;
 			}
 			
 		}},
@@ -214,6 +215,7 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 		}}
 	})
 }});
+
 
 
 //tabs
@@ -288,10 +290,10 @@ var washer1 = new loadsOne({text1: "1", yurl:"./green.jpeg", text:"Available"});
 var washer2 = new loadsOne({text1: "2", yurl:"./green.jpeg", text:"Available"});
 
 
-use_w1 = new buttonTemplate({leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin, style: tabStyle});
-use_w2 = new buttonTemplate({leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin, style: tabStyle});
-use_d1 = new buttonTemplate({leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin, style: tabStyle});
-use_d2 = new buttonTemplate({leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin, style: tabStyle});
+use_w1 = new buttonTemplate({name: "Washer 1", leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin, style: tabStyle});
+use_w2 = new buttonTemplate({name: "Washer 2", leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin, style: tabStyle});
+use_d1 = new buttonTemplate({name: "Dryer 1", leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin, style: tabStyle});
+use_d2 = new buttonTemplate({name: "Dryer 2", leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin, style: tabStyle});
 washer1.add(use_w1);
 washer2.add(use_w2);
 
@@ -330,10 +332,11 @@ var hamperCon = new containerTemplate({bottom:20, top:0, skin: whiteSkin,
 //User is going to use a machine
 var subNfcCont = new containerTemplate({top: 0, bottom: 50, left:0, right:0, skin:whiteAllBorderSkin,
 	contents: [
-		new Text({string: "Use", left: 142, right:0, top: 0, style: alertStyle}),
-		new Text({name: "useText", string: "This will subtract $4.00 from your bank", left:7, right:0, top:50, style: alertStyle}),
-		new Content({top: 120, left:0, right:0, skin: nfcSkin}),
-		new buttonTemplate({leftPos:110, width:108, bottom:10, textForLabel: "Tap to Continue", skin: whiteSkin, style: textLabelStyle}),
+		new Text({string: "Use", left: 30, right:0, top: 55, style: labelStyle}),
+		new Text({name: "machineUse", string: "Machine", left:30, right:0, top: 90, style: alertStyle}),
+		new Text({name: "useText", string: "Cost: $4.00", left:30, right:0, top:120, style: alertStyle}),
+		new Content({top: 60, left:160, right:0, skin: nfcSkin}),
+		new buttonTemplate({leftPos:184, width:108, top:120, textForLabel: "Tap to Continue", skin: whiteSkin, style: textLabelStyle}),
 			]
 });
 
