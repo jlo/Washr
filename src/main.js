@@ -7,7 +7,9 @@ var SCREEN = require('mobile/screen');
 var SCROLLER = require('mobile/scroller');
 
 //image assets
-var tutorialGif = new Texture("nfc-tut.gif");
+var tutorialGif1 = new Texture("nfc-1.gif");
+var tutorialGif2 = new Texture("nfc-2.gif");
+var tutorialGif3 = new Texture("nfc-3.gif");
 var nfcLogo = new Texture("nfc12.gif");
 
 //skins
@@ -50,9 +52,17 @@ var nfcSkin = new Skin ({
 	width: 80, height: 60, 
 	texture: nfcLogo, fill: "red"
 });
-var tutorialSkin = new Skin ({
+var tutorialSkin1 = new Skin ({
 	width: 288, height: 180, 
-	texture: tutorialGif, fill: "white"
+	texture: tutorialGif1, fill: "white"
+});
+var tutorialSkin2 = new Skin ({
+	width: 288, height: 180, 
+	texture: tutorialGif2, fill: "white"
+});
+var tutorialSkin3 = new Skin ({
+	width: 288, height: 180, 
+	texture: tutorialGif3, fill: "white"
 });
 
 //styles
@@ -88,7 +98,6 @@ dryerTwoBool = false;
 
 notifConShowing = false;
 
-machineToUse = "";
 
 var update = function(json){
 	// Use this function to update UI elements instantly/live
@@ -142,47 +151,6 @@ Handler.bind("/delay", {
     }
 });
 
-Handler.bind("/payAndUse", {
-	onInvoke: function(handler, message){
-        handler.wait(1000);//will call onComplete after 4 seconds
-    },
-    onComplete: function(handler, message) {
-    	/*
-    	machineObj = new Object();
-		switch(machineToUse){
-			case "Washer 1":
-				//machineObj.washerTimeOne = 30;
-				machineObj.washerInUseOne = 1;
-				//washerOneBool = false;
-				//handler.invoke(new Message(deviceURL + "startW1"), Message.TEXT);
-				break;
-			case "Washer 2":
-				//machineObj.washerTimeTwo = 30;
-				machineObj.washerInUseTwo = 1;
-				//washerTwoBool = false;
-				//handler.invoke(new Message(deviceURL + "startW2"), Message.TEXT);
-				break;
-			case "Dryer 1":
-				//machineObj.dryerTimeOne = 30;
-				machineObj.dryerInUseOne = 1;
-				//dryerOneBool = false;
-				//handler.invoke(new Message(deviceURL + "startD1"), Message.TEXT);
-				break;
-			case "Dryer 2":
-				//machineObj.dryerTimeTwo = 30;
-				machineObj.dryerInUseTwo = 1;
-				//dryerTwoBool = false;
-				//handler.invoke(new Message(deviceURL + "startD2"), Message.TEXT);
-				break;
-			default:
-				break;
-		}
-		update(JSON.stringify(machineObj));
-		*/
-		handler.wait(10000);
-		mainContainer.remove(payCon);
-    }
-});
 
 //tab template
 var buttonTemplate = BUTTONS.Button.template(function($){ return{
@@ -247,14 +215,9 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 			} else if ($.textForLabel == "Tap to Continue") {
 				mainContainer.remove(useCon);
 				mainContainer.add(payCon);
-				/*
-				CAUSE THE PAYMENT TO OCCUR AND START THE MACHINE
-				*/
-				application.invoke(new Message("/payAndUse"));
 			} else if ($.textForLabel == "Use") {
 				mainContainer.add(useCon);
 				subNfcCont.machineUse.string = $.name;
-				machineToUse = $.name;
 			}
 			
 		}},
@@ -389,7 +352,7 @@ var subNfcCont = new containerTemplate({top: 0, bottom: 50, left:0, right:0, ski
 
 var gifCont = new containerTemplate({top: 0, bottom: 50, left:0, right:0, skin:whiteAllBorderSkin,
 	contents: [
-		new Content({left:0, right:0, skin: tutorialSkin}),
+		new Content({name: "gif", left:0, right:0, skin: tutorialSkin1}),
 			]
 });
 
@@ -613,18 +576,30 @@ var addLoads = function(){
     if (washerInUseOne === 1 && washerOneBool === false){
         hamperList.add(hwasher1);
         washerOneBool = true;
+        if (payCon.container) {
+        	mainContainer.remove(payCon);
+        }
     }
     if(washerInUseTwo === 1 && washerTwoBool === false){
         hamperList.add(hwasher2);
         washerTwoBool = true;
+        if (payCon.container) {
+        	mainContainer.remove(payCon);
+        }
     }
     if(dryerInUseOne === 1 && dryerOneBool === false){
         hamperList.add(hdryer1);
         dryerOneBool = true;   
+        if (payCon.container) {
+        	mainContainer.remove(payCon);
+        }
     }
     if(dryerInUseTwo === 1 && dryerTwoBool === false){
        hamperList.add(hdryer2);
        dryerTwoBool = true;
+       if (payCon.container) {
+        	mainContainer.remove(payCon);
+        }
     }
     if (washerInUseOne === 0 && washerOneBool === true){
         hamperList.remove(hwasher1);
