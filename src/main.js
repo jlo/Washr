@@ -6,6 +6,12 @@ var BUTTONS = require("controls/buttons");
 var SCREEN = require('mobile/screen');
 var SCROLLER = require('mobile/scroller');
 
+//image assets
+var tutorialGif1 = new Texture("nfc-1.gif");
+var tutorialGif2 = new Texture("nfc-2.gif");
+var tutorialGif3 = new Texture("nfc-3.gif");
+var nfcLogo = new Texture("nfc12.gif");
+
 //skins
 var whiteSkin = new Skin( { fill:"white" } );
 var redSkin = new Skin( { fill:"red" } );
@@ -42,6 +48,23 @@ var greyWithBlackBorders = new Skin({
   borders:{bottom:2, top:2, right:2, left:2}, 
   stroke:"black"
 });
+var nfcSkin = new Skin ({
+	width: 80, height: 60, 
+	texture: nfcLogo, fill: "red"
+});
+var tutorialSkin1 = new Skin ({
+	width: 288, height: 180, 
+	texture: tutorialGif1, fill: "white"
+});
+var tutorialSkin2 = new Skin ({
+	width: 288, height: 180, 
+	texture: tutorialGif2, fill: "white"
+});
+var tutorialSkin3 = new Skin ({
+	width: 288, height: 180, 
+	texture: tutorialGif3, fill: "white"
+});
+
 //styles
 var labelStyle = new Style( { font: "bold 30px", color:"black" } );
 var subLabelStyle = new Style( { font: "bold 20px", color:"black" } );
@@ -76,6 +99,7 @@ dryerOneBool = false;
 dryerTwoBool = false;
 
 notifConShowing = false;
+
 
 var update = function(json){
 	// Use this function to update UI elements instantly/live
@@ -129,6 +153,7 @@ Handler.bind("/delay", {
     }
 });
 
+
 //tab template
 var buttonTemplate = BUTTONS.Button.template(function($){ return{
 	left: $.leftPos, width:$.width, bottom:$.bottom, top:$.top, height:20, name:$.name, skin:$.skin,
@@ -179,6 +204,22 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 				if (!nudgeCon.container) {
 					mainContainer.add(nudgeCon);
 				}
+			/*
+			  Adding the payment feature 
+			*/
+			} else if ($.textForLabel == "Cancel") {
+				if (useCon.container) {
+					mainContainer.remove(useCon);
+				} else if (payCon.container) {
+					mainContainer.remove(payCon);
+				}
+				machineToUse = "";
+			} else if ($.textForLabel == "Tap to Continue") {
+				mainContainer.remove(useCon);
+				mainContainer.add(payCon);
+			} else if ($.textForLabel == "Use") {
+				mainContainer.add(useCon);
+				subNfcCont.machineUse.string = $.name;
 			}
 			
 		}},
@@ -186,6 +227,7 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 		}}
 	})
 }});
+
 
 
 //tabs
@@ -207,7 +249,9 @@ var containerTemplate = Container.template(function($) { return {
 	})
 }});
 var content = "";
-var titleLabel =  new Label({left:105,top:0, right:0, height: 40, string: "Washr", style: labelStyle});
+//var titleLabel =  new Label({left:105,top:0, right:0, height: 40, string: "Washr", style: labelStyle});
+var titleLabel = new Picture({right:0, left:0, top:10, height:70, url: "./logo.jpeg"})
+
 var scroller = SCROLLER.VerticalScroller.template(function($){ return{
     contents: $.contents
 }});
@@ -259,10 +303,11 @@ var nudgeCon = new containerTemplate({ top:205, bottom:205, left:0, right:0, ski
 var washer1 = new loadsOne({text1: "1", yurl:"./green.jpeg", text:"Available"});
 var washer2 = new loadsOne({text1: "2", yurl:"./green.jpeg", text:"Available"});
 
-use_w1 = new buttonTemplate({leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin, style: tabStyle});
-use_w2 = new buttonTemplate({leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin, style: tabStyle});
-use_d1 = new buttonTemplate({leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin, style: tabStyle});
-use_d2 = new buttonTemplate({leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin, style: tabStyle});
+
+use_w1 = new buttonTemplate({name: "Washer 1", leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin, style: tabStyle});
+use_w2 = new buttonTemplate({name: "Washer 2", leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin, style: tabStyle});
+use_d1 = new buttonTemplate({name: "Dryer 1", leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin, style: tabStyle});
+use_d2 = new buttonTemplate({name: "Dryer 2", leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin, style: tabStyle});
 washer1.add(use_w1);
 washer2.add(use_w2);
 
@@ -287,14 +332,47 @@ var machinesCon = new containerTemplate({top:0, bottom: 20, skin: whiteSkin,
 //machinesCon.add(scrollableCon);
 //machinesCon.add(ListPane);
 
-var hamperList = new Column({left: 0, right: 0, skin:blackSkin});
+var hamperList = new Column({left: 0, right: 0, top:150, height:200, skin:whiteSkin});
 var hamperCon = new containerTemplate({bottom:20, top:0, skin: whiteSkin,
     contents:[
         titleLabel,
-        new Label({left:0, right:0, top: 55, height: 30, string: "My Loads", style: labelStyle, skin: whiteBorderSkin}),
-        hamperList
-      
+        new Label({left:0, right:0, top: 100, height: 30, string: "My Loads", style: labelStyle, skin: whiteBorderSkin}),
+        hamperList,
+
 ]});
+
+//User is going to use a machine
+var subNfcCont = new containerTemplate({top: 0, bottom: 50, left:0, right:0, skin:whiteAllBorderSkin,
+	contents: [
+		new Text({string: "Use", left: 30, right:0, top: 55, style: labelStyle}),
+		new Text({name: "machineUse", string: "Machine", left:30, right:0, top: 90, style: alertStyle}),
+		new Text({name: "useText", string: "Cost: $4.00", left:30, right:0, top:120, style: alertStyle}),
+		new Content({top: 60, left:160, right:0, skin: nfcSkin}),
+		new buttonTemplate({leftPos:184, width:108, top:120, textForLabel: "Tap to Continue", skin: whiteSkin, style: textLabelStyle}),
+			]
+});
+
+var gifCont = new containerTemplate({top: 0, bottom: 50, left:0, right:0, skin:whiteAllBorderSkin,
+	contents: [
+		new Content({name: "gif", left:0, right:0, skin: tutorialSkin1}),
+			]
+});
+
+var payCon = new containerTemplate({ top:80, bottom: 120, left:0, right:0, skin:whiteAllBorderSkin,
+	contents: [
+	    gifCont,
+		new buttonTemplate({leftPos:110, width:108, bottom:15, textForLabel: "Cancel", skin: redSkin, style: tabStyle}),
+	]
+});
+
+var useCon = new containerTemplate({ top:80, bottom: 120, left:0, right:0, skin:whiteAllBorderSkin,
+	contents: [
+	    subNfcCont,
+		new buttonTemplate({leftPos:110, width:108, bottom:15, textForLabel: "Cancel", skin: redSkin, style: tabStyle}),
+	]
+});
+
+
 
 // Credits Resources
 var bigText = new Style({font:"bold 55px", color:"#333333"});
@@ -578,7 +656,7 @@ var addCardCon = new containerTemplate({top:0, bottom:20, skin: whiteSkin,
 })
 
 var hamperList = new Column({left: 0, right: 0, skin:blackSkin});
-
+	
 var hwasher1 = new loadsOne({text1: "1", yurl:"./red.jpeg", text:washerTimeOne});
 var hwasher2 = new loadsOne({text1: "2", yurl:"./red.jpeg", text:washerTimeOne});
 var hdryer1 = new loadsOne({text1: "1", yurl:"./red.jpeg", text:washerTimeOne});
@@ -586,20 +664,32 @@ var hdryer2 = new loadsOne({text1: "2", yurl:"./red.jpeg", text:washerTimeOne});
 
 var addLoads = function(){
     if (washerInUseOne === 1 && washerOneBool === false){
-        hamperList.add(hwasher1);
+        	hamperList.add(hwasher1);
         washerOneBool = true;
+        if (payCon.container) {
+        	mainContainer.remove(payCon);
+        }
     }
     if(washerInUseTwo === 1 && washerTwoBool === false){
         hamperList.add(hwasher2);
         washerTwoBool = true;
+        if (payCon.container) {
+        	mainContainer.remove(payCon);
+        }
     }
     if(dryerInUseOne === 1 && dryerOneBool === false){
         hamperList.add(hdryer1);
         dryerOneBool = true;   
+        if (payCon.container) {
+        	mainContainer.remove(payCon);
+        }
     }
     if(dryerInUseTwo === 1 && dryerTwoBool === false){
        hamperList.add(hdryer2);
        dryerTwoBool = true;
+       if (payCon.container) {
+        	mainContainer.remove(payCon);
+        }
     }
     if (washerInUseOne === 0 && washerOneBool === true){
         hamperList.remove(hwasher1);
@@ -643,10 +733,10 @@ var timeChange = function(){
     } else {
         dryer2.myTime.string = "Time Left: " + dryerTimeTwo;
     }
-    hwasher1.myTime.string = washerTimeOne;
-    hwasher2.myTime.string = washerTimeTwo;
-    hdryer1.myTime.string = dryerTimeOne;
-    hdryer2.myTime.string = dryerTimeTwo;
+    hwasher1.myTime.string = washer1.myTime.string;
+    hwasher2.myTime.string = washer2.myTime.string;
+    hdryer1.myTime.string = dryer1.myTime.string;
+    hdryer2.myTime.string = dryer2.myTime.string;
 }
 var picChange = function(){
 	var str_w1 = washer1.myPic.url.toString();
@@ -821,30 +911,34 @@ var showNotification = function(json){
 		trace(notifConShowing);
 		if (!notifConShowing) {
 			trace("washer1");
-			notificationCon.notifText.string = "Your load in Washer 1 is complete!";
 			application.add(notificationCon);
+			notificationCon.notifText.string = "Your load in Washer 1 is complete!";
+			
 			notifConShowing = true;
 			
 		}
 	} else if (washerInUseTwo == 1 && json.washerInUseTwo == 0) {
 		if (!notifConShowing) {
 			trace("2");
-			notificationCon.notifText.string = "Your load in Washer 2 is complete!";
+			
 			application.add(notificationCon)
+			notificationCon.notifText.string = "Your load in Washer 2 is complete!";
 			notifConShowing = true;
 		}
 	} else if (dryerInUseOne == 1 && json.dryerInUseOne == 0) {
 		if (!notifConShowing) {
 			trace("d1");
+			
+			application.add(notificationCon);
 			notificationCon.notifText.string = "Your load in Dryer 1 is complete!";
-			application.add(notificationCon)
 			notifConShowing = true;
 		}
 	} else if (dryerInUseTwo == 1 && json.dryerInUseTwo == 0) {
 		if (!notifConShowing) {
 			trace("d2");
+			application.add(notificationCon);
 			notificationCon.notifText.string = "Your load in Dryer 2 is complete!";
-			application.add(notificationCon)
+			
 			notifConShowing = true;
 		}
 	} 
