@@ -332,12 +332,11 @@ var machinesCon = new containerTemplate({top:0, bottom: 20, skin: whiteSkin,
 //machinesCon.add(scrollableCon);
 //machinesCon.add(ListPane);
 
-var hamperList = new Column({left: 0, right: 0, top:150, height:200, skin:whiteSkin});
+var hamperList = new Column({left: 0, right: 0, top:130, height:200, skin:whiteSkin});
 var hamperCon = new containerTemplate({bottom:20, top:0, skin: whiteSkin,
     contents:[
         titleLabel,
         new Label({left:0, right:0, top: 100, height: 30, string: "My Loads", style: labelStyle, skin: whiteBorderSkin}),
-        hamperList,
 
 ]});
 
@@ -679,7 +678,6 @@ var addCardCon = new containerTemplate({top:0, bottom:20, skin: whiteSkin,
 	]
 })
 
-var hamperList = new Column({left: 0, right: 0, skin:blackSkin});
 	
 var hwasher1 = new loadsOne({text1: "1", yurl:"./red.jpeg", text:washerTimeOne});
 var hwasher2 = new loadsOne({text1: "2", yurl:"./red.jpeg", text:washerTimeOne});
