@@ -205,7 +205,9 @@ var containerTemplate = Container.template(function($) { return {
 	})
 }});
 var content = "";
-var titleLabel =  new Label({left:105,top:0, right:0, height: 40, string: "Washr", style: labelStyle});
+//var titleLabel =  new Label({left:105,top:0, right:0, height: 40, string: "Washr", style: labelStyle});
+var titleLabel = new Picture({right:0, left:0, top:10, height:70, url: "./logo.jpeg"})
+
 var scroller = SCROLLER.VerticalScroller.template(function($){ return{
     contents: $.contents
 }});
@@ -285,15 +287,15 @@ var machinesCon = new containerTemplate({top:0, bottom: 20, skin: whiteSkin,
 //machinesCon.add(scrollableCon);
 //machinesCon.add(ListPane);
 
-var hamperList = new Column({left: 0, right: 0, skin:blackSkin});
+var hamperList = new Column({left: 0, right: 0, top:150, height:200, skin:whiteSkin});
 var hamperCon = new containerTemplate({bottom:20, top:0, skin: whiteSkin,
     contents:[
         titleLabel,
-        new Label({left:0, right:0, top: 45, height: 30, string: "My Loads", style: labelStyle, skin: whiteBorderSkin}),
-        new scroller({top:70, left: 0, right: 0, contents:[ 
-            hamperList
-            ]
-        })
+        new Label({left:0, right:0, top: 100, height: 30, string: "My Loads", style: labelStyle, skin: whiteBorderSkin}),
+     	
+            hamperList,
+       
+       
 ]});
 
 // Credits Resources
@@ -490,7 +492,7 @@ var addCardCon = new containerTemplate({top:0, bottom:20, skin: whiteSkin,
 })
 
 var hamperList = new Column({left: 0, right: 0, skin:blackSkin});
-
+	
 var hwasher1 = new loadsOne({text1: "1", yurl:"./red.jpeg", text:washerTimeOne});
 var hwasher2 = new loadsOne({text1: "2", yurl:"./red.jpeg", text:washerTimeOne});
 var hdryer1 = new loadsOne({text1: "1", yurl:"./red.jpeg", text:washerTimeOne});
@@ -498,7 +500,7 @@ var hdryer2 = new loadsOne({text1: "2", yurl:"./red.jpeg", text:washerTimeOne});
 
 var addLoads = function(){
     if (washerInUseOne === 1 && washerOneBool === false){
-        hamperList.add(hwasher1);
+        	hamperList.add(hwasher1);
         washerOneBool = true;
     }
     if(washerInUseTwo === 1 && washerTwoBool === false){
@@ -555,10 +557,10 @@ var timeChange = function(){
     } else {
         dryer2.myTime.string = "Time Left: " + dryerTimeTwo;
     }
-    hwasher1.myTime.string = washerTimeOne;
-    hwasher2.myTime.string = washerTimeTwo;
-    hdryer1.myTime.string = dryerTimeOne;
-    hdryer2.myTime.string = dryerTimeTwo;
+    hwasher1.myTime.string = washer1.myTime.string;
+    hwasher2.myTime.string = washer2.myTime.string;
+    hdryer1.myTime.string = dryer1.myTime.string;
+    hdryer2.myTime.string = dryer2.myTime.string;
 }
 var picChange = function(){
 	var str_w1 = washer1.myPic.url.toString();
@@ -733,30 +735,34 @@ var showNotification = function(json){
 		trace(notifConShowing);
 		if (!notifConShowing) {
 			trace("washer1");
-			notificationCon.notifText.string = "Your load in Washer 1 is complete!";
 			application.add(notificationCon);
+			notificationCon.notifText.string = "Your load in Washer 1 is complete!";
+			
 			notifConShowing = true;
 			
 		}
 	} else if (washerInUseTwo == 1 && json.washerInUseTwo == 0) {
 		if (!notifConShowing) {
 			trace("2");
-			notificationCon.notifText.string = "Your load in Washer 2 is complete!";
+			
 			application.add(notificationCon)
+			notificationCon.notifText.string = "Your load in Washer 2 is complete!";
 			notifConShowing = true;
 		}
 	} else if (dryerInUseOne == 1 && json.dryerInUseOne == 0) {
 		if (!notifConShowing) {
 			trace("d1");
+			
+			application.add(notificationCon);
 			notificationCon.notifText.string = "Your load in Dryer 1 is complete!";
-			application.add(notificationCon)
 			notifConShowing = true;
 		}
 	} else if (dryerInUseTwo == 1 && json.dryerInUseTwo == 0) {
 		if (!notifConShowing) {
 			trace("d2");
+			application.add(notificationCon);
 			notificationCon.notifText.string = "Your load in Dryer 2 is complete!";
-			application.add(notificationCon)
+			
 			notifConShowing = true;
 		}
 	} 
