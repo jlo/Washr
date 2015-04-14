@@ -70,6 +70,7 @@ var labelStyle = new Style( { font: "bold 30px", color:"black" } );
 var subLabelStyle = new Style( { font: "bold 20px", color:"black" } );
 var subSubLabelStyle = new Style( { font: "18px", color:"black" } );
 var alertStyle = new Style( { font: "20px", color:"black" } );
+var alertStyleTwo = new Style( { font: "17px", color:"black" } );
 var textLabelStyle = new Style( { font: "15px", color:"black" } );
 var tabStyle = new Style( { font: "bold 15px", color:"white" } );
 var washerText = new Style( { font: "bold 15px", color:"black" } );
@@ -223,8 +224,6 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 			}
 			
 		}},
-		onComplete: { value: function(content, message, json){
-		}}
 	})
 }});
 
@@ -237,7 +236,7 @@ var credits = new buttonTemplate({leftPos:214, width:108, bottom:0, textForLabel
 
 
 var containerTemplate = Container.template(function($) { return {
-	left: 0, right: 0, top: $.top, bottom: $.bottom, skin: $.skin, active: true, contents:$.contents,
+	left: $.left, right: $.right, top: $.top, bottom: $.bottom, skin: $.skin, active: true, contents:$.contents,
 	behavior: Object.create(Container.prototype, {
 		onTouchEnded: { value: function(content){
 			if (nudgeCon.container) {
@@ -286,12 +285,12 @@ var loadsOne = Line.template(function($){return{
 
 var washersCon = new Column({left: 0, right: 0, top:60, skin:blackSkin});
 //var notifText = new Text({name: "notifText", string: "", left:20, right:20, top:80, bottom:30, style: alertStyle});
-notificationCon = new containerTemplate({bottom:160, top:140, left: 0, right: 0,  skin:whiteAllBorderSkin,
+notificationCon = new containerTemplate({bottom:160, top:140, left: 20, right: 20,  skin:whiteAllBorderSkin,
     contents:[
-    	//new Label({string: "Alert", left:100, right:0, top: 10, skin:whiteSkin, style: labelStyle}),
-    	new buttonTemplate({leftPos:0, width:320, top:10,  textForLabel: "Alert", skin: thinBorderSkin, style: labelStyle}),
-		new Text({name: "notifText", string: "", left:20, right:20, top:70, bottom:0, style: alertStyle}),
-		new buttonTemplate({leftPos:0, width:320, bottom:5,  textForLabel: "Okay", skin: blackTopBorder, style: subSubLabelStyle}),
+    	new Label({string: "Alert", left:110, top: 10, skin:whiteSkin, style: labelStyle}),
+    	//new buttonTemplate({leftPos:0, width:320, top:10,  textForLabel: "Alert", skin: thinBorderSkin, style: labelStyle}),
+		new Text({name: "notifText", string: "", left:25, right:5, top:70, bottom:10, style: alertStyleTwo}),
+		new buttonTemplate({leftPos:8, width:265, bottom:5,  textForLabel: "Okay", skin: blackTopBorder, style: subSubLabelStyle}),
 		
 ]});
 
@@ -320,7 +319,7 @@ dryer1.add(use_d1);
 dryer2.add(use_d2);
 dryersCon.add(dryer1);
 dryersCon.add(dryer2);
-var machinesCon = new containerTemplate({top:0, bottom: 20, skin: whiteSkin,
+var machinesCon = new containerTemplate({top:0, bottom: 20, left:0, right:0, skin: whiteSkin,
 	contents:[
 		new Label({left:0, right:0, top: 30, height: 30, string: "Washers", style: labelStyle, skin: whiteBorderSkin}),
 		washersCon,
@@ -333,7 +332,7 @@ var machinesCon = new containerTemplate({top:0, bottom: 20, skin: whiteSkin,
 //machinesCon.add(ListPane);
 
 var hamperList = new Column({left: 0, right: 0, top:130, height:200, skin:whiteSkin});
-var hamperCon = new containerTemplate({bottom:20, top:0, skin: whiteSkin,
+var hamperCon = new containerTemplate({bottom:20, top:0, left:0, right:0, skin: whiteSkin,
     contents:[
         titleLabel,
         new Label({left:0, right:0, top: 100, height: 30, string: "My Loads", style: labelStyle, skin: whiteBorderSkin}),
@@ -438,10 +437,10 @@ var cancelAddCreditsButtonTemplate = BUTTONS.Button.template(function($){ return
 var otherField = Container.template(function($) { return { 
     width: 50, height: 20, top:0,left: 10, skin: whiteAllBorderSkin, contents: [
         Scroller($, { 
-            left: 4, right: 4, top: 4, bottom: 4, active: true, 
+            name:"moreScroller",left: 4, right: 4, top: 4, bottom: 4, active: true, 
             behavior: Object.create(CONTROL.FieldScrollerBehavior.prototype), clip: true, contents: [
                 Label($, { 
-                    left: 0, top: 0, bottom: 0, skin: THEME.fieldLabelSkin, style: creditStyle, anchor: 'NAME',
+                    name:"more",left: 0, top: 0, bottom: 0, skin: THEME.fieldLabelSkin, style: creditStyle, anchor: 'NAME',
                     editable: true, string: $.name,
                     behavior: Object.create( CONTROL.FieldLabelBehavior.prototype, {
                         onEdited: { value: function(label){
@@ -449,8 +448,7 @@ var otherField = Container.template(function($) { return {
                             data.name = label.string;
                             label.container.hint.visible = ( data.name.length == 0 );
                             buttonCredits = parseInt(label.string);
-                            trace(buttonCredits);
-                            addCreditsCon.creditsCol.creditsLine.righty.string = creditSoFar+buttonCredits;   
+                            //addCreditsCon.creditsCol.creditsLine.righty.string = creditSoFar+buttonCredits;   
                         }}
                     }),
                  }),
@@ -468,9 +466,10 @@ var creditsButtonTemplate = BUTTONS.Button.template(function($){ return{
         ],
     behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
         onTap: { value: function(content){
-                buttonCredits = parseInt($.textForLabel);
+                buttonCredits = parseInt($.textForLabel.substring(1));
                 trace(buttonCredits);
-                addCreditsCon.creditsCol.creditsLine.righty.string = creditSoFar+buttonCredits;
+                var temp = creditSoFar + buttonCredits;
+                addCreditsCon.creditsCol.creditsLine.right.string = "$"+temp;
         }},
         
     })
@@ -482,13 +481,18 @@ var confirmCreditsButtonTemplate = BUTTONS.Button.template(function($){ return{
         ],
     behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
         onTap: { value: function(content){
-            creditSoFar = creditSoFar + buttonCredits;
-            creditsCon.omg.wtf.string = "Credits: " + creditSoFar;
+            if(buttonCredits === NaN){
+                creditsSoFar = 0;
+            } else{
+                creditSoFar = creditSoFar + buttonCredits;
+            }
+            
+            creditsCon.omg.wtf.string = "Credits: $" + creditSoFar;
             mainContainer.remove(addCreditsCon);
             mainContainer.add(creditsCon);
-            addCreditsCon.creditsCol.creditsLine.lefty.string = creditSoFar;
-            addCreditsCon.creditsCol.creditsLine.righty.string = "0";
-            
+            addCreditsCon.creditsCol.creditsLine.lefty.string = "$"+creditSoFar;
+            addCreditsCon.creditsCol.creditsLine.right.string = "$0";
+            //otherField.moreScroller.more.string = "";
         }},
         
     })
@@ -502,9 +506,9 @@ var addCreditsCon = new containerTemplate({left:0, right:0, top:0, bottom:20, sk
         new Label({left:93, right:0, top:0, height:40, string: "Add Credits", style: labelStyle}),
         new Column({name:"creditsCol",top:50,left:5, right:5, skin:whiteAllBorderSkin, contents:[
             new Line({top:5, contents: [
-                new creditsButtonTemplate({leftPos:10, width:50, bottom:10, textForLabel:"5"}),
-                new creditsButtonTemplate({leftPos:10, width:50, bottom:10, textForLabel:"10"}),
-                new creditsButtonTemplate({leftPos:10, width:50, bottom:10, textForLabel:"20"}),
+                new creditsButtonTemplate({leftPos:10, width:50, bottom:10, textForLabel:"$5"}),
+                new creditsButtonTemplate({leftPos:10, width:50, bottom:10, textForLabel:"$10"}),
+                new creditsButtonTemplate({leftPos:10, width:50, bottom:10, textForLabel:"$20"}),
                 //new creditsButtonTemplate({leftPos:10, width:50, bottom:10, textForLabel:"Other"}),
                 new otherField({name:""}),
                 ]
@@ -513,10 +517,10 @@ var addCreditsCon = new containerTemplate({left:0, right:0, top:0, bottom:20, sk
                 new Label({left:5,right:5, height:40, string: "Default Payment                                  Visa *1234", style: textLabelStyle}),
                 ]
             }),
-            new Line({name:"creditsLine",top:30, left:50, right:50, contents: [
-                new Label({name:"lefty",left:30, top:0, right:0, height:40, string: creditSoFar, style: labelStyle}),
+            new Line({name:"creditsLine",top:30, left:0, right:0, contents: [
+                new Label({name:"lefty",left:30, top:0, right:0, height:40, string: "$0", style: labelStyle}),
                 new Label({left:30, top:0, right:0, height:40, string: ">>", style: labelStyle}),
-                new Label({name:"righty",left:30, top:0, right:0, height:40, string: buttonCredits + creditSoFar, style: labelStyle}),
+                new Label({name:"right",left:30, top:0, right:0, height:40, string: "$0", style: labelStyle}),
                 ]
             }),
             new confirmCreditsButtonTemplate({leftPos:100,right:100, width:100, bottom:10, textForLabel:"Confirm"}),
@@ -526,13 +530,13 @@ var addCreditsCon = new containerTemplate({left:0, right:0, top:0, bottom:20, sk
     ]
 })
 
-var creditsCon = new containerTemplate({top:0, bottom:20, skin: whiteSkin,
+var creditsCon = new containerTemplate({top:0, bottom:20, left:0, right:0, skin: whiteSkin,
 	contents:[
 		new Label({left:110,top:0, right:0, height: 40, string: "Credits", style: labelStyle}),
 		new Label({left:10, right:0, top: 45, height: 30, string: " Available Credits", style: subLabelStyle, skin: whiteBorderSkin}),
 		new Line({name:"omg",left:10, right:0, top:75, height:35,
 			contents: [
-				new Label({name:"wtf",left:10, top:10, right:0, height: 30, string: "Credits: " + creditSoFar, style: subSubLabelStyle}),
+				new Label({name:"wtf",left:10, top:10, right:0, height: 30, string: "Credits: $" + creditSoFar, style: subSubLabelStyle}),
 				new addCreditsButtonTemplate({leftPos:0, right:10, width:30, bottom:0, name:"add money", textForLabel:"+ Add Credits"}),
 			]
 		}),
@@ -646,7 +650,7 @@ var field_name = new myField({ name: "" });
 var field_num = new myField({ name: "" });
 var field_deets = new myField_deets({ name: "" });
 // Add Credit Card Page
-var addCardCon = new containerTemplate({top:0, bottom:20, skin: whiteSkin,
+var addCardCon = new containerTemplate({top:0, bottom:20, left:0, right:0,  skin: whiteSkin,
 	contents:[
 		new Line({top:0, left:0, right:0, skin:whiteSkin, contents: [
 			
@@ -933,40 +937,38 @@ var showNotification = function(json){
 		trace(notifConShowing);
 		if (!notifConShowing) {
 			trace("washer1");
-			application.add(notificationCon);
 			notificationCon.notifText.string = "Your load in Washer 1 is complete!";
-			
+			application.add(notificationCon);
 			notifConShowing = true;
 			
 		}
 	} else if (washerInUseTwo == 1 && json.washerInUseTwo == 0) {
 		if (!notifConShowing) {
 			trace("2");
-			
-			application.add(notificationCon)
 			notificationCon.notifText.string = "Your load in Washer 2 is complete!";
+			application.add(notificationCon)
 			notifConShowing = true;
 		}
 	} else if (dryerInUseOne == 1 && json.dryerInUseOne == 0) {
 		if (!notifConShowing) {
 			trace("d1");
-			
-			application.add(notificationCon);
 			notificationCon.notifText.string = "Your load in Dryer 1 is complete!";
+			application.add(notificationCon);	
 			notifConShowing = true;
 		}
 	} else if (dryerInUseTwo == 1 && json.dryerInUseTwo == 0) {
 		if (!notifConShowing) {
 			trace("d2");
-			application.add(notificationCon);
 			notificationCon.notifText.string = "Your load in Dryer 2 is complete!";
+			application.add(notificationCon);
+			
 			
 			notifConShowing = true;
 		}
 	} 
 }
 
-var mainContainer = new containerTemplate({top:0, bottom:0, skin:whiteSkin});
+var mainContainer = new containerTemplate({top:0, bottom:0, right:0, left:0, skin:whiteSkin});
 
 mainContainer.add(hamper);
 mainContainer.add(machines);
