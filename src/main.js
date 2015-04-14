@@ -18,6 +18,7 @@ var greenSkin = new Skin( { fill:"green" } );
 var lightBlueSkin = new Skin( { fill:"#1E90FF" } );
 var purpleSkin = new Skin( { fill:"purple" } );
 var redSkin = new Skin( { fill:"#B22222" } );
+var liteSkin = new Skin({fill:"01B4F7"});
 var blackSkin = new Skin( { fill:"black" } );
 var separatorSkin = new Skin({ fill: 'silver',});
 var blueSkin = new Skin( { fill:"blue" } );
@@ -78,6 +79,7 @@ var tabStyle = new Style( { font: "bold 15px", color:"white" } );
 var washerText = new Style( { font: "bold 15px", color:"black" } );
 var creditStyle = new Style( { font: "bold 15px", color:"black" } );
 var titleStyle = new Style({font: "bold 30px", color:"black"});
+var redStyle = new Style( { font: "bold 20px", color:"red" } );
 
 
 var use_w1;
@@ -221,6 +223,13 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 				mainContainer.remove(useCon);
 				mainContainer.add(payCon);
 			} else if ($.textForLabel == "Use") {
+				if (creditSoFar < 2) {
+					subNfcCont.payPreview.string = "Not Enough Credits";
+					subNfcCont.payPreview.style = redStyle;
+				} else {
+					subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
+					subNfcCont.payPreview.style = subLabelStyle;
+				};
 				mainContainer.add(useCon);
 				subNfcCont.machineUse.string = $.name;
 			}
@@ -323,7 +332,7 @@ dryer1.add(use_d1);
 dryer2.add(use_d2);
 dryersCon.add(dryer1);
 dryersCon.add(dryer2);
-var machinesCon = new containerTemplate({top:0, bottom: 20, skin: whiteSkin,
+var machinesCon = new containerTemplate({top:0, bottom: 20, skin: liteSkin,
 	contents:[
 		new Label({left:0, right:0, top: 30, height: 30, string: "Washers", style: labelStyle, skin: whiteBorderSkin}),
 		washersCon,
@@ -348,10 +357,11 @@ var subNfcCont = new containerTemplate({top: 0, bottom: 50, left:0, right:0, ski
 	contents: [
 		new Text({string: "Use", left: 30, right:0, top: 55, style: labelStyle}),
 		new Text({name: "machineUse", string: "Machine", left:30, right:0, top: 90, style: alertStyle}),
-		new Text({name: "useText", string: "Cost: $4.00", left:30, right:0, top:120, style: alertStyle}),
+		new Text({name: "useText", string: "Cost: $2.00", left:30, right:0, top:120, style: alertStyle}),
 		new Content({top: 60, left:160, right:0, skin: nfcSkin}),
 		new buttonTemplate({leftPos:184, width:108, top:120, textForLabel: "Tap to Continue", skin: whiteSkin, style: textLabelStyle}),
-			]
+		new Text({name: "payPreview", top:160, left:70, right:0, string: creditSoFar, style: subLabelStyle}),
+	]
 });
 
 var gifCont = new containerTemplate({top: 0, bottom: 50, left:0, right:0, skin:whiteAllBorderSkin,
@@ -693,28 +703,32 @@ var addLoads = function(){
         washerOneBool = true;
         if (payCon.container) {
         	mainContainer.remove(payCon);
-        }
+        };
+        creditSoFar = creditSoFar - 2;
     }
     if(washerInUseTwo === 1 && washerTwoBool === false){
         hamperList.add(hwasher2);
         washerTwoBool = true;
         if (payCon.container) {
         	mainContainer.remove(payCon);
-        }
+        };
+        creditSoFar = creditSoFar - 2;
     }
     if(dryerInUseOne === 1 && dryerOneBool === false){
         hamperList.add(hdryer1);
         dryerOneBool = true;   
         if (payCon.container) {
         	mainContainer.remove(payCon);
-        }
+        };
+        creditSoFar = creditSoFar - 2;
     }
     if(dryerInUseTwo === 1 && dryerTwoBool === false){
        hamperList.add(hdryer2);
        dryerTwoBool = true;
        if (payCon.container) {
         	mainContainer.remove(payCon);
-        }
+        };
+        creditSoFar = creditSoFar - 2;
     }
     if (washerInUseOne === 0 && washerOneBool === true){
         hamperList.remove(hwasher1);
