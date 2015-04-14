@@ -14,7 +14,10 @@ var nfcLogo = new Texture("nfc12.gif");
 
 //skins
 var whiteSkin = new Skin( { fill:"white" } );
-var redSkin = new Skin( { fill:"red" } );
+var greenSkin = new Skin( { fill:"green" } );
+var lightBlueSkin = new Skin( { fill:"#1E90FF" } );
+var purpleSkin = new Skin( { fill:"purple" } );
+var redSkin = new Skin( { fill:"#B22222" } );
 var blackSkin = new Skin( { fill:"black" } );
 var separatorSkin = new Skin({ fill: 'silver',});
 var blueSkin = new Skin( { fill:"blue" } );
@@ -295,7 +298,7 @@ notificationCon = new containerTemplate({bottom:160, top:140, left: 0, right: 0,
 		
 ]});
 
-var nudgeCon = new containerTemplate({ top:205, bottom:205, left:0, right:0, skin:greyWithBlackBorders,
+var nudgeCon = new containerTemplate({ top:195, bottom:220, left:0, right:0, skin:greyWithBlackBorders,
 	contents: [
 		new Text({name: "nudgeText", string: "You have successfully nudged this user!", left:0, right:0, top:10, style: alertStyle}),
 	]
@@ -313,7 +316,7 @@ washer2.add(use_w2);
 
 washersCon.add(washer1);
 washersCon.add(washer2);
-var dryersCon = new Column({left: 0, right: 0, top:280, skin:blackSkin});
+var dryersCon = new Column({left: 0, right: 0, top:270, skin:blackSkin});
 var dryer1 = new loadsOne({text1: "1", yurl:"./green.jpeg", text:"Available"});
 var dryer2 = new loadsOne({text1: "2", yurl:"./green.jpeg", text:"Available"});
 dryer1.add(use_d1);
@@ -324,7 +327,7 @@ var machinesCon = new containerTemplate({top:0, bottom: 20, skin: whiteSkin,
 	contents:[
 		new Label({left:0, right:0, top: 30, height: 30, string: "Washers", style: labelStyle, skin: whiteBorderSkin}),
 		washersCon,
-        new Label({left:0, right:0, top: 250, height: 30, string: "Dryers", style: labelStyle, skin: whiteBorderSkin}),
+        new Label({left:0, right:0, top: 240, height: 30, string: "Dryers", style: labelStyle, skin: whiteBorderSkin}),
         dryersCon,
 	]});
 	
@@ -378,9 +381,9 @@ var bigText = new Style({font:"bold 55px", color:"#333333"});
 
 // Button for adding a card 
 var addCardButtonTemplate = BUTTONS.Button.template(function($){ return{
-	left: $.leftPos, right:$.right, width:$.width, bottom:$.bottom, height:20, name:$.name, skin:whiteAllBorderSkin,
+	left: $.leftPos, right:$.right, width:$.width, bottom:$.bottom, height:20, name:$.name, skin:lightBlueSkin,
 	contents: [
-		new Label({left:0, right:0, height:20, string:$.textForLabel, style: creditStyle})
+		new Label({left:0, right:0, height:20, string:$.textForLabel, style: tabStyle})
 		],
 	behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
 		onTap: { value: function(content){
@@ -393,9 +396,9 @@ var addCardButtonTemplate = BUTTONS.Button.template(function($){ return{
 
 // Button for returning to credits screen
 var cancelAddCardButtonTemplate = BUTTONS.Button.template(function($){ return{
-	left: $.leftPos,right:$.right, width:$.width, bottom:$.bottom, height:30, name:$.name, skin:whiteAllBorderSkin,
+	left: $.leftPos,right:$.right, width:$.width, bottom:$.bottom, height:30, name:$.name, skin:redSkin,
 	contents: [
-		new Label({left:0, right:0, height:20, string:$.textForLabel, style: creditStyle})
+		new Label({left:0, right:0, height:20, string:$.textForLabel, style: tabStyle})
 		],
 	behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
 		onTap: { value: function(content){
@@ -408,9 +411,9 @@ var cancelAddCardButtonTemplate = BUTTONS.Button.template(function($){ return{
 
 // Button for adding a card 
 var addCreditsButtonTemplate = BUTTONS.Button.template(function($){ return{
-    left: $.leftPos, right:$.right, width:$.width, bottom:$.bottom, height:20, name:$.name, skin:whiteAllBorderSkin,
+    left: $.leftPos, right:$.right, width:$.width, bottom:$.bottom, height:20, name:$.name, skin:lightBlueSkin,
     contents: [
-        new Label({left:0, right:0, height:20, string:$.textForLabel, style: creditStyle})
+        new Label({left:0, right:0, height:20, string:$.textForLabel, style: tabStyle})
         ],
     behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
         onTap: { value: function(content){
@@ -423,9 +426,9 @@ var addCreditsButtonTemplate = BUTTONS.Button.template(function($){ return{
 
 // Button for returning to credits screen
 var cancelAddCreditsButtonTemplate = BUTTONS.Button.template(function($){ return{
-    left: $.leftPos, right:$.right, width:$.width, bottom:$.bottom, height:30, name:$.name, skin:whiteAllBorderSkin,
+    left: $.leftPos, right:$.right, width:$.width, bottom:$.bottom, height:30, name:$.name, skin:redSkin,
     contents: [
-        new Label({left:0, right:0, height:20, string:$.textForLabel, style: creditStyle})
+        new Label({left:0, right:0, height:20, string:$.textForLabel, style: tabStyle})
         ],
     behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
         onTap: { value: function(content){
@@ -436,12 +439,12 @@ var cancelAddCreditsButtonTemplate = BUTTONS.Button.template(function($){ return
     })
 }});
 var otherField = Container.template(function($) { return { 
-    width: 50, height: 20, top:0,left: 10, skin: whiteAllBorderSkin, contents: [
+    width: 60, height: 25, top:0,left: 10, skin:blackSkin, contents: [
         Scroller($, { 
             left: 4, right: 4, top: 4, bottom: 4, active: true, 
             behavior: Object.create(CONTROL.FieldScrollerBehavior.prototype), clip: true, contents: [
                 Label($, { 
-                    left: 0, top: 0, bottom: 0, skin: THEME.fieldLabelSkin, style: creditStyle, anchor: 'NAME',
+                    left: 0, top: 0, bottom: 0, skin: THEME.fieldLabelSkin, style: tabStyle, anchor: 'NAME',
                     editable: true, string: $.name,
                     behavior: Object.create( CONTROL.FieldLabelBehavior.prototype, {
                         onEdited: { value: function(label){
@@ -455,16 +458,16 @@ var otherField = Container.template(function($) { return {
                     }),
                  }),
                  Label($, {
-                     style:creditStyle, string:"Other", name:"hint"
+                     style:tabStyle, string:"Other", name:"hint"
                  })
             ]
         })
     ]
 }});
 var creditsButtonTemplate = BUTTONS.Button.template(function($){ return{
-    left: $.leftPos, width:$.width, bottom:$.bottom, height:20, name:$.name, skin:whiteAllBorderSkin,
+    left: $.leftPos, width:$.width, bottom:$.bottom, height:25, name:$.name, skin:blackSkin,
     contents: [
-        new Label({left:0, right:0, height:20, string:$.textForLabel, style: creditStyle})
+        new Label({left:0, right:0, height:30, string:$.textForLabel, style: tabStyle})
         ],
     behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
         onTap: { value: function(content){
@@ -476,9 +479,9 @@ var creditsButtonTemplate = BUTTONS.Button.template(function($){ return{
     })
 }});
 var confirmCreditsButtonTemplate = BUTTONS.Button.template(function($){ return{
-    top:30,left: $.leftPos, right:$.right,width:$.width, bottom:$.bottom, height:30, name:$.name, skin:whiteAllBorderSkin,
+    top:30,left: $.leftPos, right:$.right,width:$.width, bottom:$.bottom, height:30, name:$.name, skin:greenSkin,
     contents: [
-        new Label({left:10, right:10, height:20, string:$.textForLabel, style: creditStyle})
+        new Label({left:10, right:10, height:20, string:$.textForLabel, style: tabStyle})
         ],
     behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
         onTap: { value: function(content){
@@ -497,20 +500,20 @@ var confirmCreditsButtonTemplate = BUTTONS.Button.template(function($){ return{
 
 
 
-var addCreditsCon = new containerTemplate({left:0, right:0, top:0, bottom:20, skin: whiteSkin,
+var addCreditsCon = new containerTemplate({left:0, right:0, top:10, bottom:20, skin: whiteSkin,
     contents:[
-        new Label({left:93, right:0, top:0, height:40, string: "Add Credits", style: labelStyle}),
-        new Column({name:"creditsCol",top:50,left:5, right:5, skin:whiteAllBorderSkin, contents:[
+        new Label({left:90, right:0, top:0, height:40, string: "Add Credits", style: labelStyle}),
+        new Column({name:"creditsCol",top:60,left:5, right:5, skin:whiteSkin, contents:[
             new Line({top:5, contents: [
-                new creditsButtonTemplate({leftPos:10, width:50, bottom:10, textForLabel:"5"}),
-                new creditsButtonTemplate({leftPos:10, width:50, bottom:10, textForLabel:"10"}),
-                new creditsButtonTemplate({leftPos:10, width:50, bottom:10, textForLabel:"20"}),
+                new creditsButtonTemplate({leftPos:5, width:60, bottom:10, textForLabel:"5"}),
+                new creditsButtonTemplate({leftPos:10, width:60, bottom:10, textForLabel:"10"}),
+                new creditsButtonTemplate({leftPos:10, width:60, bottom:10, textForLabel:"20"}),
                 //new creditsButtonTemplate({leftPos:10, width:50, bottom:10, textForLabel:"Other"}),
                 new otherField({name:""}),
                 ]
             }),
-            new Line({top:30, left:5, right:5, skin:whiteAllBorderSkin, contents: [
-                new Label({left:5,right:5, height:40, string: "Default Payment                                  Visa *1234", style: textLabelStyle}),
+            new Line({top:30, left:20, right:20, skin:whiteAllBorderSkin, contents: [
+                new Label({left:20,right:20, height:40, string: "Default Payment                 Visa *1234", style: textLabelStyle}),
                 ]
             }),
             new Line({name:"creditsLine",top:30, left:50, right:50, contents: [
@@ -528,8 +531,8 @@ var addCreditsCon = new containerTemplate({left:0, right:0, top:0, bottom:20, sk
 
 var creditsCon = new containerTemplate({top:0, bottom:20, skin: whiteSkin,
 	contents:[
-		new Label({left:110,top:0, right:0, height: 40, string: "Credits", style: labelStyle}),
-		new Label({left:10, right:0, top: 45, height: 30, string: " Available Credits", style: subLabelStyle, skin: whiteBorderSkin}),
+		new Label({left:110,top:10, right:0, height: 40, string: "Credits", style: labelStyle}),
+		new Label({left:10, right:0, top: 50, height: 30, string: " Available Credits", style: subLabelStyle, skin: whiteBorderSkin}),
 		new Line({name:"omg",left:10, right:0, top:75, height:35,
 			contents: [
 				new Label({name:"wtf",left:10, top:10, right:0, height: 30, string: "Credits: " + creditSoFar, style: subSubLabelStyle}),
@@ -550,7 +553,7 @@ var creditsCon = new containerTemplate({top:0, bottom:20, skin: whiteSkin,
                         // }),
                        	new Line({left:0, right:0, skin:whiteSkin, 
                     		contents:[
-                            	new addCardButtonTemplate({leftPos:10, width:200, bottom:20, name:"add card", textForLabel:"+ Add Credit Card"}),
+                            	new addCardButtonTemplate({leftPos:60, width:200, bottom:20, name:"add card", textForLabel:"+ Add Credit Card"}),
                            	]
                        	}),
 						// new Label({left:10, right:0, height:30, string: " VISA **** **** **** 1234", style: textLabelStyle, skin: thinBorderSkin}),
@@ -622,9 +625,9 @@ var myField_deets = Container.template(function($) { return {
 
 // Button for saving add card page
 var saveCardButtonTemplate = BUTTONS.Button.template(function($){ return{
-	left: $.leftPos, width:$.width, bottom:$.bottom, height:30, name:$.name, skin:redSkin,
+	left: $.leftPos, width:$.width, bottom:$.bottom, height:30, name:$.name, skin:greenSkin,
 	contents: [
-		new Label({left:0, right:0, height:20, string:$.textForLabel, style: creditStyle})
+		new Label({left:0, right:0, height:20, string:$.textForLabel, style: tabStyle})
 		],
 	behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
 		onTap: { value: function(content){
@@ -650,10 +653,10 @@ var addCardCon = new containerTemplate({top:0, bottom:20, skin: whiteSkin,
 	contents:[
 		new Line({top:0, left:0, right:0, skin:whiteSkin, contents: [
 			
-			new Label({left:30, top:0, right:0, height:40, string: "Add a Card", style: labelStyle}),
+			new Label({left:90, top:10, right:0, height:40, string: "Add a Card", style: labelStyle}),
 			]
 		}),
-		new Column({name: "cardinfo", top:40, left: 0, right: 0, skin:whiteSkin,
+		new Column({name: "cardinfo", top:70, left: 0, right: 0, skin:whiteSkin,
           	contents: [
             	new Line({left:0, right:0, skin:whiteSkin, contents:[
                   		new Label({left:10, right:0, height:50, string: " Name: ", style: textLabelStyle, skin: noBorderSkin}),
@@ -670,8 +673,8 @@ var addCardCon = new containerTemplate({top:0, bottom:20, skin: whiteSkin,
                   		field_deets,
                   	]
                	}),
-                new saveCardButtonTemplate({leftPos:100, width:100, bottom:10, textForLabel:"Save"}),
-                new cancelAddCardButtonTemplate({leftPos:100, width:100, bottom:10, textForLabel:"Cancel"}),
+                new saveCardButtonTemplate({leftPos:110, width:100, bottom:10, textForLabel:"Save"}),
+                new cancelAddCardButtonTemplate({leftPos:110, width:100, bottom:10, textForLabel:"Cancel"}),
                 
           	] 
      	}),
