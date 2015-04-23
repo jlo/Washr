@@ -42,6 +42,11 @@ var blackTopBorder = new Skin({
 	borders: {top:2},
 	stroke: "black"
 });
+var greyTopBorder = new Skin({
+	fill: "white",
+	borders: {top:2},
+	stroke: "silver"
+});
 var whiteAllBorderSkin = new Skin({
   fill:"white", 
   borders:{bottom:2, top:2, right:2, left:2}, 
@@ -164,7 +169,7 @@ Handler.bind("/delay", {
 
 //tab template
 var buttonTemplate = BUTTONS.Button.template(function($){ return{
-	left: $.leftPos, width:$.width, bottom:$.bottom, top:$.top, height:20, name:$.name, skin:$.skin,
+	left: $.leftPos, width:$.width, bottom:$.bottom, top:$.top, height:$.height, name:$.name, skin:$.skin,
 	contents: [
 	
 		new Label({left:0, right:0, height:20, string:$.textForLabel, style: $.style})
@@ -174,36 +179,7 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 		onTap: { value: function(content){
 			trace("tapped");
 			trace($.textForLabel);
-			if ($.textForLabel == "Hamper") {
-				if (machinesCon.container) {
-					mainContainer.remove(machinesCon);
-				} else if (creditsCon.container) {
-					mainContainer.remove(creditsCon);
-				}
-				if (!hamperCon.container) {
-					mainContainer.add(hamperCon);
-				}
-			} else if ($.textForLabel == "Machines") {
-				if (hamperCon.container) {
-					mainContainer.remove(hamperCon);
-				} else if (creditsCon.container) {
-					mainContainer.remove(creditsCon);
-				}
-				if (!machinesCon.container) {
-					//trace("!!!");
-					mainContainer.add(machinesCon);
-				}
-			
-			}else if ($.textForLabel == "Credits") {
-				if (hamperCon.container) {
-					mainContainer.remove(hamperCon);
-				} else if (machinesCon.container) {
-					mainContainer.remove(machinesCon);
-				}
-				if (!creditsCon.container) {
-					mainContainer.add(creditsCon);
-				}
-			} else if ($.textForLabel == "Okay") {
+			if ($.textForLabel == "Okay") {
 				application.remove(notificationCon);
 				notifConShowing = false;
 			} else if (use_w1.first.string == "Nudge" || 
@@ -240,12 +216,69 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 	})
 }});
 
+var oldPic;
+var tabTemplate = BUTTONS.Button.template(function($){ return{
+	left: $.leftPos, width:$.width, bottom:$.bottom, top:$.top, height:$.height, name:$.name, skin:$.skin,
+	contents: [
+			new Label({left:0, right:0, height:20, string:$.textForLabel, style: $.style}),
+	        new Picture({name:"test",left:0, right:0, width:$.picWidth, height:$.picHeight, url:$.yurl})
+		],
+	behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
+		onTap: { value: function(content){
+			trace("tapped");
+			trace($.textForLabel);
+			if (oldPic == null) {
+				oldPic = content;
+			} else {
+				oldPic.remove(oldPic.last);
+				oldPic.add(new Picture({name:"test",left:0, right:0, width:$.picWidth, height:$.picHeight, url:"yellow.jpeg"}));
+				oldPic = content;
+			}
+			content.remove(content.last);
+			content.add(new Picture({name:"test",left:0, right:0, width:$.picWidth, height:$.picHeight, url:"green.jpeg"}))
+			if ($.textForLabel == "Hamper") {
+				if (machinesCon.container) {
+					mainContainer.remove(machinesCon);
+				} else if (creditsCon.container) {
+					mainContainer.remove(creditsCon);
+				}
+				if (!hamperCon.container) {
+					mainContainer.add(hamperCon);
+				}
+			} else if ($.textForLabel == "Machines") {
+				if (hamperCon.container) {
+					mainContainer.remove(hamperCon);
+				} else if (creditsCon.container) {
+					mainContainer.remove(creditsCon);
+				}
+				if (!machinesCon.container) {
+					//trace("!!!");
+					mainContainer.add(machinesCon);
+				}
+			
+			}else if ($.textForLabel == "Credits") {
+				if (hamperCon.container) {
+					mainContainer.remove(hamperCon);
+				} else if (machinesCon.container) {
+					mainContainer.remove(machinesCon);
+				}
+				if (!creditsCon.container) {
+					mainContainer.add(creditsCon);
+				}
+			}
+		}},
+	})
+}});
+
 
 
 //tabs
-var hamper = new buttonTemplate({leftPos:0,width:107, bottom:0,  textForLabel: "Hamper", skin: blackSkin, style: tabStyle});
-var machines = new buttonTemplate({leftPos:107, width:107, bottom:0, textForLabel: "Machines", skin: blackSkin, style:tabStyle});
-var credits = new buttonTemplate({leftPos:214, width:108, bottom:0, textForLabel:"Credits", skin: blackSkin, style: tabStyle});
+var hamper = new tabTemplate({leftPos:0, width:107, height:45, bottom:0, textForLabel: "Hamper", skin:greyTopBorder, style:tabStyle,
+			picWidth:20, picHeight:20, yurl:"./green.jpeg"});
+var machines = new tabTemplate({leftPos:107, width:107, height:45, bottom:0, textForLabel: "Machines", skin:greyTopBorder, style:tabStyle,
+			picWidth:20, picHeight:20, yurl:"./yellow.jpeg"});
+var credits = new tabTemplate({leftPos:214, width:108, height:45, bottom:0, textForLabel:"Credits", skin:greyTopBorder, style: tabStyle,
+			picWidth:20, picHeight:20, yurl:"./yellow.jpeg"});
 
 
 var containerTemplate = Container.template(function($) { return {
@@ -333,7 +366,7 @@ dryer2.add(use_d2);
 dryersCon.add(dryer1);
 dryersCon.add(dryer2);
 
-var machinesCon = new containerTemplate({top:0, bottom: 20, left:0, right:0,skin: liteSkin,
+var machinesCon = new containerTemplate({top:0, bottom: 45, left:0, right:0,skin: liteSkin,
 	contents:[
 	    new Column({top:0, left:0, right:0,height:40, skin:lightBlueSkin, contents:[
             new Label({left:110, top:5, height: 30, string: "Machines", style: topTitleStyle}), 
@@ -361,8 +394,8 @@ var hamperButtonTemplate = BUTTONS.Button.template(function($){ return{
 
 
 var hamperList = new Column({left: 0, right: 0, top:150, height:200, skin:whiteSkin});
-//hamperList.add(hamperButton);
-var hamperCon = new containerTemplate({bottom:20, top:0, left:0, right:0, skin: whiteSkin,
+
+var hamperCon = new containerTemplate({bottom:45, top:0, left:0, right:0, skin: whiteSkin,
     contents:[
         new Column({top:0, left:0, right:0,height:40, skin:lightBlueSkin, contents:[
             new Picture({right:0, left:0, top:5, height:30, url: "./washr_allwhite.png"}),   
@@ -534,7 +567,7 @@ var confirmCreditsButtonTemplate = BUTTONS.Button.template(function($){ return{
 
 
 
-var addCreditsCon = new containerTemplate({left:0, right:0, top:10, bottom:20, skin: whiteSkin,
+var addCreditsCon = new containerTemplate({left:0, right:0, top:10, bottom:45, skin: whiteSkin,
     contents:[
         new Label({left:90, right:0, top:0, height:40, string: "Add Credits", style: labelStyle}),
         new Column({name:"creditsCol",top:60,left:5, right:5, skin:whiteSkin, contents:[
@@ -564,7 +597,7 @@ var addCreditsCon = new containerTemplate({left:0, right:0, top:10, bottom:20, s
     ]
 })
 
-var creditsCon = new containerTemplate({top:0, bottom:20, left:0, right:0, skin: whiteSkin,
+var creditsCon = new containerTemplate({top:0, bottom:45, left:0, right:0, skin: whiteSkin,
 	contents:[
 		new Column({top:0, left:0, right:0,height:40, skin:lightBlueSkin, contents:[
             new Label({left:130, top:5, height: 30, string: "Credits", style: topTitleStyle}), 
@@ -675,7 +708,7 @@ var saveCardButtonTemplate = BUTTONS.Button.template(function($){ return{
 var field_name = new myField({ name: "" });
 var field_num = new myField({ name: "" });
 var field_deets = new myField_deets({ name: "" });
-var addCardCon = new containerTemplate({top:0, bottom:20, left:0, right:0,  skin: whiteSkin,
+var addCardCon = new containerTemplate({top:0, bottom:45, left:0, right:0,  skin: whiteSkin,
 	contents:[
 		new Line({top:0, left:0, right:0, skin:whiteSkin, contents: [
 			
@@ -1011,8 +1044,6 @@ var showNotification = function(json){
 			trace("d2");
 			application.add(notificationCon);
 			notificationCon.notifText.string = "Your load in Dryer 2 is complete!";
-			
-			
 			notifConShowing = true;
 		}
 	} 
