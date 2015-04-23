@@ -15,7 +15,7 @@ var nfcLogo = new Texture("nfc12.gif");
 //skins
 var whiteSkin = new Skin( { fill:"white" } );
 var greenSkin = new Skin( { fill:"green" } );
-var lightBlueSkin = new Skin( { fill:"#1E90FF" } );
+var lightBlueSkin = new Skin( { fill:"#14affa" } );
 var purpleSkin = new Skin( { fill:"purple" } );
 var redSkin = new Skin( { fill:"#B22222" } );
 var liteSkin = new Skin({fill:"01B4F7"});
@@ -68,11 +68,12 @@ var tutorialSkin3 = new Skin ({
 	width: 288, height: 180, 
 	texture: tutorialGif3, fill: "white"
 });
-
 //styles
 var labelStyle = new Style( { font: "bold 30px", color:"black" } );
+var topTitleStyle = new Style( { font: "bold 25px", color:"white" } );
 var subLabelStyle = new Style( { font: "bold 20px", color:"black" } );
 var subSubLabelStyle = new Style( { font: "18px", color:"black" } );
+var greyStyle = new Style( { font: "18px", color:"#545454" } );
 var alertStyle = new Style( { font: "20px", color:"black" } );
 var alertStyleTwo = new Style( { font: "17px", color:"black" } );
 var textLabelStyle = new Style( { font: "15px", color:"black" } );
@@ -118,6 +119,7 @@ var update = function(json){
     dryerInUseOne = json.dryerInUseOne;
 	dryerTimeTwo = json.dryerTimeTwo;
 	dryerInUseTwo = json.dryerInUseTwo;
+	loadsExist();
 	addLoads();
 	timeChange();
 	picChange();
@@ -164,7 +166,9 @@ Handler.bind("/delay", {
 var buttonTemplate = BUTTONS.Button.template(function($){ return{
 	left: $.leftPos, width:$.width, bottom:$.bottom, top:$.top, height:20, name:$.name, skin:$.skin,
 	contents: [
+	
 		new Label({left:0, right:0, height:20, string:$.textForLabel, style: $.style})
+		
 		],
 	behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
 		onTap: { value: function(content){
@@ -258,7 +262,7 @@ var containerTemplate = Container.template(function($) { return {
 }});
 var content = "";
 //var titleLabel =  new Label({left:105,top:0, right:0, height: 40, string: "Washr", style: labelStyle});
-var titleLabel = new Picture({right:0, left:0, top:30, height:70, url: "./logo.jpeg"})
+
 
 var scroller = SCROLLER.VerticalScroller.template(function($){ return{
     contents: $.contents
@@ -292,7 +296,7 @@ var loadsOne = Line.template(function($){return{
 
 //containers
 
-var washersCon = new Column({left: 0, right: 0, top:60, skin:blackSkin});
+var washersCon = new Column({left: 0, right: 0, top:100, skin:blackSkin});
 //var notifText = new Text({name: "notifText", string: "", left:20, right:20, top:80, bottom:30, style: alertStyle});
 notificationCon = new containerTemplate({bottom:160, top:140, left: 20, right: 20,  skin:whiteAllBorderSkin,
     contents:[
@@ -329,20 +333,42 @@ dryer2.add(use_d2);
 dryersCon.add(dryer1);
 dryersCon.add(dryer2);
 
-var machinesCon = new containerTemplate({top:0, bottom: 20, skin: liteSkin,
+var machinesCon = new containerTemplate({top:0, bottom: 20, left:0, right:0,skin: liteSkin,
 	contents:[
-		new Label({left:0, right:0, top: 30, height: 30, string: "Washers", style: labelStyle, skin: whiteBorderSkin}),
+	    new Column({top:0, left:0, right:0,height:40, skin:lightBlueSkin, contents:[
+            new Label({left:110, top:5, height: 30, string: "Machines", style: topTitleStyle}), 
+        ]}),
+		new Label({left:0, right:0, top: 70, height: 30, string: "Washers", style: labelStyle, skin: whiteBorderSkin}),
 		washersCon,
         new Label({left:0, right:0, top: 240, height: 30, string: "Dryers", style: labelStyle, skin: whiteBorderSkin}),
         dryersCon,
 	]});
+//hampers yo
+var hamperButtonTemplate = BUTTONS.Button.template(function($){ return{
+    left: $.left,right:$.right, top:$.top, height:200, skin:whiteSkin,
+    contents: [
+        new Picture({top:0, url:"./grey.jpeg"}),
+        new Label({top:195,left:0, right:0, height:20, string:$.textForLabel, style: greyStyle}),
+        ],
+    behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
+        onTap: { value: function(content){
+            trace("Button was tapped.\n");
+            mainContainer.remove(hamperCon);
+            mainContainer.add(machinesCon);
+        } },
+    })
+}});
+
 
 var hamperList = new Column({left: 0, right: 0, top:150, height:200, skin:whiteSkin});
+//hamperList.add(hamperButton);
 var hamperCon = new containerTemplate({bottom:20, top:0, left:0, right:0, skin: whiteSkin,
     contents:[
-        titleLabel,
-        new Label({left:0, right:0, top: 120, height: 30, string: "My Loads", style: labelStyle, skin: whiteBorderSkin}),
-
+        new Column({top:0, left:0, right:0,height:40, skin:lightBlueSkin, contents:[
+            new Picture({right:0, left:0, top:5, height:30, url: "./washr_allwhite.png"}),   
+        ]}),
+        new Label({left:0, right:0, top: 120, height: 30, string: "My Hamper", style: labelStyle, skin: whiteBorderSkin}),
+        
 ]});
 
 //User is going to use a machine
@@ -401,7 +427,7 @@ var addCardButtonTemplate = BUTTONS.Button.template(function($){ return{
 var cancelAddCardButtonTemplate = BUTTONS.Button.template(function($){ return{
 	left: $.leftPos,right:$.right, width:$.width, bottom:$.bottom, height:30, name:$.name, skin:redSkin,
 	contents: [
-		new Label({left:0, right:0, height:20, string:$.textForLabel, style: tabStyle})
+		new Label({left:0, right:0, height:20, string:$.textForLabel, style: tabStyle}),
 		],
 	behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
 		onTap: { value: function(content){
@@ -540,7 +566,9 @@ var addCreditsCon = new containerTemplate({left:0, right:0, top:10, bottom:20, s
 
 var creditsCon = new containerTemplate({top:0, bottom:20, left:0, right:0, skin: whiteSkin,
 	contents:[
-		new Label({left:110,top:10, right:0, height: 40, string: "Credits", style: labelStyle}),
+		new Column({top:0, left:0, right:0,height:40, skin:lightBlueSkin, contents:[
+            new Label({left:130, top:5, height: 30, string: "Credits", style: topTitleStyle}), 
+        ]}),
 		new Label({left:10, right:0, top: 50, height: 30, string: " Available Credits", style: subLabelStyle, skin: whiteBorderSkin}),
 		new Line({name:"omg",left:10, right:0, top:75, height:35,
 			contents: [
@@ -684,6 +712,25 @@ var hwasher1 = new loadsOne({text1: "1", yurl:"./red.jpeg", text:washerTimeOne})
 var hwasher2 = new loadsOne({text1: "2", yurl:"./red.jpeg", text:washerTimeOne});
 var hdryer1 = new loadsOne({text1: "1", yurl:"./red.jpeg", text:washerTimeOne});
 var hdryer2 = new loadsOne({text1: "2", yurl:"./red.jpeg", text:washerTimeOne});
+
+var hamperBool = false;
+
+var loadsExist = function(){
+
+    if(washerInUseOne === 0 && washerOneBool === false && washerInUseTwo === 0 && washerTwoBool === false &&dryerInUseOne === 0 && dryerOneBool === false &&dryerInUseTwo === 0 && dryerTwoBool === false){
+        if(hamperBool === false){
+            hamperButton123 = new hamperButtonTemplate({left:0, right:0, top:10,textForLabel:"Tap to begin."});
+            hamperList.add(hamperButton123);
+            hamperBool = true;
+        }
+    }else{
+        if(hamperBool === true){
+            hamperList.remove(hamperButton123);
+            hamperBool = false;
+        }
+    }
+}
+
 
 var addLoads = function(){
     if (washerInUseOne === 1 && washerOneBool === false){
