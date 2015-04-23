@@ -15,7 +15,7 @@ var nfcLogo = new Texture("nfc12.gif");
 //skins
 var whiteSkin = new Skin( { fill:"white" } );
 var greenSkin = new Skin( { fill:"green" } );
-var lightBlueSkin = new Skin( { fill:"#1E90FF" } );
+var lightBlueSkin = new Skin( { fill:"#14AFFA" } );
 var purpleSkin = new Skin( { fill:"purple" } );
 var redSkin = new Skin( { fill:"#B22222" } );
 var liteSkin = new Skin({fill:"01B4F7"});
@@ -41,6 +41,11 @@ var blackTopBorder = new Skin({
 	fill: "white",
 	borders: {top:2},
 	stroke: "black"
+});
+var greyTopBorder = new Skin({
+	fill: "white",
+	borders: {top:2},
+	stroke: "silver"
 });
 var whiteAllBorderSkin = new Skin({
   fill:"white", 
@@ -162,7 +167,7 @@ Handler.bind("/delay", {
 
 //tab template
 var buttonTemplate = BUTTONS.Button.template(function($){ return{
-	left: $.leftPos, width:$.width, bottom:$.bottom, top:$.top, height:20, name:$.name, skin:$.skin,
+	left: $.leftPos, width:$.width, bottom:$.bottom, top:$.top, height:$.height, name:$.name, skin:$.skin,
 	contents: [
 		new Label({left:0, right:0, height:20, string:$.textForLabel, style: $.style})
 		],
@@ -170,36 +175,7 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 		onTap: { value: function(content){
 			trace("tapped");
 			trace($.textForLabel);
-			if ($.textForLabel == "Hamper") {
-				if (machinesCon.container) {
-					mainContainer.remove(machinesCon);
-				} else if (creditsCon.container) {
-					mainContainer.remove(creditsCon);
-				}
-				if (!hamperCon.container) {
-					mainContainer.add(hamperCon);
-				}
-			} else if ($.textForLabel == "Machines") {
-				if (hamperCon.container) {
-					mainContainer.remove(hamperCon);
-				} else if (creditsCon.container) {
-					mainContainer.remove(creditsCon);
-				}
-				if (!machinesCon.container) {
-					//trace("!!!");
-					mainContainer.add(machinesCon);
-				}
-			
-			}else if ($.textForLabel == "Credits") {
-				if (hamperCon.container) {
-					mainContainer.remove(hamperCon);
-				} else if (machinesCon.container) {
-					mainContainer.remove(machinesCon);
-				}
-				if (!creditsCon.container) {
-					mainContainer.add(creditsCon);
-				}
-			} else if ($.textForLabel == "Okay") {
+			if ($.textForLabel == "Okay") {
 				application.remove(notificationCon);
 				notifConShowing = false;
 			} else if (use_w1.first.string == "Nudge" || 
@@ -236,12 +212,69 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 	})
 }});
 
+var oldPic;
+var tabTemplate = BUTTONS.Button.template(function($){ return{
+	left: $.leftPos, width:$.width, bottom:$.bottom, top:$.top, height:$.height, name:$.name, skin:$.skin,
+	contents: [
+			new Label({left:0, right:0, height:20, string:$.textForLabel, style: $.style}),
+	        new Picture({name:"test",left:0, right:0, width:$.picWidth, height:$.picHeight, url:$.yurl})
+		],
+	behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
+		onTap: { value: function(content){
+			trace("tapped");
+			trace($.textForLabel);
+			if (oldPic == null) {
+				oldPic = content;
+			} else {
+				oldPic.remove(oldPic.last);
+				oldPic.add(new Picture({name:"test",left:0, right:0, width:$.picWidth, height:$.picHeight, url:"yellow.jpeg"}));
+				oldPic = content;
+			}
+			content.remove(content.last);
+			content.add(new Picture({name:"test",left:0, right:0, width:$.picWidth, height:$.picHeight, url:"green.jpeg"}))
+			if ($.textForLabel == "Hamper") {
+				if (machinesCon.container) {
+					mainContainer.remove(machinesCon);
+				} else if (creditsCon.container) {
+					mainContainer.remove(creditsCon);
+				}
+				if (!hamperCon.container) {
+					mainContainer.add(hamperCon);
+				}
+			} else if ($.textForLabel == "Machines") {
+				if (hamperCon.container) {
+					mainContainer.remove(hamperCon);
+				} else if (creditsCon.container) {
+					mainContainer.remove(creditsCon);
+				}
+				if (!machinesCon.container) {
+					//trace("!!!");
+					mainContainer.add(machinesCon);
+				}
+			
+			}else if ($.textForLabel == "Credits") {
+				if (hamperCon.container) {
+					mainContainer.remove(hamperCon);
+				} else if (machinesCon.container) {
+					mainContainer.remove(machinesCon);
+				}
+				if (!creditsCon.container) {
+					mainContainer.add(creditsCon);
+				}
+			}
+		}},
+	})
+}});
+
 
 
 //tabs
-var hamper = new buttonTemplate({leftPos:0,width:107, bottom:0,  textForLabel: "Hamper", skin: blackSkin, style: tabStyle});
-var machines = new buttonTemplate({leftPos:107, width:107, bottom:0, textForLabel: "Machines", skin: blackSkin, style:tabStyle});
-var credits = new buttonTemplate({leftPos:214, width:108, bottom:0, textForLabel:"Credits", skin: blackSkin, style: tabStyle});
+var hamper = new tabTemplate({leftPos:0, width:107, height:60, bottom:0, textForLabel: "Hamper", skin:greyTopBorder, style:tabStyle,
+			picWidth:20, picHeight:20, yurl:"./green.jpeg"});
+var machines = new tabTemplate({leftPos:107, width:107, height:60, bottom:0, textForLabel: "Machines", skin:greyTopBorder, style:tabStyle,
+			picWidth:20, picHeight:20, yurl:"./yellow.jpeg"});
+var credits = new tabTemplate({leftPos:214, width:108, height:60, bottom:0, textForLabel:"Credits", skin:greyTopBorder, style: tabStyle,
+			picWidth:20, picHeight:20, yurl:"./yellow.jpeg"});
 
 
 var containerTemplate = Container.template(function($) { return {
@@ -329,7 +362,7 @@ dryer2.add(use_d2);
 dryersCon.add(dryer1);
 dryersCon.add(dryer2);
 
-var machinesCon = new containerTemplate({top:0, bottom: 20, skin: liteSkin,
+var machinesCon = new containerTemplate({top:0, bottom: 60, skin: liteSkin,
 	contents:[
 		new Label({left:0, right:0, top: 30, height: 30, string: "Washers", style: labelStyle, skin: whiteBorderSkin}),
 		washersCon,
@@ -338,7 +371,7 @@ var machinesCon = new containerTemplate({top:0, bottom: 20, skin: liteSkin,
 	]});
 
 var hamperList = new Column({left: 0, right: 0, top:150, height:200, skin:whiteSkin});
-var hamperCon = new containerTemplate({bottom:20, top:0, left:0, right:0, skin: whiteSkin,
+var hamperCon = new containerTemplate({bottom:60, top:0, left:0, right:0, skin: whiteSkin,
     contents:[
         titleLabel,
         new Label({left:0, right:0, top: 120, height: 30, string: "My Loads", style: labelStyle, skin: whiteBorderSkin}),
@@ -538,7 +571,7 @@ var addCreditsCon = new containerTemplate({left:0, right:0, top:10, bottom:20, s
     ]
 })
 
-var creditsCon = new containerTemplate({top:0, bottom:20, left:0, right:0, skin: whiteSkin,
+var creditsCon = new containerTemplate({top:0, bottom:60, left:0, right:0, skin: whiteSkin,
 	contents:[
 		new Label({left:110,top:10, right:0, height: 40, string: "Credits", style: labelStyle}),
 		new Label({left:10, right:0, top: 50, height: 30, string: " Available Credits", style: subLabelStyle, skin: whiteBorderSkin}),
@@ -964,8 +997,6 @@ var showNotification = function(json){
 			trace("d2");
 			application.add(notificationCon);
 			notificationCon.notifText.string = "Your load in Dryer 2 is complete!";
-			
-			
 			notifConShowing = true;
 		}
 	} 
