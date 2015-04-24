@@ -202,14 +202,7 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 			} else if ($.textForLabel == "Okay") {
 				application.remove(notificationCon);
 				notifConShowing = false;
-			} else if (use_w1.first.string == "Nudge" || 
-				use_w2.first.string == "Nudge" ||
-				use_d1.first.string == "Nudge" ||
-				use_d2.first.string == "Nudge" ) {
-				trace("in nudge");
-				if (!nudgeCon.container) {
-					mainContainer.add(nudgeCon);
-				}
+			
 			} else if ($.textForLabel == "Cancel") {
 				if (useCon.container) {
 					mainContainer.remove(useCon);
@@ -220,16 +213,35 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 			} else if ($.textForLabel == "Tap to Continue") {
 				mainContainer.remove(useCon);
 				mainContainer.add(payCon);
-			} else if ($.textForLabel == "Use") {
+			} 
+			
+		}},
+	})
+}});
+
+var pictureButtonTemplate = BUTTONS.Button.template(function($){ return{
+	left: $.leftPos, width:$.width, bottom:$.bottom, top:$.top, height:20, name:$.name, skin:$.skin,
+	contents: [
+		new Label({left:0, right:0, height:20, string:$.textForLabel, style: $.style}),
+		new Picture({left:0, right:0, width: 60, url: $.url, opacity: $.opacity})
+		],
+	behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
+		onTap: { value: function(content){
+			if ($.textForLabel == "Use" && $.opacity == 1) {
 				if (creditSoFar < 2) {
 					subNfcCont.payPreview.string = "Not Enough Credits";
 					subNfcCont.payPreview.style = redStyle;
 				} else {
 					subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
 					subNfcCont.payPreview.style = subLabelStyle;
-				};
+				}
 				mainContainer.add(useCon);
 				subNfcCont.machineUse.string = $.name;
+			} else if ($.textForLabel == "Nudge" && $.opacity == 1) {
+				//trace("in nudge");
+				if (!nudgeCon.container) {
+					mainContainer.add(nudgeCon);
+				}
 			}
 			
 		}},
@@ -277,15 +289,16 @@ var scrollableCon = new scroller({ name: "comicScroller", left: 0, right: 0,
 
 var loadsOne = Line.template(function($){return{
     left:0, right:0, height:60, skin:whiteSkinWithBorders, contents:[
-     	Label($,{
-            left:5, width:7, height: 40, string:$.text1, style:washerText,
-        }),
+     	//Label($,{
+          //  left:5, width:7, height: 40, string:$.text1, style:washerText,
+       //}),
         Picture($,{
-            name: "myPic", left:5, width:100, height:50, url:$.yurl
+            name: "myPic", left:-20, width:100, height:50, url:$.yurl
         }),
         Label($,{
             name:"myTime", left:0, width:140, height: 40, string:$.text, style:washerText,
-        })       
+        }), 
+          
     ]
 } });
 
@@ -308,28 +321,42 @@ var nudgeCon = new containerTemplate({ top:195, bottom:220, left:0, right:0, ski
 		new Text({name: "nudgeText", string: "You have successfully nudged this user!", left:0, right:0, top:10, style: alertStyle}),
 	]
 });
-var washer1 = new loadsOne({text1: "1", yurl:"./green.jpeg", text:"Available"});
-var washer2 = new loadsOne({text1: "2", yurl:"./green.jpeg", text:"Available"});
+var washer1 = new loadsOne({ yurl:"./green.jpeg", text:"Available"});
+var washer2 = new loadsOne({ yurl:"./green.jpeg", text:"Available"});
 
 
-use_w1 = new buttonTemplate({name: "Washer 1", leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin, style: tabStyle});
-use_w2 = new buttonTemplate({name: "Washer 2", leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin, style: tabStyle});
-use_d1 = new buttonTemplate({name: "Dryer 1", leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin, style: tabStyle});
-use_d2 = new buttonTemplate({name: "Dryer 2", leftPos:0, width:60, top:10, bottom:10, textForLabel:"Use", skin: blueSkin, style: tabStyle});
+use_w1 = new pictureButtonTemplate({name: "Washer 1", leftPos:25, width:30, top:10, bottom:10, textForLabel:"Use", url: "use.png", opacity: 1,skin: whiteSkin, style: tabStyle});
+use_w2 = new pictureButtonTemplate({name: "Washer 2", leftPos:25, width:30, top:10, bottom:10, textForLabel:"Use", url: "use.png",opacity: 1, skin: whiteSkin, style: tabStyle});
+use_d1 = new pictureButtonTemplate({name: "Dryer 1", leftPos:25, width:30, top:10, bottom:10, textForLabel:"Use", url: "use.png",opacity: 1, skin: whiteSkin, style: tabStyle});
+use_d2 = new pictureButtonTemplate({name: "Dryer 2", leftPos:25, width:30, top:10, bottom:10, textForLabel:"Use", url: "use.png",opacity: 1, skin: whiteSkin, style: tabStyle});
+
+var nudge_w1 = new pictureButtonTemplate({leftPos:5, width:30, top:10, bottom:10, textForLabel:"Nudge", url: "nudge.png",opacity: 0.5,skin: whiteSkin, style: tabStyle});
+var nudge_w2 = new pictureButtonTemplate({leftPos:5, width:30, top:10, bottom:10, textForLabel:"Nudge", url: "nudge.png",opacity: 0.5,skin: whiteSkin, style: tabStyle});
+var nudge_d1 = new pictureButtonTemplate({leftPos:5, width:30, top:10, bottom:10, textForLabel:"Nudge", url: "nudge.png",opacity: 0.5,skin: whiteSkin, style: tabStyle});
+var nudge_d2 = new pictureButtonTemplate({leftPos:5, width:30, top:10, bottom:10, textForLabel:"Nudge", url: "nudge.png", opacity: 0.5,skin: whiteSkin, style: tabStyle});
+nudge_w1.first.next.opacity = 0.2;
+nudge_w2.first.next.opacity = 0.2;
+nudge_d1.first.next.opacity = 0.2;
+nudge_d2.first.next.opacity = 0.2;
 washer1.add(use_w1);
+washer1.add(nudge_w1);
 washer2.add(use_w2);
+washer2.add(nudge_w2);
+
 
 washersCon.add(washer1);
 washersCon.add(washer2);
 var dryersCon = new Column({left: 0, right: 0, top:270, skin:blackSkin});
-var dryer1 = new loadsOne({text1: "1", yurl:"./green.jpeg", text:"Available"});
-var dryer2 = new loadsOne({text1: "2", yurl:"./green.jpeg", text:"Available"});
+var dryer1 = new loadsOne({ yurl:"./green.jpeg", text:"Available"});
+var dryer2 = new loadsOne({ yurl:"./green.jpeg", text:"Available"});
 dryer1.add(use_d1);
+dryer1.add(nudge_d1);
 dryer2.add(use_d2);
+dryer2.add(nudge_d2);
 dryersCon.add(dryer1);
 dryersCon.add(dryer2);
 
-var machinesCon = new containerTemplate({top:0, bottom: 20, skin: liteSkin,
+var machinesCon = new containerTemplate({top:0, bottom: 20, left: 0, right:0, skin: liteSkin,
 	contents:[
 		new Label({left:0, right:0, top: 30, height: 30, string: "Washers", style: labelStyle, skin: whiteBorderSkin}),
 		washersCon,
@@ -680,10 +707,10 @@ var addCardCon = new containerTemplate({top:0, bottom:20, left:0, right:0,  skin
 })
 
 	
-var hwasher1 = new loadsOne({text1: "1", yurl:"./red.jpeg", text:washerTimeOne});
-var hwasher2 = new loadsOne({text1: "2", yurl:"./red.jpeg", text:washerTimeOne});
-var hdryer1 = new loadsOne({text1: "1", yurl:"./red.jpeg", text:washerTimeOne});
-var hdryer2 = new loadsOne({text1: "2", yurl:"./red.jpeg", text:washerTimeOne});
+var hwasher1 = new loadsOne({yurl:"./red.jpeg", text:washerTimeOne});
+var hwasher2 = new loadsOne({yurl:"./red.jpeg", text:washerTimeOne});
+var hdryer1 = new loadsOne({yurl:"./red.jpeg", text:washerTimeOne});
+var hdryer2 = new loadsOne({yurl:"./red.jpeg", text:washerTimeOne});
 
 var addLoads = function(){
     if (washerInUseOne === 1 && washerOneBool === false){
@@ -781,15 +808,14 @@ var picChange = function(){
     	if ( url_w1 != "/green.jpeg") {
     		//trace("hereeeee");
         	washer1.myPic.url = "./green.jpeg";
-        }
-        if (!use_w1.visible) {
-        	use_w1.visible = true;
-        }
-        if (use_w1.first.string != "Use") {
-        	//trace("!!!" + use_w1.string);
-        	use_w1.first.string = "Use";
         	
         }
+   
+     
+        	use_w1.first.next.opacity = 1;
+        	nudge_w1.first.next.opacity = 0.2;
+        	
+       
         
     } else if(washerTimeOne<=15 && washerInUseOne === 1){
     	if (url_w1 != "/yellow.jpeg") {
@@ -799,25 +825,25 @@ var picChange = function(){
 	        hwasher1.myPic.url = "./yellow.jpeg";
         }
         if (washerTimeOne == 0) {
-        	if (!use_w1.visible) {
-        		use_w1.visible = true;
-        	}
-	        if (use_w1.first.string != "Nudge") {
-	        	use_w1.first.string = "Nudge";
-	        	trace("changed to nudge");
-	        }
+    
+	        	use_w1.first.next.opacity = 0.2;
+	        	nudge_w1.first.next.opacity = 1;
 	    } else {
-	    	use_w1.visible = false;
+	    	use_w1.first.next.opacity = 0.2;
+	        	nudge_w1.first.next.opacity = 0.2;
 	    }
+	     
+
 	    
     } else if(washerTimeOne>15 && washerInUseOne === 1){
-    	if (use_w1.visible) {
-        	use_w1.visible = false;
-        }
+    
         if (url_w1 != "/red.jpeg") {
 	        washer1.myPic.url = "./red.jpeg";
 	        hwasher1.myPic.url = "./red.jpeg";
+	        
 	    }
+	    use_w1.first.next.opacity = 0.2;
+	    nudge_w1.first.next.opacity = 0.2;
     }
     if(washerInUseTwo === 0){
     	
@@ -825,48 +851,40 @@ var picChange = function(){
 	    	washer2.myPic.url = "./green.jpeg";
 	        washer2.myPic.url = "./green.jpeg";
 	    }
-        if (!use_w2.visible) {
-        	use_w2.visible = true;
-        }
-        if (use_w2.first.string != "Use") {
-        	use_w2.first.string = "Use";
-        }
+        
+        	use_w2.first.next.opacity = 1;
+        	nudge_w2.first.next.opacity = 0.2;
+        
     } else if(washerTimeTwo<=15 && washerInUseTwo === 1){
     	if (url_w2 != "/yellow.jpeg") {
 	        washer2.myPic.url = "./yellow.jpeg";
 	        hwasher2.myPic.url = "./yellow.jpeg";
 	    }
-        if (washerTimeTwo == 0) {
-	        if (!use_w2.visible) {
-	        	use_w2.visible = true;
-	        }
-	        if (use_w2.first.string != "Nudge") {
-	        	use_w2.first.string = "Nudge";
-	        }
+	    if (washerTimeTwo == 0) {
+        	use_w2.first.next.opacity = 0.2;
+	        nudge_w2.first.next.opacity = 1;
 	    } else {
-	    	use_w2.visible = false;
+	    	use_w2.first.next.opacity = 0.2;
+	        nudge_w2.first.next.opacity = 0.2;
 	    }
     } else {
     	if (url_w2 != "/red.jpeg") {
     		washer2.myPic.url = "./red.jpeg";
         	hwasher2.myPic.url = "./red.jpeg";
     	}
+    	use_w2.first.next.opacity = 0.2;
+	    nudge_w2.first.next.opacity = 0.2;
         
-        if (use_w2.visible) {
-        	use_w2.visible = false;
-        }
+        
     }
     if(dryerInUseOne === 0){
     	
     	if (url_d1 != "/green.jpeg") {
         	dryer1.myPic.url = "./green.jpeg";
         }
-        if (!use_d1.visible) {
-        	use_d1.visible = true;
-        }
-        if (use_d1.first.string != "Use") {
-        	use_d1.first.string = "Use";
-        }
+        use_d1.first.next.opacity = 1;
+        nudge_d1.first.next.opacity = 0.2;
+        
     } else if(dryerTimeOne<=15 && dryerInUseOne === 1){
     	if (url_d1 != "/yellow.jpeg") {
     	
@@ -875,14 +893,11 @@ var picChange = function(){
 	    }
         
         if (dryerTimeOne == 0) {
-	        if (!use_d1.visible) {
-	        	use_d1.visible = true;
-	        }
-	        if (use_d1.first.string != "Nudge") {
-	        	use_d1.first.string = "Nudge";
-	        }
+	        use_d1.first.next.opacity = 0.2;
+	        nudge_d1.first.next.opacity = 1;
 	     } else {
-	     	use_d1.visible = false;
+	     	use_d1.first.next.opacity = 0.2;
+	        nudge_d1.first.next.opacity = 0.2;
 	     }
     } else {
     	
@@ -890,42 +905,37 @@ var picChange = function(){
 	        dryer1.myPic.url = "./red.jpeg";
 	        hdryer1.myPic.url = "./red.jpeg";
 	    }
-        if (use_d1.visible) {
-        	use_d1.visible = false;
-        }
+	    use_d1.first.next.opacity = 0.2;
+	    nudge_d1.first.next.opacity = 0.2;
+        
     }
     if(dryerInUseTwo === 0){
     	
     	if (url_d2 != "/green.jpeg") {
         	dryer2.myPic.url = "./green.jpeg";
         }
-        if (!use_d2.visible) {
-        	use_d2.visible = true;
-        }
-        if (use_d2.first.string != "Use") {
-        	use_d2.first.string = "Use";
-        }
+         use_d2.first.next.opacity = 1;
+        nudge_d2.first.next.opacity = 0.2;
+       
     } else if(dryerTimeTwo<=15 && dryerInUseTwo === 1){
     	if (url_d2 != "/yellow.jpeg"){
         	dryer2.myPic.url = "./yellow.jpeg";
         	hdryer2.myPic.url = "./yellow.jpeg";
        	}
         if (dryerTimeTwo == 0) {
-	        if (!use_d2.visible) {
-	        	use_d2.visible = true;
-	        }
-	        if (use_d2.first.string != "Nudge") {
-	        	use_d2.first.string = "Nudge";
-	        }
+	    	use_d2.first.next.opacity = 0.2;
+	    	nudge_d2.first.next.opacity = 1;
+	    } else {
+	    	use_d2.first.next.opacity = 0.2;
+	    	nudge_d2.first.next.opacity = 0.2;
 	    }
     } else {
     	if (url_d2 != "/red.jpeg") {
 	        dryer2.myPic.url = "./red.jpeg";
 	        hdryer2.myPic.url = "./red.jpeg";
 	    }
-        if (use_d2.visible) {
-        	use_d2.visible = false;
-        }
+        use_d2.first.next.opacity = 0.2;
+	    	nudge_d2.first.next.opacity = 0.2;
     }
 }
 
