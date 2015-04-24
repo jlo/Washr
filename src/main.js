@@ -83,6 +83,7 @@ var alertStyle = new Style( { font: "20px", color:"black" } );
 var alertStyleTwo = new Style( { font: "17px", color:"black" } );
 var textLabelStyle = new Style( { font: "15px", color:"black" } );
 var tabStyle = new Style( { font: "bold 15px", color:"white" } );
+var bottomTabStyle = new Style( { font: "12px", color:"gray" } );
 var washerText = new Style( { font: "bold 15px", color:"black" } );
 var creditStyle = new Style( { font: "bold 15px", color:"black" } );
 var titleStyle = new Style({font: "bold 30px", color:"black"});
@@ -220,8 +221,8 @@ var oldPic;
 var tabTemplate = BUTTONS.Button.template(function($){ return{
 	left: $.leftPos, width:$.width, bottom:$.bottom, top:$.top, height:$.height, name:$.name, skin:$.skin,
 	contents: [
-			new Label({left:0, right:0, height:20, string:$.textForLabel, style: $.style}),
-	        new Picture({name:"test",left:0, right:0, width:$.picWidth, height:$.picHeight, url:$.yurl})
+			new Label({left:0, right:0, height:10, bottom:2, string:$.textForLabel, style: $.style}),
+	        new Picture({left:0, right:0, width:$.picWidth, height:$.picHeight, url:$.yurl})
 		],
 	behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
 		onTap: { value: function(content){
@@ -230,12 +231,19 @@ var tabTemplate = BUTTONS.Button.template(function($){ return{
 			if (oldPic == null) {
 				oldPic = content;
 			} else {
-				oldPic.remove(oldPic.last);
-				oldPic.add(new Picture({name:"test",left:0, right:0, width:$.picWidth, height:$.picHeight, url:"yellow.jpeg"}));
+				trace("\n" + oldPic.last.url)
+				if (oldPic.last.url.indexOf("hamper") > -1) {
+					oldPic.remove(oldPic.last);
+					oldPic.add(new Picture({left:0, right:0, width:$.picWidth, height:$.picHeight, url:"hamper_gray.png"}));
+				} else if (oldPic.last.url.indexOf("washer") > -1) {
+					oldPic.remove(oldPic.last);
+					oldPic.add(new Picture({left:0, right:0, width:40, height:40, url:"washer_gray.png"}));
+				} else if (oldPic.last.url.indexOf("credit") > -1) {
+					oldPic.remove(oldPic.last);
+					oldPic.add(new Picture({left:0, right:0, width:$.picWidth, height:$.picHeight, url:"credit_gray.png"}));
+				}
 				oldPic = content;
 			}
-			content.remove(content.last);
-			content.add(new Picture({name:"test",left:0, right:0, width:$.picWidth, height:$.picHeight, url:"green.jpeg"}))
 			if ($.textForLabel == "Hamper") {
 				if (machinesCon.container) {
 					mainContainer.remove(machinesCon);
@@ -245,6 +253,8 @@ var tabTemplate = BUTTONS.Button.template(function($){ return{
 				if (!hamperCon.container) {
 					mainContainer.add(hamperCon);
 				}
+				content.remove(content.last);
+				content.add(new Picture({left:0, right:0, width:$.picWidth, height:$.picHeight, url:"hamper_blue.png"}));
 			} else if ($.textForLabel == "Machines") {
 				if (hamperCon.container) {
 					mainContainer.remove(hamperCon);
@@ -255,7 +265,8 @@ var tabTemplate = BUTTONS.Button.template(function($){ return{
 					//trace("!!!");
 					mainContainer.add(machinesCon);
 				}
-			
+				content.remove(content.last);
+				content.add(new Picture({left:0, right:0, width:$.picWidth, height:$.picHeight, url:"washer_blue.png"}));
 			}else if ($.textForLabel == "Credits") {
 				if (hamperCon.container) {
 					mainContainer.remove(hamperCon);
@@ -265,6 +276,8 @@ var tabTemplate = BUTTONS.Button.template(function($){ return{
 				if (!creditsCon.container) {
 					mainContainer.add(creditsCon);
 				}
+				content.remove(content.last);
+				content.add(new Picture({left:0, right:0, width:$.picWidth, height:$.picHeight, url:"credit_blue.png"}));
 			}
 		}},
 	})
@@ -273,12 +286,12 @@ var tabTemplate = BUTTONS.Button.template(function($){ return{
 
 
 //tabs
-var hamper = new tabTemplate({leftPos:0, width:107, height:45, bottom:0, textForLabel: "Hamper", skin:greyTopBorder, style:tabStyle,
-			picWidth:20, picHeight:20, yurl:"./green.jpeg"});
-var machines = new tabTemplate({leftPos:107, width:107, height:45, bottom:0, textForLabel: "Machines", skin:greyTopBorder, style:tabStyle,
-			picWidth:20, picHeight:20, yurl:"./yellow.jpeg"});
-var credits = new tabTemplate({leftPos:214, width:108, height:45, bottom:0, textForLabel:"Credits", skin:greyTopBorder, style: tabStyle,
-			picWidth:20, picHeight:20, yurl:"./yellow.jpeg"});
+var hamper = new tabTemplate({leftPos:0, width:107, height:45, bottom:0, textForLabel: "Hamper", skin:greyTopBorder, style:bottomTabStyle,
+			picWidth:45, picHeight:45, yurl:"./hamper_blue.png"});
+var machines = new tabTemplate({leftPos:107, width:107, height:45, bottom:0, textForLabel: "Machines", skin:greyTopBorder, style:bottomTabStyle,
+			picWidth:40, picHeight:40, yurl:"./washer_gray.png"});
+var credits = new tabTemplate({leftPos:214, width:108, height:45, bottom:0, textForLabel:"Credits", skin:greyTopBorder, style:bottomTabStyle,
+			picWidth:45, picHeight:45, yurl:"./credit_gray.png"});
 
 
 var containerTemplate = Container.template(function($) { return {
