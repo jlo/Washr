@@ -227,7 +227,7 @@ var pictureButtonTemplate = BUTTONS.Button.template(function($){ return{
 		],
 	behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
 		onTap: { value: function(content){
-			if ($.textForLabel == "Use" && $.opacity == 1) {
+			if ($.textForLabel == "Use" && content.last.opacity == 1) {
 				if (creditSoFar < 2) {
 					subNfcCont.payPreview.string = "Not Enough Credits";
 					subNfcCont.payPreview.style = redStyle;
@@ -237,7 +237,7 @@ var pictureButtonTemplate = BUTTONS.Button.template(function($){ return{
 				}
 				mainContainer.add(useCon);
 				subNfcCont.machineUse.string = $.name;
-			} else if ($.textForLabel == "Nudge" && $.opacity == 1) {
+			} else if ($.textForLabel == "Nudge" && content.last.opacity == 1) {
 				//trace("in nudge");
 				if (!nudgeCon.container) {
 					mainContainer.add(nudgeCon);
