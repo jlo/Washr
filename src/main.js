@@ -41,7 +41,7 @@ var thinBorderSkin = new Skin({
 var blackTopBorder = new Skin({
 	fill: "white",
 	borders: {top:2},
-	stroke: "black"
+	stroke: "gray"
 });
 var greyTopBorder = new Skin({
 	fill: "white",
@@ -79,10 +79,10 @@ var labelStyle = new Style( { font: "25px", color:"gray" } );
 var whiteTextStyle = new Style({font: "30px", color:"white"});
 var topTitleStyle = new Style( { font: "bold 25px", color:"white" } );
 var subLabelStyle = new Style( { font: "bold 20px", color:"black" } );
-var subSubLabelStyle = new Style( { font: "18px", color:"black" } );
+var subSubLabelStyle = new Style( { font: "17px", color:"gray" } );
 var greyStyle = new Style( { font: "18px", color:"#545454" } );
 var alertStyle = new Style( { font: "20px", color:"gray" } );
-var alertStyleTwo = new Style( { font: "17px", color:"black" } );
+var alertStyleTwo = new Style( { font: "17px", color:"gray" } );
 var textLabelStyle = new Style( { font: "15px", color:"black" } );
 var tabStyle = new Style( { font: "bold 15px", color:"white" } );
 var bottomTabStyle = new Style( { font: "12px", color:"gray" } );
@@ -211,15 +211,9 @@ var pictureButtonTemplate = BUTTONS.Button.template(function($){ return{
 	behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
 		onTap: { value: function(content){
 			if ($.textForLabel == "Use" && content.last.opacity == 1) {
-				if (creditSoFar < 2) {
-					subNfcCont.payPreview.string = "Not Enough Credits";
-					subNfcCont.payPreview.style = redStyle;
-				} else {
-					subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
-					subNfcCont.payPreview.style = subLabelStyle;
-				}
 				mainContainer.add(useCon);
 				subNfcCont.machineUse.string = $.name;
+				subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
 			} else if ($.textForLabel == "Nudge" && content.last.opacity == 1) {
 				//trace("in nudge");
 				if (!nudgeCon.container) {
@@ -455,7 +449,7 @@ var subNfcCont = new containerTemplate({top: 0, bottom: 50, left:0, right:0, ski
 		new Text({name: "useText", string: "Cost: $2.00", left:30, right:0, top:120, style: alertStyle}),
 		new Content({top: 60, left:160, right:0, skin: nfcSkin}),
 		new buttonTemplate({leftPos:184, width:108, top:120, textForLabel: "Tap to Continue", skin: whiteSkin, style: textLabelStyle}),
-		new Text({name: "payPreview", top:160, left:70, right:0, string: creditSoFar, style: subLabelStyle}),
+		new Text({name: "payPreview", top:160, left:70, right:0, string: "Available Credits: " + creditSoFar, style: subLabelStyle}),
 	]
 });
 
@@ -601,6 +595,7 @@ var confirmCreditsButtonTemplate = BUTTONS.Button.template(function($){ return{
             mainContainer.add(creditsCon);
             addCreditsCon.creditsCol.creditsLine.lefty.string = "$"+creditSoFar;
             addCreditsCon.creditsCol.creditsLine.right.string = "$0";
+            subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
             //otherField.moreScroller.more.string = "";
         }},
         
@@ -816,7 +811,7 @@ var addLoads = function(){
         	mainContainer.remove(payCon);
         };
         creditSoFar = creditSoFar - 2;
-        addCreditsCon.creditsCol.creditsLine.lefty.string = "$"+creditSoFar;
+        subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
     }
     if(washerInUseTwo === 1 && washerTwoBool === false){
         hamperList.add(hwasher2);
@@ -825,7 +820,8 @@ var addLoads = function(){
         	mainContainer.remove(payCon);
         };
         creditSoFar = creditSoFar - 2;
-        addCreditsCon.creditsCol.creditsLine.lefty.string = "$"+creditSoFar;
+
+        //subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
     }
     if(dryerInUseOne === 1 && dryerOneBool === false){
         hamperList.add(hdryer1);
@@ -834,7 +830,8 @@ var addLoads = function(){
         	mainContainer.remove(payCon);
         };
         creditSoFar = creditSoFar - 2;
-        addCreditsCon.creditsCol.creditsLine.lefty.string = "$"+creditSoFar;
+
+        //subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
     }
     if(dryerInUseTwo === 1 && dryerTwoBool === false){
        hamperList.add(hdryer2);
@@ -843,7 +840,7 @@ var addLoads = function(){
         	mainContainer.remove(payCon);
         };
         creditSoFar = creditSoFar - 2;
-        addCreditsCon.creditsCol.creditsLine.lefty.string = "$"+creditSoFar;
+        //subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
     }
     if (washerInUseOne === 0 && washerOneBool === true){
         hamperList.remove(hwasher1);
