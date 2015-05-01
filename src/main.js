@@ -16,6 +16,7 @@ var nfcLogo = new Texture("nfc12.gif");
 var whiteSkin = new Skin( { fill:"white" } );
 var greenSkin = new Skin( { fill:"green" } );
 var lightBlueSkin = new Skin( { fill:"#14affa" } );
+var graySkin = new Skin({fill: "gray"});
 var purpleSkin = new Skin( { fill:"purple" } );
 var redSkin = new Skin( { fill:"#B22222" } );
 var liteSkin = new Skin({fill:"01B4F7"});
@@ -24,7 +25,7 @@ var separatorSkin = new Skin({ fill: 'silver',});
 var blueSkin = new Skin( { fill:"blue" } );
 var whiteBorderSkin = new Skin({
   fill:"white", 
-  borders:{bottom:5}, 
+  borders:{bottom:2}, 
   stroke:"gray"
 });
 var whiteSkinWithBorders = new Skin({
@@ -50,7 +51,7 @@ var greyTopBorder = new Skin({
 var whiteAllBorderSkin = new Skin({
   fill:"white", 
   borders:{bottom:2, top:2, right:2, left:2}, 
-  stroke:"black"
+  stroke:"gray"
 });
 var greyWithBlackBorders = new Skin({
   fill:"gray", 
@@ -74,12 +75,13 @@ var tutorialSkin3 = new Skin ({
 	texture: tutorialGif3, fill: "white"
 });
 //styles
-var labelStyle = new Style( { font: "bold 30px", color:"gray" } );
+var labelStyle = new Style( { font: "25px", color:"gray" } );
+var whiteTextStyle = new Style({font: "30px", color:"white"});
 var topTitleStyle = new Style( { font: "bold 25px", color:"white" } );
 var subLabelStyle = new Style( { font: "bold 20px", color:"black" } );
 var subSubLabelStyle = new Style( { font: "18px", color:"black" } );
 var greyStyle = new Style( { font: "18px", color:"#545454" } );
-var alertStyle = new Style( { font: "20px", color:"black" } );
+var alertStyle = new Style( { font: "20px", color:"gray" } );
 var alertStyleTwo = new Style( { font: "17px", color:"black" } );
 var textLabelStyle = new Style( { font: "15px", color:"black" } );
 var tabStyle = new Style( { font: "bold 15px", color:"white" } );
@@ -355,7 +357,7 @@ var loadsOne = Line.template(function($){return{
 
 //containers
 
-var washersCon = new Column({left: 0, right: 0, top:100, skin:blackSkin});
+var washersCon = new Column({left: 0, right: 0, top:90, skin:blackSkin});
 //var notifText = new Text({name: "notifText", string: "", left:20, right:20, top:80, bottom:30, style: alertStyle});
 notificationCon = new containerTemplate({bottom:160, top:140, left: 20, right: 20,  skin:whiteAllBorderSkin,
     contents:[
@@ -371,8 +373,8 @@ var nudgeCon = new containerTemplate({ top:195, bottom:220, left:0, right:0, ski
 		new Text({name: "nudgeText", string: "You have successfully nudged this user!", left:0, right:0, top:10, style: alertStyle}),
 	]
 });
-var washer1 = new loadsOne({ yurl:"./green.jpeg", text:"Available"});
-var washer2 = new loadsOne({ yurl:"./green.jpeg", text:"Available"});
+var washer1 = new loadsOne({ yurl:"00washr.png", text:"Available"});
+var washer2 = new loadsOne({ yurl:"00washr.png", text:"Available"});
 
 
 use_w1 = new pictureButtonTemplate({name: "Washer 1", leftPos:25, width:30, top:10, bottom:10, textForLabel:"Use", url: "use.png", opacity: 1,skin: whiteSkin, style: tabStyle});
@@ -396,9 +398,9 @@ washer2.add(nudge_w2);
 
 washersCon.add(washer1);
 washersCon.add(washer2);
-var dryersCon = new Column({left: 0, right: 0, top:270, skin:blackSkin});
-var dryer1 = new loadsOne({ yurl:"./green.jpeg", text:"Available"});
-var dryer2 = new loadsOne({ yurl:"./green.jpeg", text:"Available"});
+var dryersCon = new Column({left: 0, right: 0, top:260, skin:blackSkin});
+var dryer1 = new loadsOne({ yurl:"00dryer.png", text:"Available"});
+var dryer2 = new loadsOne({ yurl:"00dryer.png", text:"Available"});
 dryer1.add(use_d1);
 dryer1.add(nudge_d1);
 dryer2.add(use_d2);
@@ -412,9 +414,9 @@ var machinesCon = new containerTemplate({top:0, bottom: 45, left:0, right:0,skin
 	    new Column({top:0, left:0, right:0,height:40, skin:lightBlueSkin, contents:[
             new Label({left:110, top:5, height: 30, string: "Machines", style: topTitleStyle}), 
         ]}),
-		new Label({left:0, right:0, top: 70, height: 30, string: "Washers", style: labelStyle, skin: whiteBorderSkin}),
+		new Label({left:0, right:0, top: 60, height: 30, string: "Washers", style: labelStyle, skin: whiteBorderSkin}),
 		washersCon,
-        new Label({left:0, right:0, top: 240, height: 30, string: "Dryers", style: labelStyle, skin: whiteBorderSkin}),
+        new Label({left:0, right:0, top: 230, height: 30, string: "Dryers", style: labelStyle, skin: whiteBorderSkin}),
         dryersCon,
 	]});
 //hampers yo
@@ -434,14 +436,14 @@ var hamperButtonTemplate = BUTTONS.Button.template(function($){ return{
 }});
 
 
-var hamperList = new Column({left: 0, right: 0, top:150, height:200, skin:whiteSkin});
+var hamperList = new Column({left: 0, right: 0, top:120, height:200, skin:whiteSkin});
 
 var hamperCon = new containerTemplate({bottom:45, top:0, left:0, right:0, skin: whiteSkin,
     contents:[
         new Column({top:0, left:0, right:0,height:40, skin:lightBlueSkin, contents:[
             new Picture({right:0, left:0, top:5, height:30, url: "./washr_allwhite.png"}),   
         ]}),
-        new Label({left:0, right:0, top: 120, height: 30, string: "My Hamper", style: labelStyle, skin: whiteBorderSkin}),
+        new Label({left:0, right:0, top: 90, height: 30, string: "My Hamper", style: labelStyle, skin: whiteBorderSkin}),
         
 ]});
 
@@ -814,6 +816,7 @@ var addLoads = function(){
         	mainContainer.remove(payCon);
         };
         creditSoFar = creditSoFar - 2;
+        addCreditsCon.creditsCol.creditsLine.lefty.string = "$"+creditSoFar;
     }
     if(washerInUseTwo === 1 && washerTwoBool === false){
         hamperList.add(hwasher2);
@@ -822,6 +825,7 @@ var addLoads = function(){
         	mainContainer.remove(payCon);
         };
         creditSoFar = creditSoFar - 2;
+        addCreditsCon.creditsCol.creditsLine.lefty.string = "$"+creditSoFar;
     }
     if(dryerInUseOne === 1 && dryerOneBool === false){
         hamperList.add(hdryer1);
@@ -830,6 +834,7 @@ var addLoads = function(){
         	mainContainer.remove(payCon);
         };
         creditSoFar = creditSoFar - 2;
+        addCreditsCon.creditsCol.creditsLine.lefty.string = "$"+creditSoFar;
     }
     if(dryerInUseTwo === 1 && dryerTwoBool === false){
        hamperList.add(hdryer2);
@@ -838,6 +843,7 @@ var addLoads = function(){
         	mainContainer.remove(payCon);
         };
         creditSoFar = creditSoFar - 2;
+        addCreditsCon.creditsCol.creditsLine.lefty.string = "$"+creditSoFar;
     }
     if (washerInUseOne === 0 && washerOneBool === true){
         hamperList.remove(hwasher1);
@@ -861,25 +867,25 @@ var timeChange = function(){
         washer1.myTime.string = "Available";
         washerTimeOne = 0;
     } else{
-        washer1.myTime.string = "Time Left: " + washerTimeOne;
+        washer1.myTime.string =  washerTimeOne + " mins left";
     }
     if(washerInUseTwo === 0){
         washer2.myTime.string = "Available";
         washerTimeTwo = 0;
     } else {
-        washer2.myTime.string = "Time Left: " + washerTimeTwo;
+        washer2.myTime.string = washerTimeTwo + " mins left";
     }
     if(dryerInUseOne === 0){
         dryer1.myTime.string = "Available";
         dryerTimeOne = 0;
     } else{
-        dryer1.myTime.string = "Time Left: " +dryerTimeOne;
+        dryer1.myTime.string = dryerTimeOne + " mins left";
     }
     if(dryerInUseTwo === 0){
         dryer2.myTime.string = "Available";
         dryerTimeTwo = 0;
     } else {
-        dryer2.myTime.string = "Time Left: " + dryerTimeTwo;
+        dryer2.myTime.string = dryerTimeTwo + " mins left";
     }
     hwasher1.myTime.string = washer1.myTime.string;
     hwasher2.myTime.string = washer2.myTime.string;
@@ -888,35 +894,29 @@ var timeChange = function(){
 }
 var picChange = function(){
 	var str_w1 = washer1.myPic.url.toString();
-    var url_w1 = str_w1.substring(56, str_w1.length);
+	str_w1 = str_w1.substring(str_w1.length - 11, str_w1.length);
     var str_w2 = washer2.myPic.url.toString();
-    var url_w2 = str_w2.substring(56, str_w2.length);
+	str_w2 = str_w2.substring(str_w2.length - 11, str_w2.length);
     var str_d1 = dryer1.myPic.url.toString();
-    var url_d1 = str_d1.substring(56, str_d1.length);
+    str_d1 = str_d1.substring(str_d1.length - 11, str_d1.length);
     var str_d2 = dryer2.myPic.url.toString();
-    var url_d2 = str_d2.substring(56, str_d2.length);
+  	str_d2 = str_d2.substring(str_d2.length - 11, str_d2.length);
     	
     if(washerInUseOne === 0){
-    	
     	//trace(url_w1);
-    	if ( url_w1 != "/green.jpeg") {
+    	if ( str_w1 != "00washr.png") {
     		//trace("hereeeee");
-        	washer1.myPic.url = "./green.jpeg";
-        	
+        	washer1.myPic.url = "00washr.png";
         }
-   
-     
         	use_w1.first.next.opacity = 1;
         	nudge_w1.first.next.opacity = 0.2;
         	
-       
-        
-    } else if(washerTimeOne<=15 && washerInUseOne === 1){
-    	if (url_w1 != "/yellow.jpeg") {
+    } else if(washerTimeOne<=11.25 && washerInUseOne === 1){
+    	if (str_w1 != "14washr.png") {
     		//trace("whyyy");
     		//trace(url_w1);
-	        washer1.myPic.url = "./yellow.jpeg";
-	        hwasher1.myPic.url = "./yellow.jpeg";
+	        washer1.myPic.url = "14washr.png";
+	        hwasher1.myPic.url = "14washr.png";
         }
         if (washerTimeOne == 0) {
     
@@ -926,33 +926,42 @@ var picChange = function(){
 	    	use_w1.first.next.opacity = 0.2;
 	        	nudge_w1.first.next.opacity = 0.2;
 	    }
-	     
-
-	    
-    } else if(washerTimeOne>15 && washerInUseOne === 1){
-    
-        if (url_w1 != "/red.jpeg") {
-	        washer1.myPic.url = "./red.jpeg";
-	        hwasher1.myPic.url = "./red.jpeg";
-	        
+	} else if (washerTimeOne > 11.25 && washerTimeOne <= 22.5 && washerInUseOne == 1) {
+	
+		if (str_w1 != "24washr.png") {
+    	
+	        washer1.myPic.url = "24washr.png";
+	        hwasher1.myPic.url = "24washr.png";
+	    }
+	} else if (washerTimeOne > 22.5 && washerTimeOne <= 33.75 && washerInUseOne == 1) {
+		if (str_w1 != "34washr.png") {
+    	
+	        washer1.myPic.url = "34washr.png";
+	        hwasher1.myPic.url = "34washr.png";
+	    }
+    } else if(washerTimeOne>33.75 && washerInUseOne === 1){
+    	if (str_w1 != "44washr.png") {
+    	
+	        washer1.myPic.url = "44washr.png";
+	        hwasher1.myPic.url = "44washr.png";
 	    }
 	    use_w1.first.next.opacity = 0.2;
 	    nudge_w1.first.next.opacity = 0.2;
     }
     if(washerInUseTwo === 0){
     	
-    	if (url_w2 != "/green.jpeg") {
-	    	washer2.myPic.url = "./green.jpeg";
-	        washer2.myPic.url = "./green.jpeg";
+    	if (str_w2 != "00washr.png") {
+	    	washer2.myPic.url = "00washr.png";
+	        washer2.myPic.url = "00washr.png";
 	    }
         
         	use_w2.first.next.opacity = 1;
         	nudge_w2.first.next.opacity = 0.2;
         
-    } else if(washerTimeTwo<=15 && washerInUseTwo === 1){
-    	if (url_w2 != "/yellow.jpeg") {
-	        washer2.myPic.url = "./yellow.jpeg";
-	        hwasher2.myPic.url = "./yellow.jpeg";
+    } else if(washerTimeTwo<=11.25 && washerInUseTwo === 1){
+    	if (str_w2 != "14washr.png") {
+	        washer2.myPic.url = "14washr.png";
+	        hwasher2.myPic.url = "14washr.png";
 	    }
 	    if (washerTimeTwo == 0) {
         	use_w2.first.next.opacity = 0.2;
@@ -961,11 +970,26 @@ var picChange = function(){
 	    	use_w2.first.next.opacity = 0.2;
 	        nudge_w2.first.next.opacity = 0.2;
 	    }
+	} else if (washerTimeTwo > 11.25 && washerTimeTwo <= 22.5 && washerInUseTwo == 1) {
+	
+		if (str_w2 != "24washr.png") {
+    	
+	        washer2.myPic.url = "24washr.png";
+	        hwasher2.myPic.url = "24washr.png";
+	    }
+	} else if (washerTimeTwo > 22.5 && washerTimeTwo <= 33.75 && washerInUseTwo == 1) {
+		if (str_w2 != "34washr.png") {
+    	
+	        washer2.myPic.url = "34washr.png";
+	        hwasher2.myPic.url = "34washr.png";
+	    }
+
     } else {
-    	if (url_w2 != "/red.jpeg") {
-    		washer2.myPic.url = "./red.jpeg";
-        	hwasher2.myPic.url = "./red.jpeg";
-    	}
+    	if (str_w2 != "44washr.png") {
+    	
+	        washer2.myPic.url = "44washr.png";
+	        hwasher2.myPic.url = "44washr.png";
+	    }
     	use_w2.first.next.opacity = 0.2;
 	    nudge_w2.first.next.opacity = 0.2;
         
@@ -973,17 +997,17 @@ var picChange = function(){
     }
     if(dryerInUseOne === 0){
     	
-    	if (url_d1 != "/green.jpeg") {
-        	dryer1.myPic.url = "./green.jpeg";
+    	if (str_d1 != "00dryer.png") {
+        	dryer1.myPic.url = "00dryer.png";
         }
         use_d1.first.next.opacity = 1;
         nudge_d1.first.next.opacity = 0.2;
         
     } else if(dryerTimeOne<=15 && dryerInUseOne === 1){
-    	if (url_d1 != "/yellow.jpeg") {
+    	if (str_d1 != "14dryer.png") {
     	
-	        dryer1.myPic.url = "./yellow.jpeg";
-	        hdryer1.myPic.url = "./yellow.jpeg";
+	        dryer1.myPic.url = "14dryer.png";
+	        hdryer1.myPic.url = "14dryer.png";
 	    }
         
         if (dryerTimeOne == 0) {
@@ -993,11 +1017,23 @@ var picChange = function(){
 	     	use_d1.first.next.opacity = 0.2;
 	        nudge_d1.first.next.opacity = 0.2;
 	     }
+	} else if (dryerTimeOne > 15 && dryerTimeOne <= 30 && dryerInUseOne == 1) {
+		if (str_d1 != "24dryer.png") {
+    	
+	        dryer1.myPic.url = "24dryer.png";
+	        hdryer1.myPic.url = "24dryer.png";
+	    }
+	} else if (dryerTimeOne > 30 && dryerTimeOne <= 45 && dryerInUseOne == 1) {
+		if (str_d1 != "34dryer.png") {
+    	
+	        dryer1.myPic.url = "34dryer.png";
+	        hdryer1.myPic.url = "34dryer.png";
+	    }
     } else {
     	
-    	if (url_d1 != "/red.jpeg") {
-	        dryer1.myPic.url = "./red.jpeg";
-	        hdryer1.myPic.url = "./red.jpeg";
+    	if (str_d1 != "44dryer.png") {
+	        dryer1.myPic.url = "44dryer.png";
+	        hdryer1.myPic.url = "44dryer.png";
 	    }
 	    use_d1.first.next.opacity = 0.2;
 	    nudge_d1.first.next.opacity = 0.2;
@@ -1005,16 +1041,17 @@ var picChange = function(){
     }
     if(dryerInUseTwo === 0){
     	
-    	if (url_d2 != "/green.jpeg") {
-        	dryer2.myPic.url = "./green.jpeg";
+    	if (str_d2 != "00dryer.png") {
+        	dryer2.myPic.url = "00dryer.png";
+        	
         }
          use_d2.first.next.opacity = 1;
         nudge_d2.first.next.opacity = 0.2;
        
     } else if(dryerTimeTwo<=15 && dryerInUseTwo === 1){
-    	if (url_d2 != "/yellow.jpeg"){
-        	dryer2.myPic.url = "./yellow.jpeg";
-        	hdryer2.myPic.url = "./yellow.jpeg";
+    	if (str_d2 != "14dryer.png"){
+        	dryer2.myPic.url = "14dryer.png";
+        	hdryer2.myPic.url = "14dryer.png";
        	}
         if (dryerTimeTwo == 0) {
 	    	use_d2.first.next.opacity = 0.2;
@@ -1023,10 +1060,21 @@ var picChange = function(){
 	    	use_d2.first.next.opacity = 0.2;
 	    	nudge_d2.first.next.opacity = 0.2;
 	    }
+	} else if (dryerTimeTwo >15 && dryerTimeTwo < 30 && dryerInUseTwo == 1) {
+		if (str_d2 != "24dryer.png") {
+    	
+	        dryer2.myPic.url = "24dryer.png";
+	        hdryer2.myPic.url = "24dryer.png";
+	    }
+	} else if (dryerTimeTwo > 30 && dryerTimeTwo <= 45 && dryerInUseTwo == 1) {
+		if (str_d2 != "34dryer.png") {
+	        dryer2.myPic.url = "34dryer.png";
+	        hdryer2.myPic.url = "34dryer.png";
+	    }
     } else {
-    	if (url_d2 != "/red.jpeg") {
-	        dryer2.myPic.url = "./red.jpeg";
-	        hdryer2.myPic.url = "./red.jpeg";
+    	if (str_d2 != "44dryer.png") {
+	        dryer2.myPic.url = "44dryer.png";
+	        hdryer2.myPic.url = "44dryer.png";
 	    }
         use_d2.first.next.opacity = 0.2;
 	    	nudge_d2.first.next.opacity = 0.2;
