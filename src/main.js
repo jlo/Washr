@@ -351,7 +351,7 @@ var loadsOne = Line.template(function($){return{
 
 //containers
 
-var washersCon = new Column({left: 0, right: 0, top:90, skin:blackSkin});
+var washersCon = new Column({left: 10, right: 0, top:90, skin:blackSkin});
 //var notifText = new Text({name: "notifText", string: "", left:20, right:20, top:80, bottom:30, style: alertStyle});
 notificationCon = new containerTemplate({bottom:160, top:140, left: 20, right: 20,  skin:whiteAllBorderSkin,
     contents:[
@@ -408,9 +408,9 @@ var machinesCon = new containerTemplate({top:0, bottom: 45, left:0, right:0,skin
 	    new Column({top:0, left:0, right:0,height:40, skin:lightBlueSkin, contents:[
             new Label({left:110, top:5, height: 30, string: "Machines", style: topTitleStyle}), 
         ]}),
-		new Label({left:0, right:0, top: 60, height: 30, string: "Washers", style: labelStyle, skin: whiteBorderSkin}),
+		new Label({left:0, right:0, top: 60, height: 30, string: " Washers", style: labelStyle, skin: whiteBorderSkin}),
 		washersCon,
-        new Label({left:0, right:0, top: 230, height: 30, string: "Dryers", style: labelStyle, skin: whiteBorderSkin}),
+        new Label({left:0, right:0, top: 230, height: 30, string: " Dryers", style: labelStyle, skin: whiteBorderSkin}),
         dryersCon,
 	]});
 //hampers yo
@@ -437,7 +437,7 @@ var hamperCon = new containerTemplate({bottom:45, top:0, left:0, right:0, skin: 
         new Column({top:0, left:0, right:0,height:40, skin:lightBlueSkin, contents:[
             new Picture({right:0, left:0, top:5, height:30, url: "./washr_allwhite.png"}),   
         ]}),
-        new Label({left:0, right:0, top: 90, height: 30, string: "My Hamper", style: labelStyle, skin: whiteBorderSkin}),
+        new Label({left:0, right:0, top: 90, height: 30, string: " My Hamper", style: labelStyle, skin: whiteBorderSkin}),
         
 ]});
 
@@ -733,7 +733,7 @@ var saveCardButtonTemplate = BUTTONS.Button.template(function($){ return{
 		onTap: { value: function(content){
 			trace("Button was tapped.\n");
 			trace(field_num.first.first.string + "\n");
-			creditsCon.cards.cardscol.add(new Label({left:10, right:0, height:30, string: " **** **** **** " + field_num.first.first.string.substring(12,16), style: textLabelStyle, skin: thinBorderSkin}));
+			creditsCon.cards.cardscol.add(new Label({left:0, right:0, height:30, string: " •••• •••• •••• " + field_num.first.first.string.substring(12,16), style: washerText, skin: whiteBorderSkin}));
 			field_name.first.first.string = ""
 			field_num.first.first.string = ""
 			field_deets.first.first.string = ""
