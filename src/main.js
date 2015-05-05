@@ -68,6 +68,11 @@ var greyWithBlackBorders = new Skin({
   borders:{bottom:2, top:2, right:2, left:2}, 
   stroke:"black"
 });
+var greyRightBorder = new Skin({
+	fill: "white",
+	borders: {right: 2},
+	stroke: "gray"
+});
 var nfcSkin = new Skin ({
 	width: 80, height: 60, 
 	texture: nfcLogo, fill: "red"
@@ -191,9 +196,19 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 			trace("tapped");
 			trace($.textForLabel);
 			if ($.textForLabel == "Okay") {
-				application.remove(notificationCon);
-				notifConShowing = false;
-			
+				if (notificationCon.container) {
+					application.remove(notificationCon);
+					notifConShowing = false;
+				} else if (nudgeCon.container) {
+					mainContainer.remove(nudgeCon);
+				} else if (inUseCon.container) {
+					mainContainer.remove(inUseCon);
+				}
+			} else if ($.textForLabel == "No") {
+				mainContainer.remove(preNudgeConfirmCon);
+			} else if ($.textForLabel == "Yes") {
+				mainContainer.remove(preNudgeConfirmCon);
+				mainContainer.add(nudgeCon);
 			} else if ($.textForLabel == "Cancel") {
 				if (useCon.container) {
 					mainContainer.remove(useCon);
@@ -220,10 +235,10 @@ var pictureButtonTemplate = BUTTONS.Button.template(function($){ return{
 	behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
 		onTap: { value: function(content){
 
-		if ($.textForLabel == "Nudge" && content.last.opacity == 1) {
+		if ($.textForLabel == "Nudge") {
 				//trace("in nudge");
-				if (!nudgeCon.container) {
-					mainContainer.add(nudgeCon);
+				if (!preNudgeConfirmCon.container) {
+					mainContainer.add(preNudgeConfirmCon);
 				}
 			}
 			
@@ -312,9 +327,6 @@ var containerTemplate = Container.template(function($) { return {
 	left: $.left, right: $.right, top: $.top, bottom: $.bottom, skin: $.skin, active: true, contents:$.contents,
 	behavior: Object.create(Container.prototype, {
 		onTouchEnded: { value: function(content){
-			if (nudgeCon.container) {
-				mainContainer.remove(nudgeCon);
-			}
 			KEYBOARD.hide();
 			content.focus();
 		}}
@@ -387,16 +399,30 @@ var alertTemplate = Container.template(function($) { return {
         new buttonTemplate({leftPos:8, width:265, bottom:5,  textForLabel: "Okay",  style: subSubLabelStyle}),
     
     ]}})
+    
+var alertYesNoTemplate = Container.template(function($) { return {
+    left: 20, right: 20, top: 140, bottom: 160, skin: whiteAllBorderSkin, active: true, contents:[
+        new Column({top:2, left:2, right:2,height:40, skin:lightBlueSkin, contents:[
+            new Label({left:110, top:5, height: 30, string: "Alert", style: topTitleStyle}), 
+        ]}),
+        new Text({name:$.name, string:$.string, left:20, right:10, top:70, bottom:10, style: alertStyleTwo}),
+        new Line({left:0, right:0, top:130, bottom:28, skin: graySkin}),
+        new buttonTemplate({leftPos:142, width:132, bottom:5,  textForLabel: "Yes",  style: subSubLabelStyle}),
+    	new buttonTemplate({leftPos:5, width:132, bottom:5, height:20,  textForLabel: "No",  style: subSubLabelStyle, skin: greyRightBorder}),
+    	
+    ]}})
+
 
 notificationCon = new alertTemplate({name: "notifText", string: ""});
-var nudgeCon = new alertTemplate({name: "nudgeCon", string: "You have successfully nudge this user!"});
-var inUseCon = new alertTemplate({name: "inUseCon", string: "Sorry! This machine is in use!"});
+var preNudgeConfirmCon = new alertYesNoTemplate({name: "preconfirmNudge", string: "Are you sure you want to nudge this user?"});
+var nudgeCon = new alertTemplate({name: "nudgeCon", string: "You have successfully nudged this user!"});
+var inUseCon = new alertTemplate({name: "inUseCon", string: "Sorry! This machine is currently in use!"});
 
-var nudgeCon = new containerTemplate({ top:195, bottom:220, left:0, right:0, skin:greyWithBlackBorders,
+/*var nudgeCon = new containerTemplate({ top:195, bottom:220, left:0, right:0, skin:greyWithBlackBorders,
 	contents: [
 		new Text({name: "nudgeText", string: "You have successfully nudged this user!", left:0, right:0, top:10, style: alertStyle}),
 	]
-});
+});*/
 
 var washer_1 = BUTTONS.Button.template(function($){ return{
      left:0, right:0, skin:whiteSkin,
@@ -406,10 +432,8 @@ var washer_1 = BUTTONS.Button.template(function($){ return{
     behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
         onTap: { value: function(content){
         	trace("line item tap");
-            if (washerInUseOne == 0 || washerInUseTwo == 0|| dryerInUseOne==0 || dryerInUseTwo==0) {
-				mainContainer.add(useCon);
-				var name = "";
-				if ($.sname == "w1") {
+        	var name = "";
+        	if ($.sname == "w1") {
 					name = "Washer 1";
 				} else if ($.sname == "w2") {
 					name = "Washer 2";
@@ -418,6 +442,10 @@ var washer_1 = BUTTONS.Button.template(function($){ return{
 				} else {
 					name = "Dryer 2";
 				}
+            if ((name == "Washer 1" && washerInUseOne == 0) || (name == "Washer 2" && washerInUseTwo == 0) || (name == "Dryer 1" && dryerInUseOne == 0) || (name == "Dryer 2" && dryerInUseTwo == 0)) {
+				if (!useCon.container) {
+					mainContainer.add(useCon);
+				}
 				subNfcCont.machineUse.string = name;
 				if (name.indexOf("Washer") > -1){
 					subNfcCont.icon.url = "000washr.png";
@@ -425,6 +453,14 @@ var washer_1 = BUTTONS.Button.template(function($){ return{
 					subNfcCont.icon.url = "000dryer.png";
 				};
 				subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
+			} else if ((name == "Washer 1" && washerInUseOne == 1 && washerTimeOne == 0) || (name == "Washer 2" && washerInUseTwo == 1 && washerTimeTwo == 0) || (name == "Dryer 1" && dryerInUseOne == 1 && dryerTimeOne == 0) || (name == "Dryer 2" && dryerInUseTwo == 1 && dryerTimeTwo == 0)) {
+				if (!preNudgeConfirmCon.container) {
+					mainContainer.add(preNudgeConfirmCon);
+				}
+			} else if ((name == "Washer 1" && washerInUseOne == 1 && washerTimeOne !=0) || (name == "Washer 2" && washerInUseTwo == 1 && washerTimeTwo != 0) ||  (name == "Dryer 1" && dryerInUseOne == 1 && dryerTimeOne != 0) || (name == "Dryer 2" && dryerInUseTwo == 1 && dryerTimeTwo == 0)) {
+				if (!inUseCon.container) {
+					mainContainer.add(inUseCon);
+				}
 			}
             
         } },
@@ -470,7 +506,7 @@ var machinesCon = new containerTemplate({top:0, bottom: 45, left:0, right:0,skin
 
 
 
-var hamperList = new Column({left: 0, right: 0, top:120, height:200, skin:whiteSkin});
+var hamperList = new Column({left: 0, right: 0, top:90, height:200, skin:whiteSkin});
 
 var hamperCon = new containerTemplate({bottom:45, top:0, left:0, right:0, skin: whiteSkin,
     contents:[
