@@ -369,15 +369,21 @@ var emptyHamper = Column.template(function($){return{
 //containers
 
 var washersCon = new Column({left: 0, right: 0, top:90, skin:blackSkin});
-//var notifText = new Text({name: "notifText", string: "", left:20, right:20, top:80, bottom:30, style: alertStyle});
-notificationCon = new containerTemplate({bottom:160, top:140, left: 20, right: 20,  skin:whiteAllBorderSkin,
-    contents:[
-    	new Label({string: "Alert", left:110, top: 10, skin:whiteSkin, style: labelStyle}),
-    	//new buttonTemplate({leftPos:0, width:320, top:10,  textForLabel: "Alert", skin: thinBorderSkin, style: labelStyle}),
-		new Text({name: "notifText", string: "", left:25, right:5, top:70, bottom:10, style: alertStyleTwo}),
-		new buttonTemplate({leftPos:8, width:265, bottom:5,  textForLabel: "Okay", skin: blackTopBorder, style: subSubLabelStyle}),
-		
-]});
+//RIGHT HERE
+var alertTemplate = Container.template(function($) { return {
+    left: 20, right: 20, top: 140, bottom: 160, skin: whiteAllBorderSkin, active: true, contents:[
+        new Column({top:2, left:2, right:2,height:40, skin:lightBlueSkin, contents:[
+            new Label({left:110, top:5, height: 30, string: "Alert", style: topTitleStyle}), 
+        ]}),
+        new Text({name:$.name, string:$.string, left:25, right:5, top:70, bottom:10, style: alertStyleTwo}),
+        new Line({left:0, right:0, top:130, bottom:28, skin: graySkin}),
+        new buttonTemplate({leftPos:8, width:265, bottom:5,  textForLabel: "Okay",  style: subSubLabelStyle}),
+    
+    ]}})
+
+notificationCon = new alertTemplate({name: "notifText", string: ""});
+var nudgeCon = new alertTemplate({name: "nudgeCon", string: "You have successfully nudge this user!"});
+var inUseCon = new alertTemplate({name: "inUseCon", string: "Sorry! This machine is in use!"});
 
 var nudgeCon = new containerTemplate({ top:195, bottom:220, left:0, right:0, skin:greyWithBlackBorders,
 	contents: [
@@ -575,7 +581,7 @@ var creditsButtonTemplate = BUTTONS.Button.template(function($){ return{
                 buttonCredits = parseInt($.textForLabel.substring(1));
                 trace(buttonCredits);
                 var temp = creditSoFar + buttonCredits;
-                addCreditsCon.creditsCol.creditsLine.right.string = "$"+temp;
+                addCreditsCon.creditsCol1.creditsCol2.creditsLine2.right.string = "$"+temp;
         }},
         
     })
@@ -596,8 +602,8 @@ var confirmCreditsButtonTemplate = BUTTONS.Button.template(function($){ return{
             creditsCon.omg.wtf.string = "Credits: $" + creditSoFar;
             creditsCon.remove(addCreditsCon);
             //mainContainer.add(creditsCon);
-            addCreditsCon.creditsCol.creditsLine.lefty.string = "$"+creditSoFar;
-            addCreditsCon.creditsCol.creditsLine.right.string = "$0";
+            addCreditsCon.creditsCol1.creditsCol2.creditsLine1.lefty.string = "$"+creditSoFar;
+            addCreditsCon.creditsCol1.creditsCol2.creditsLine2.right.string = "$0";
             subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
             //otherField.moreScroller.more.string = "";
         }},
@@ -613,7 +619,7 @@ var addCreditsCon = new containerTemplate({left:0, right:0, top:0, bottom:45, sk
         new Column({top:0, left:0, right:0,height:40, skin:lightBlueSkin, contents:[
             new Label({left:100, top:5, height: 30, string: "Add Credits", style: topTitleStyle}), 
         ]}),
-        new Column({name:"creditsCol",top:60,left:5, right:5, skin:whiteSkin, contents:[
+        new Column({name:"creditsCol1",top:60,left:5, right:5, skin:whiteSkin, contents:[
             new Line({top:10, left:20, right:20, skin:whiteAllBorderSkin, contents: [
                 new Label({left:20,right:20, height:40, string: "Default Payment                 Visa *1234", style: textLabelStyle}),
                 ]
@@ -623,16 +629,17 @@ var addCreditsCon = new containerTemplate({left:0, right:0, top:0, bottom:45, sk
                 new creditsButtonTemplate({leftPos:10, width:50, bottom:10, textForLabel:"$5"}),
                 new creditsButtonTemplate({leftPos:10, width:50, bottom:10, textForLabel:"$10"}),
                 new creditsButtonTemplate({leftPos:10, width:50, bottom:10, textForLabel:"$20"}),
-                //new creditsButtonTemplate({leftPos:10, width:50, bottom:10, textForLabel:"Other"}),
-                //new otherField({name:""}),
                 ]
             }),
             
-            new Line({name:"creditsLine",top:30, left:0, right:0, contents: [
-                new Label({left:30, top:0, height:40, string: "Current Balance", style: labelStyle}),
-                new Label({name:"lefty",left:30, top:0, height:40, string: "$0", style: labelStyle}),
-                new Label({left:30, top:0, height:40, string: "New Balance", style: labelStyle}),
-                new Label({name:"right",left:30, top:0,  height:40, string: "$0", style: labelStyle}),
+            new Column({name:"creditsCol2", top:30, left:0, right:0, contents: [
+                new Line({name:"creditsLine1",left:0, contents:[
+                    new Label({top:0, left:40, height:40, string: "Current Balance", style: labelStyle}),
+                    new Label({name:"lefty",left:40, top:0, height:40, string: "$0", style: labelStyle}),]}),
+                
+                new Line({name:"creditsLine2", left:0, contents:[
+                    new Label({ top:0, left:40, height:40, string: "New Balance", style: labelStyle}),
+                    new Label({name:"right",left:70, top:0,  height:40, string: "$0", style: labelStyle}),]}),
                 ]
             }),
             new confirmCreditsButtonTemplate({leftPos:100,right:100, width:100, bottom:10, textForLabel:"Confirm"}),
@@ -732,7 +739,7 @@ var myField_deets = Container.template(function($) { return {
 
 // Button for saving add card page
 var saveCardButtonTemplate = BUTTONS.Button.template(function($){ return{
-	left: $.leftPos, width:$.width, bottom:$.bottom, height:30, name:$.name, skin:greenSkin,
+	left: $.leftPos, width:$.width, bottom:$.bottom, height:30, name:$.name, skin:lightBlueSkin,
 	contents: [
 		new Label({left:0, right:0, height:20, string:$.textForLabel, style: tabStyle})
 		],
