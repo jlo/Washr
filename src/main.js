@@ -92,10 +92,7 @@ var titleStyle = new Style({font: "bold 30px", color:"black"});
 var redStyle = new Style( { font: "bold 20px", color:"red" } );
 
 
-var use_w1;
-var use_w2;
-var use_d1;
-var use_d2;
+
 var notificationCon;
 var creditSoFar = 0;
 var buttonCredits = 0;
@@ -210,11 +207,7 @@ var pictureButtonTemplate = BUTTONS.Button.template(function($){ return{
 		],
 	behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
 		onTap: { value: function(content){
-			if ($.textForLabel == "Use" && content.last.opacity == 1) {
-				mainContainer.add(useCon);
-				subNfcCont.machineUse.string = $.name;
-				subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
-			} else if ($.textForLabel == "Nudge" && content.last.opacity == 1) {
+			if ($.textForLabel == "Nudge" && content.last.opacity == 1) {
 				//trace("in nudge");
 				if (!nudgeCon.container) {
 					mainContainer.add(nudgeCon);
@@ -334,7 +327,7 @@ var scrollableCon = new scroller({ name: "comicScroller", left: 0, right: 0,
 }) 
 
 var loadsOne = Line.template(function($){return{
-    left:0, right:0, height:60, skin:whiteSkinWithBorders, contents:[
+    name:$.name,left:0, right:0, height:60, skin:whiteSkinWithBorders, contents:[
      	//Label($,{
           //  left:5, width:7, height: 40, string:$.text1, style:washerText,
        //}),
@@ -342,11 +335,12 @@ var loadsOne = Line.template(function($){return{
             name: "myPic", left:-20, width:100, height:50, url:$.yurl
         }),
         Label($,{
-            name:"myTime", left:0, width:140, height: 40, string:$.text, style:washerText,
+            name:"myTime", left:0, height: 40, string:$.text, style:washerText,
         }), 
           
     ]
 } });
+
 
 
 //containers
@@ -367,38 +361,64 @@ var nudgeCon = new containerTemplate({ top:195, bottom:220, left:0, right:0, ski
 		new Text({name: "nudgeText", string: "You have successfully nudged this user!", left:0, right:0, top:10, style: alertStyle}),
 	]
 });
-var washer1 = new loadsOne({ yurl:"00washr.png", text:"Available"});
-var washer2 = new loadsOne({ yurl:"00washr.png", text:"Available"});
+var washer_1 = BUTTONS.Button.template(function($){ return{
+     left:0, right:0, skin:whiteSkin,
+    contents: [
+       	new loadsOne({name:$.sname, yurl:$.yurl, text:$.text})
+        ],
+    behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
+        onTap: { value: function(content){
+        	trace("line item tap");
+            if (washerInUseOne == 0 || washerInUseTwo == 0|| dryerInUseOne==0 || dryerInUseTwo==0) {
+				mainContainer.add(useCon);
+				var name = "";
+				if ($.sname == "w1") {
+					name = "Washer 1";
+				} else if ($.sname == "w2") {
+					name = "Washer 2";
+				} else if ($.sname = "d1") {
+					name = "Dryer 1";
+				} else {
+					name = "Dryer 2";
+				}
+				subNfcCont.machineUse.string = name;
+				subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
+			}
+            
+        } },
+    })
+}});
+var washer1 = new washer_1({sname:"w1", yurl:"00washr.png", text:"Available"});
+var washer2 = new washer_1({sname: "w2", yurl:"00washr.png", text:"Available"});
+
+var dryer1 = new washer_1({ sname: "d1", yurl:"00dryer.png", text:"Available"});
+var dryer2 = new washer_1({sname: "d2", yurl:"00dryer.png", text:"Available"});
 
 
-use_w1 = new pictureButtonTemplate({name: "Washer 1", leftPos:25, width:30, top:10, bottom:10, textForLabel:"Use", url: "use.png", opacity: 1,skin: whiteSkin, style: tabStyle});
-use_w2 = new pictureButtonTemplate({name: "Washer 2", leftPos:25, width:30, top:10, bottom:10, textForLabel:"Use", url: "use.png",opacity: 1, skin: whiteSkin, style: tabStyle});
-use_d1 = new pictureButtonTemplate({name: "Dryer 1", leftPos:25, width:30, top:10, bottom:10, textForLabel:"Use", url: "use.png",opacity: 1, skin: whiteSkin, style: tabStyle});
-use_d2 = new pictureButtonTemplate({name: "Dryer 2", leftPos:25, width:30, top:10, bottom:10, textForLabel:"Use", url: "use.png",opacity: 1, skin: whiteSkin, style: tabStyle});
 
-var nudge_w1 = new pictureButtonTemplate({leftPos:5, width:30, top:10, bottom:10, textForLabel:"Nudge", url: "nudge.png",opacity: 0.5,skin: whiteSkin, style: tabStyle});
-var nudge_w2 = new pictureButtonTemplate({leftPos:5, width:30, top:10, bottom:10, textForLabel:"Nudge", url: "nudge.png",opacity: 0.5,skin: whiteSkin, style: tabStyle});
-var nudge_d1 = new pictureButtonTemplate({leftPos:5, width:30, top:10, bottom:10, textForLabel:"Nudge", url: "nudge.png",opacity: 0.5,skin: whiteSkin, style: tabStyle});
-var nudge_d2 = new pictureButtonTemplate({leftPos:5, width:30, top:10, bottom:10, textForLabel:"Nudge", url: "nudge.png", opacity: 0.5,skin: whiteSkin, style: tabStyle});
-nudge_w1.first.next.opacity = 0.2;
-nudge_w2.first.next.opacity = 0.2;
-nudge_d1.first.next.opacity = 0.2;
-nudge_d2.first.next.opacity = 0.2;
-washer1.add(use_w1);
+
+//use_w1 = new pictureButtonTemplate({name: "Washer 1", leftPos:25, width:30, top:10, bottom:10, textForLabel:"Use", url: "use.png", opacity: 1,skin: whiteSkin, style: tabStyle});
+//use_w2 = new pictureButtonTemplate({name: "Washer 2", leftPos:25, width:30, top:10, bottom:10, textForLabel:"Use", url: "use.png",opacity: 1, skin: whiteSkin, style: tabStyle});
+//use_d1 = new pictureButtonTemplate({name: "Dryer 1", leftPos:25, width:30, top:10, bottom:10, textForLabel:"Use", url: "use.png",opacity: 1, skin: whiteSkin, style: tabStyle});
+//use_d2 = new pictureButtonTemplate({name: "Dryer 2", leftPos:25, width:30, top:10, bottom:10, textForLabel:"Use", url: "use.png",opacity: 1, skin: whiteSkin, style: tabStyle});
+
+var nudge_w1 = new pictureButtonTemplate({leftPos:280, width:30, top:10, bottom:10, textForLabel:"Nudge", url: "nudge.png",skin: whiteSkin, style: tabStyle});
+var nudge_w2 = new pictureButtonTemplate({leftPos:280, width:30, top:10, bottom:10, textForLabel:"Nudge", url: "nudge.png",skin: whiteSkin, style: tabStyle});
+var nudge_d1 = new pictureButtonTemplate({leftPos:280, width:30, top:10, bottom:10, textForLabel:"Nudge", url: "nudge.png",skin: whiteSkin, style: tabStyle});
+var nudge_d2 = new pictureButtonTemplate({leftPos:280, width:30, top:10, bottom:10, textForLabel:"Nudge", url: "nudge.png", skin: whiteSkin, style: tabStyle});
+nudge_w1.visible = false;
+nudge_w2.visible = false;
+nudge_d1.visible = false;
+nudge_d2.visible = false;
+
 washer1.add(nudge_w1);
-washer2.add(use_w2);
 washer2.add(nudge_w2);
-
-
+dryer1.add(nudge_d1);
+dryer2.add(nudge_d2);
 washersCon.add(washer1);
 washersCon.add(washer2);
 var dryersCon = new Column({left: 0, right: 0, top:260, skin:blackSkin});
-var dryer1 = new loadsOne({ yurl:"00dryer.png", text:"Available"});
-var dryer2 = new loadsOne({ yurl:"00dryer.png", text:"Available"});
-dryer1.add(use_d1);
-dryer1.add(nudge_d1);
-dryer2.add(use_d2);
-dryer2.add(nudge_d2);
+
 dryersCon.add(dryer1);
 dryersCon.add(dryer2);
 
@@ -861,42 +881,42 @@ var addLoads = function(){
 }
 var timeChange = function(){
     if(washerInUseOne === 0){
-        washer1.myTime.string = "Available";
+        washer1.w1.myTime.string = "Available";
         washerTimeOne = 0;
     } else{
-        washer1.myTime.string =  washerTimeOne + " mins left";
+        washer1.w1.myTime.string =  washerTimeOne + " mins left";
     }
     if(washerInUseTwo === 0){
-        washer2.myTime.string = "Available";
+        washer2.w2.myTime.string = "Available";
         washerTimeTwo = 0;
     } else {
-        washer2.myTime.string = washerTimeTwo + " mins left";
+        washer2.w2.myTime.string = washerTimeTwo + " mins left";
     }
     if(dryerInUseOne === 0){
-        dryer1.myTime.string = "Available";
+        dryer1.d1.myTime.string = "Available";
         dryerTimeOne = 0;
     } else{
-        dryer1.myTime.string = dryerTimeOne + " mins left";
+        dryer1.d1.myTime.string = dryerTimeOne + " mins left";
     }
     if(dryerInUseTwo === 0){
-        dryer2.myTime.string = "Available";
+        dryer2.d2.myTime.string = "Available";
         dryerTimeTwo = 0;
     } else {
-        dryer2.myTime.string = dryerTimeTwo + " mins left";
+        dryer2.d2.myTime.string = dryerTimeTwo + " mins left";
     }
-    hwasher1.myTime.string = washer1.myTime.string;
-    hwasher2.myTime.string = washer2.myTime.string;
-    hdryer1.myTime.string = dryer1.myTime.string;
-    hdryer2.myTime.string = dryer2.myTime.string;
+    hwasher1.myTime.string = washer1.first.myTime.string;
+    hwasher2.myTime.string = washer2.first.myTime.string;
+    hdryer1.myTime.string = dryer1.first.myTime.string;
+    hdryer2.myTime.string = dryer2.first.myTime.string;
 }
 var picChange = function(){
-	var str_w1 = washer1.myPic.url.toString();
+	var str_w1 = washer1.first.myPic.url.toString();
 	str_w1 = str_w1.substring(str_w1.length - 11, str_w1.length);
-    var str_w2 = washer2.myPic.url.toString();
+    var str_w2 = washer2.first.myPic.url.toString();
 	str_w2 = str_w2.substring(str_w2.length - 11, str_w2.length);
-    var str_d1 = dryer1.myPic.url.toString();
+    var str_d1 = dryer1.first.myPic.url.toString();
     str_d1 = str_d1.substring(str_d1.length - 11, str_d1.length);
-    var str_d2 = dryer2.myPic.url.toString();
+    var str_d2 = dryer2.first.myPic.url.toString();
   	str_d2 = str_d2.substring(str_d2.length - 11, str_d2.length);
     	
     if(washerInUseOne === 0){
@@ -905,176 +925,182 @@ var picChange = function(){
     		//trace("hereeeee");
         	washer1.myPic.url = "00washr.png";
         }
-        	use_w1.first.next.opacity = 1;
-        	nudge_w1.first.next.opacity = 0.2;
+        	//use_w1.first.next.opacity = 1;
+        	nudge_w1.visible = false;
         	
     } else if(washerTimeOne<=11.25 && washerInUseOne === 1){
     	if (str_w1 != "14washr.png") {
     		//trace("whyyy");
     		//trace(url_w1);
-	        washer1.myPic.url = "14washr.png";
+	        washer1.w1.myPic.url = "14washr.png";
 	        hwasher1.myPic.url = "14washr.png";
         }
         if (washerTimeOne == 0) {
     
-	        	use_w1.first.next.opacity = 0.2;
-	        	nudge_w1.first.next.opacity = 1;
+	        	//use_w1.first.next.opacity = 0.2;
+	        	nudge_w1.visible = true;
 	    } else {
-	    	use_w1.first.next.opacity = 0.2;
-	        	nudge_w1.first.next.opacity = 0.2;
+	    	//use_w1.first.next.opacity = 0.2;
+	        	nudge_w1.visible = false;
 	    }
 	} else if (washerTimeOne > 11.25 && washerTimeOne <= 22.5 && washerInUseOne == 1) {
 	
 		if (str_w1 != "24washr.png") {
     	
-	        washer1.myPic.url = "24washr.png";
+	        washer1.w1.myPic.url = "24washr.png";
 	        hwasher1.myPic.url = "24washr.png";
+	        
 	    }
+	    nudge_w1.visible = false;
 	} else if (washerTimeOne > 22.5 && washerTimeOne <= 33.75 && washerInUseOne == 1) {
 		if (str_w1 != "34washr.png") {
     	
-	        washer1.myPic.url = "34washr.png";
+	        washer1.w1.myPic.url = "34washr.png";
 	        hwasher1.myPic.url = "34washr.png";
 	    }
+	    nudge_w1.visible = false;
     } else if(washerTimeOne>33.75 && washerInUseOne === 1){
     	if (str_w1 != "44washr.png") {
     	
-	        washer1.myPic.url = "44washr.png";
+	        washer1.w1.myPic.url = "44washr.png";
 	        hwasher1.myPic.url = "44washr.png";
 	    }
-	    use_w1.first.next.opacity = 0.2;
-	    nudge_w1.first.next.opacity = 0.2;
+	    //use_w1.first.next.opacity = 0.2;
+	    nudge_w1.visible = false;
     }
     if(washerInUseTwo === 0){
     	
     	if (str_w2 != "00washr.png") {
-	    	washer2.myPic.url = "00washr.png";
-	        washer2.myPic.url = "00washr.png";
+	    	washer2.w2.myPic.url = "00washr.png";
+	        hwasher2.myPic.url = "00washr.png";
 	    }
         
-        	use_w2.first.next.opacity = 1;
-        	nudge_w2.first.next.opacity = 0.2;
+        	//use_w2.first.next.opacity = 1;
+        	nudge_w2.visible = false;
         
     } else if(washerTimeTwo<=11.25 && washerInUseTwo === 1){
     	if (str_w2 != "14washr.png") {
-	        washer2.myPic.url = "14washr.png";
+	        washer2.w2.myPic.url = "14washr.png";
 	        hwasher2.myPic.url = "14washr.png";
 	    }
 	    if (washerTimeTwo == 0) {
-        	use_w2.first.next.opacity = 0.2;
-	        nudge_w2.first.next.opacity = 1;
+        	//use_w2.first.next.opacity = 0.2;
+	        nudge_w2.visible = true;
 	    } else {
-	    	use_w2.first.next.opacity = 0.2;
-	        nudge_w2.first.next.opacity = 0.2;
+	    	//use_w2.first.next.opacity = 0.2;
+	        nudge_w2.visible = false;
 	    }
 	} else if (washerTimeTwo > 11.25 && washerTimeTwo <= 22.5 && washerInUseTwo == 1) {
 	
 		if (str_w2 != "24washr.png") {
     	
-	        washer2.myPic.url = "24washr.png";
+	        washer2.w2.myPic.url = "24washr.png";
 	        hwasher2.myPic.url = "24washr.png";
 	    }
+	     nudge_w2.visible = false;
 	} else if (washerTimeTwo > 22.5 && washerTimeTwo <= 33.75 && washerInUseTwo == 1) {
 		if (str_w2 != "34washr.png") {
     	
-	        washer2.myPic.url = "34washr.png";
+	        washer2.w2.myPic.url = "34washr.png";
 	        hwasher2.myPic.url = "34washr.png";
 	    }
+	     nudge_w2.visible = false;
 
     } else {
     	if (str_w2 != "44washr.png") {
     	
-	        washer2.myPic.url = "44washr.png";
+	        washer2.w2.myPic.url = "44washr.png";
 	        hwasher2.myPic.url = "44washr.png";
 	    }
-    	use_w2.first.next.opacity = 0.2;
-	    nudge_w2.first.next.opacity = 0.2;
+    	//use_w2.first.next.opacity = 0.2;
+	    nudge_w2.visible = false;
         
         
     }
     if(dryerInUseOne === 0){
     	
     	if (str_d1 != "00dryer.png") {
-        	dryer1.myPic.url = "00dryer.png";
+        	dryer1.d1.myPic.url = "00dryer.png";
+        	hdryer1.myPic.url = "00dryer.png";
         }
-        use_d1.first.next.opacity = 1;
-        nudge_d1.first.next.opacity = 0.2;
+        //use_d1.first.next.opacity = 1;
+       nudge_d1.visible = false;
         
     } else if(dryerTimeOne<=15 && dryerInUseOne === 1){
     	if (str_d1 != "14dryer.png") {
     	
-	        dryer1.myPic.url = "14dryer.png";
+	        dryer1.d1.myPic.url = "14dryer.png";
 	        hdryer1.myPic.url = "14dryer.png";
 	    }
         
         if (dryerTimeOne == 0) {
-	        use_d1.first.next.opacity = 0.2;
-	        nudge_d1.first.next.opacity = 1;
+	         nudge_d1.visible = true;
 	     } else {
-	     	use_d1.first.next.opacity = 0.2;
-	        nudge_d1.first.next.opacity = 0.2;
+	     	//use_d1.first.next.opacity = 0.2;
+	         nudge_d1.visible = false;
 	     }
 	} else if (dryerTimeOne > 15 && dryerTimeOne <= 30 && dryerInUseOne == 1) {
 		if (str_d1 != "24dryer.png") {
     	
-	        dryer1.myPic.url = "24dryer.png";
+	        dryer1.d1.myPic.url = "24dryer.png";
 	        hdryer1.myPic.url = "24dryer.png";
 	    }
+	     nudge_d1.visible = false;
 	} else if (dryerTimeOne > 30 && dryerTimeOne <= 45 && dryerInUseOne == 1) {
 		if (str_d1 != "34dryer.png") {
     	
-	        dryer1.myPic.url = "34dryer.png";
+	        dryer1.d1.myPic.url = "34dryer.png";
 	        hdryer1.myPic.url = "34dryer.png";
 	    }
+	     nudge_d1.visible = false;
     } else {
     	
     	if (str_d1 != "44dryer.png") {
-	        dryer1.myPic.url = "44dryer.png";
+	        dryer1.d1.myPic.url = "44dryer.png";
 	        hdryer1.myPic.url = "44dryer.png";
 	    }
-	    use_d1.first.next.opacity = 0.2;
-	    nudge_d1.first.next.opacity = 0.2;
+	     nudge_d1.visible = false;
         
     }
     if(dryerInUseTwo === 0){
     	
     	if (str_d2 != "00dryer.png") {
-        	dryer2.myPic.url = "00dryer.png";
+        	dryer2.d2.myPic.url = "00dryer.png";
+        	hdryer2.myPic.url = "00dryer.png";
         	
         }
-         use_d2.first.next.opacity = 1;
-        nudge_d2.first.next.opacity = 0.2;
+          nudge_d2.visible = false;
        
     } else if(dryerTimeTwo<=15 && dryerInUseTwo === 1){
     	if (str_d2 != "14dryer.png"){
-        	dryer2.myPic.url = "14dryer.png";
+        	dryer2.d2.myPic.url = "14dryer.png";
         	hdryer2.myPic.url = "14dryer.png";
        	}
         if (dryerTimeTwo == 0) {
-	    	use_d2.first.next.opacity = 0.2;
-	    	nudge_d2.first.next.opacity = 1;
+	    	//use_d2.first.next.opacity = 0.2;
+	    	 nudge_d2.visible = true;
 	    } else {
-	    	use_d2.first.next.opacity = 0.2;
-	    	nudge_d2.first.next.opacity = 0.2;
+	    	 nudge_d2.visible = false;
 	    }
 	} else if (dryerTimeTwo >15 && dryerTimeTwo < 30 && dryerInUseTwo == 1) {
 		if (str_d2 != "24dryer.png") {
     	
-	        dryer2.myPic.url = "24dryer.png";
+	        dryer2.d2.myPic.url = "24dryer.png";
 	        hdryer2.myPic.url = "24dryer.png";
 	    }
+	     nudge_d2.visible = false;
 	} else if (dryerTimeTwo > 30 && dryerTimeTwo <= 45 && dryerInUseTwo == 1) {
 		if (str_d2 != "34dryer.png") {
-	        dryer2.myPic.url = "34dryer.png";
+	        dryer2.d2.myPic.url = "34dryer.png";
 	        hdryer2.myPic.url = "34dryer.png";
 	    }
+	     nudge_d2.visible = false;
     } else {
     	if (str_d2 != "44dryer.png") {
-	        dryer2.myPic.url = "44dryer.png";
+	        dryer2.d2.myPic.url = "44dryer.png";
 	        hdryer2.myPic.url = "44dryer.png";
 	    }
-        use_d2.first.next.opacity = 0.2;
-	    	nudge_d2.first.next.opacity = 0.2;
+         nudge_d2.visible = false;
     }
 }
 
