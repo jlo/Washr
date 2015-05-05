@@ -17,6 +17,7 @@ var whiteSkin = new Skin( { fill:"white" } );
 var greenSkin = new Skin( { fill:"green" } );
 var lightBlueSkin = new Skin( { fill:"#14affa" } );
 var graySkin = new Skin({fill: "gray"});
+var cancelSkin = new Skin({fill: "#5c5c5c"});
 var purpleSkin = new Skin( { fill:"purple" } );
 var redSkin = new Skin( { fill:"#B22222" } );
 var liteSkin = new Skin({fill:"01B4F7"});
@@ -79,6 +80,7 @@ var labelStyle = new Style( { font: "25px", color:"gray" } );
 var whiteTextStyle = new Style({font: "30px", color:"white"});
 var topTitleStyle = new Style( { font: "bold 25px", color:"white" } );
 var subLabelStyle = new Style( { font: "bold 20px", color:"black" } );
+var previewStyle = new Style( { font: "bold 20px", color:"gray" } );
 var subSubLabelStyle = new Style( { font: "17px", color:"gray" } );
 var greyStyle = new Style( { font: "18px", color:"#545454" } );
 var alertStyle = new Style( { font: "20px", color:"gray" } );
@@ -193,9 +195,10 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 					mainContainer.remove(payCon);
 				}
 				machineToUse = "";
-			} else if ($.textForLabel == "Tap to Continue") {
+			} else if ($.textForLabel == "Continue") {
 				mainContainer.remove(useCon);
 				mainContainer.add(payCon);
+				payCon.behavior = new GifBehavior();
 			} 
 			
 		}},
@@ -213,6 +216,11 @@ var pictureButtonTemplate = BUTTONS.Button.template(function($){ return{
 			if ($.textForLabel == "Use" && content.last.opacity == 1) {
 				mainContainer.add(useCon);
 				subNfcCont.machineUse.string = $.name;
+				if ($.name.indexOf("Washer") > -1){
+					subNfcCont.icon.url = "000washr.png";
+				} else {
+					subNfcCont.icon.url = "000dryer.png";
+				};
 				subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
 			} else if ($.textForLabel == "Nudge" && content.last.opacity == 1) {
 				//trace("in nudge");
@@ -444,32 +452,71 @@ var hamperCon = new containerTemplate({bottom:45, top:0, left:0, right:0, skin: 
 //User is going to use a machine
 var subNfcCont = new containerTemplate({top: 0, bottom: 50, left:0, right:0, skin:whiteAllBorderSkin,
 	contents: [
-		new Text({string: "Use", left: 30, right:0, top: 55, style: labelStyle}),
-		new Text({name: "machineUse", string: "Machine", left:30, right:0, top: 90, style: alertStyle}),
-		new Text({name: "useText", string: "Cost: $2.00", left:30, right:0, top:120, style: alertStyle}),
-		new Content({top: 60, left:160, right:0, skin: nfcSkin}),
-		new buttonTemplate({leftPos:184, width:108, top:120, textForLabel: "Tap to Continue", skin: whiteSkin, style: textLabelStyle}),
-		new Text({name: "payPreview", top:160, left:70, right:0, string: "Available Credits: " + creditSoFar, style: subLabelStyle}),
+		new Text({string: "Use", left: 30, right:0, top: 35, style: labelStyle}),
+		new Text({name: "machineUse", string: "Machine", left:30, right:0, top: 65, style: alertStyle}),
+		new Text({name: "useText", string: "Cost: $2.00", left:30, right:0, top:95, style: alertStyle}),
+		new Picture({name: "icon", width: 70, height:100, top: 20, left:160, right:0, url: "000washr.png"}),
+		new Text({name: "payPreview", top:160, left:75, right:0, string: "Available Credits:\n" + creditSoFar, style: previewStyle}),
 	]
 });
 
-var gifCont = new containerTemplate({top: 0, bottom: 50, left:0, right:0, skin:whiteAllBorderSkin,
-	contents: [
-		new Content({name: "gif", left:0, right:0, skin: tutorialSkin1}),
-			]
-});
+
+	var GifBehavior = function(gif){
+		this.gif = gif;
+	}
+	
+	GifBehavior.prototype = Object.create(Object.prototype, {
+		onDisplaying: {
+			value: function(gifCont) {
+				gifCont.start();
+				trace("begin");
+			}
+		},
+		onTimeChanged: {
+			value: function(gifCont) {
+				/*
+				if (FRAME == 1) {
+					trace(FRAME);
+					FRAME = 2;
+					gifContent.url = "nfc-2.gif";
+				}
+				if (FRAME == 2) {
+					trace(FRAME);
+					FRAME = 3;
+					gifContent.url = "nfc-3.gif";
+				}
+				if (FRAME == 3) {
+					trace(FRAME);
+					FRAME = 1;
+					gifContent.url = "nfc-1.gif"
+				}*/
+				//gifContent.url = "nfc-3.gif";
+			}
+		}
+	})
+	
+	var FRAME = 1;
+	var gifContent = new Picture({name: "gif", left:0, right:0, url: "nfc-1.gif"});
+	
+	var gifCont = new containerTemplate({top: 0, bottom: 50, left:0, right:0, skin:whiteAllBorderSkin,
+		contents: [
+			gifContent
+				],
+		behavior: new GifBehavior(gifContent)
+	});
 
 var payCon = new containerTemplate({ top:80, bottom: 120, left:0, right:0, skin:whiteAllBorderSkin,
 	contents: [
 	    gifCont,
 		new buttonTemplate({leftPos:110, width:108, bottom:15, textForLabel: "Cancel", skin: redSkin, style: tabStyle}),
-	]
+	],
 });
 
 var useCon = new containerTemplate({ top:80, bottom: 120, left:0, right:0, skin:whiteAllBorderSkin,
 	contents: [
 	    subNfcCont,
-		new buttonTemplate({leftPos:110, width:108, bottom:15, textForLabel: "Cancel", skin: redSkin, style: tabStyle}),
+	    new buttonTemplate({leftPos:160, width:108, bottom:15, textForLabel: "Continue", skin: lightBlueSkin, style: tabStyle}),
+		new buttonTemplate({leftPos:45, width:108, bottom:15, textForLabel: "Cancel", skin: cancelSkin, style: tabStyle}),
 	]
 });
 
