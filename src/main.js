@@ -1135,6 +1135,7 @@ mainContainer.add(hamperCon);
 hamperCon.add(hamperList);
 
 application.add(mainContainer);
+hamper.delegate("onTap");
 
 var ApplicationBehavior = Behavior.template({
 	onDisplayed: function(application) {
