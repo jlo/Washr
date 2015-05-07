@@ -435,9 +435,9 @@ var alertYesNoTemplate = Container.template(function($) { return {
 
 
 notificationCon = new alertTemplate({name: "notifText", string: ""});
-var preNudgeConfirmCon = new alertYesNoTemplate({name: "preconfirmNudge", string: "Are you sure you want to nudge this user?"});
-var nudgeCon = new alertTemplate({name: "nudgeCon", string: "You have successfully nudged this user!"});
-var inUseCon = new alertTemplate({name: "inUseCon", string: "Sorry! This machine is currently in use!"});
+var preNudgeConfirmCon = new alertYesNoTemplate({name: "preconfirmNudge", string: "          Are you sure you want \n             to nudge this user?"});
+var nudgeCon = new alertTemplate({name: "nudgeCon", string: "         You have successfully \n             nudged this user!"});
+var inUseCon = new alertTemplate({name: "inUseCon", string: "                      Sorry!\n         This machine is in use!"});
 
 /*var nudgeCon = new containerTemplate({ top:195, bottom:220, left:0, right:0, skin:greyWithBlackBorders,
 	contents: [
@@ -733,6 +733,7 @@ var confirmCreditsButtonTemplate = BUTTONS.Button.template(function($){ return{
             //mainContainer.add(creditsCon);
             addCreditsCon.creditsCol1.creditsCol2.creditsLine1.lefty.string = "$"+creditSoFar;
             addCreditsCon.creditsCol1.creditsCol2.creditsLine2.right.string = "$0";
+            buttonCredits =0;
             subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
             //otherField.moreScroller.more.string = "";
         }},
@@ -980,7 +981,8 @@ var addLoads = function(){
         	mainContainer.remove(payCon);
         };
         creditSoFar = creditSoFar - 2;
-        subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
+        creditsCon.omg.wtf.string = "Credits: $" + creditSoFar;
+        addCreditsCon.creditsCol1.creditsCol2.creditsLine1.lefty.string = "$"+creditSoFar;
     }
     if(washerInUseTwo === 1 && washerTwoBool === false){
         hamperList.add(hwasher2);
@@ -989,6 +991,9 @@ var addLoads = function(){
         	mainContainer.remove(payCon);
         };
         creditSoFar = creditSoFar - 2;
+        creditsCon.omg.wtf.string = "Credits: $" + creditSoFar;
+        addCreditsCon.creditsCol1.creditsCol2.creditsLine1.lefty.string = "$"+creditSoFar;
+        
 
         //subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
     }
@@ -999,6 +1004,8 @@ var addLoads = function(){
         	mainContainer.remove(payCon);
         };
         creditSoFar = creditSoFar - 2;
+        creditsCon.omg.wtf.string = "Credits: $" + creditSoFar;
+        addCreditsCon.creditsCol1.creditsCol2.creditsLine1.lefty.string = "$"+creditSoFar;
 
         //subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
     }
@@ -1009,6 +1016,8 @@ var addLoads = function(){
         	mainContainer.remove(payCon);
         };
         creditSoFar = creditSoFar - 2;
+        creditsCon.omg.wtf.string = "Credits: $" + creditSoFar;
+        addCreditsCon.creditsCol1.creditsCol2.creditsLine1.lefty.string = "$"+creditSoFar;
         //subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
     }
     if (washerInUseOne === 0 && washerOneBool === true){
