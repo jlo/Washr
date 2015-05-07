@@ -643,6 +643,7 @@ var addCardButtonTemplate = BUTTONS.Button.template(function($){ return{
 		onTap: { value: function(content){
 			trace("Button was tapped.\n");
 			//mainContainer.remove(creditsCon);
+			addCardCon.first.next.first.next.first.style = textLabelStyle;
 			creditsCon.add(addCardCon);
 		} },
 	})
@@ -687,6 +688,7 @@ var cancelAddCreditsButtonTemplate = BUTTONS.Button.template(function($){ return
     behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
         onTap: { value: function(content){
             trace("Button was tapped.\n");
+            addCreditsCon.first.next.first.first.style = textLabelStyle;
             creditsCon.remove(addCreditsCon);
             //mainContainer.add(creditsCon);
         } },
@@ -790,7 +792,7 @@ var addCreditsCon = new containerTemplate({left:0, right:0, top:0, bottom:45, sk
                     new Label({name:"lefty",left:40, top:0, height:40, string: "$0", style: labelStyle}),]}),
                 
                 new Line({name:"creditsLine2", left:0, contents:[
-                    new Label({ top:0, left:70, height:40, string: "New Balance", style: labelStyle}),
+                    new Label({ top:0, left:69, height:40, string: "New Balance", style: labelStyle}),
                     new Label({name:"right",left:40, top:0,  height:40, string: "$0", style: labelStyle}),]}),
                 ]
             }),
@@ -856,6 +858,9 @@ var myField = Container.template(function($) { return {
 				 		onEdited: { value: function(label){
 				 			var data = this.data;
 							data.name = label.string;
+							if (data.name.length == 16) {
+								addCardCon.first.next.first.next.first.style = textLabelStyle;
+							}
 							label.container.hint.visible = ( data.name.length == 0 );	
 				 		}}
 				 	}),
