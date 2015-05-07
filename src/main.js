@@ -40,6 +40,11 @@ var whiteBorderSkin = new Skin({
   borders:{bottom:2}, 
   stroke:"gray"
 });
+var whiteBorderSkinTop = new Skin({
+  fill:"white", 
+  borders:{top:2}, 
+  stroke:"gray"
+});
 var whiteSkinWithBorders = new Skin({
 	fill: "white",
 	borders: {bottom:2},
@@ -336,11 +341,11 @@ var tabTemplate = BUTTONS.Button.template(function($){ return{
 
 
 //tabs
-var hamper = new tabTemplate({leftPos:0, width:107, height:45, bottom:0, textForLabel: "Hamper", skin:greyTopBorder, style:bottomTabStyle,
+var hamper = new tabTemplate({leftPos:0, width:107, height:45, top:415, textForLabel: "Hamper", skin:greyTopBorder, style:bottomTabStyle,
 			picWidth:40, picHeight:40, yurl:"./hamper_blue.png"});
-var machines = new tabTemplate({leftPos:107, width:107, height:45, bottom:0, textForLabel: "Machines", skin:greyTopBorder, style:bottomTabStyle,
+var machines = new tabTemplate({leftPos:107, width:107, height:45, top:415, textForLabel: "Machines", skin:greyTopBorder, style:bottomTabStyle,
 			picWidth:40, picHeight:40, yurl:"./washer_gray.png"});
-var credits = new tabTemplate({leftPos:214, width:108, height:45, bottom:0, textForLabel:"Credits", skin:greyTopBorder, style:bottomTabStyle,
+var credits = new tabTemplate({leftPos:214, width:108, height:45, top:415, textForLabel:"Credits", skin:greyTopBorder, style:bottomTabStyle,
 			picWidth:40, picHeight:40, yurl:"./credit_gray.png"});
 
 
@@ -722,9 +727,14 @@ var confirmCreditsButtonTemplate = BUTTONS.Button.template(function($){ return{
         ],
     behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
         onTap: { value: function(content){
-            if(buttonCredits === NaN){
+        	//@@@
+        	if (defaultCard == 0) {
+        		addCreditsCon.first.next.first.first.style = textLabelStyleRed;
+        		return;
+        	}
+            if (buttonCredits === NaN){
                 creditsSoFar = 0;
-            } else{
+            } else {
                 creditSoFar = creditSoFar + buttonCredits;
             }
             
@@ -733,7 +743,7 @@ var confirmCreditsButtonTemplate = BUTTONS.Button.template(function($){ return{
             //mainContainer.add(creditsCon);
             addCreditsCon.creditsCol1.creditsCol2.creditsLine1.lefty.string = "$"+creditSoFar;
             addCreditsCon.creditsCol1.creditsCol2.creditsLine2.right.string = "$0";
-            buttonCredits =0;
+            buttonCredits = 0;
             subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
             //otherField.moreScroller.more.string = "";
         }},
@@ -768,12 +778,15 @@ var addCreditsCon = new containerTemplate({left:0, right:0, top:0, bottom:45, sk
                     new Label({name:"lefty",left:40, top:0, height:40, string: "$0", style: labelStyle}),]}),
                 
                 new Line({name:"creditsLine2", left:0, contents:[
-                    new Label({ top:0, left:40, height:40, string: "New Balance", style: labelStyle}),
-                    new Label({name:"right",left:70, top:0,  height:40, string: "$0", style: labelStyle}),]}),
+                    new Label({ top:0, left:70, height:40, string: "New Balance", style: labelStyle}),
+                    new Label({name:"right",left:40, top:0,  height:40, string: "$0", style: labelStyle}),]}),
                 ]
             }),
-            new confirmCreditsButtonTemplate({leftPos:100,right:100, width:100, bottom:10, textForLabel:"Confirm"}),
-            new cancelAddCreditsButtonTemplate({leftPos:100,right:100, width:100, bottom:10, textForLabel:"Cancel"}),
+            new Line({ contents: [
+            		new confirmCreditsButtonTemplate({leftPos:100, width:100, bottom:10, textForLabel:"Confirm"}),
+            		new cancelAddCreditsButtonTemplate({leftPos:20,right:100, width:100, bottom:10, textForLabel:"Cancel"})
+            	]
+            })
         ]
         }),
     ]
@@ -939,7 +952,7 @@ var addCardCon = new containerTemplate({top:0, bottom:45, left:0, right:0,  skin
                	}),
                	new Line({height:10}),
                	new Line({left:0, right:0, skin:whiteSkin, contents:[
-               			new saveCardButtonTemplate({leftPos:40, width:100, bottom:0, textForLabel:"Save"}),
+               			new saveCardButtonTemplate({leftPos:45, width:100, bottom:0, textForLabel:"Save"}),
                 		new cancelAddCardButtonTemplate({leftPos:30, width:100, bottom:0, textForLabel:"Cancel"}),
                 	]
                 }),
