@@ -992,7 +992,9 @@ var addLoads = function(){
         if (payCon.container) {
         	mainContainer.remove(payCon);
         };
-        creditSoFar = creditSoFar - 2;
+        if (creditSoFar - 2 >= 0) {
+        	creditSoFar = creditSoFar - 2;
+        }
         creditsCon.omg.wtf.string = "Credits: $" + creditSoFar;
         addCreditsCon.creditsCol1.creditsCol2.creditsLine1.lefty.string = "$"+creditSoFar;
     }
@@ -1002,7 +1004,10 @@ var addLoads = function(){
         if (payCon.container) {
         	mainContainer.remove(payCon);
         };
-        creditSoFar = creditSoFar - 2;
+
+        if (creditSoFar - 2 >= 0) {
+        	creditSoFar = creditSoFar - 2;
+        }
         creditsCon.omg.wtf.string = "Credits: $" + creditSoFar;
         addCreditsCon.creditsCol1.creditsCol2.creditsLine1.lefty.string = "$"+creditSoFar;
         
@@ -1014,10 +1019,15 @@ var addLoads = function(){
         if (payCon.container) {
         	mainContainer.remove(payCon);
         };
-        creditSoFar = creditSoFar - 2;
+
+        if (creditSoFar - 2 >= 0) {
+        	creditSoFar = creditSoFar - 2;
+        }
+
         creditsCon.omg.wtf.string = "Credits: $" + creditSoFar;
         addCreditsCon.creditsCol1.creditsCol2.creditsLine1.lefty.string = "$"+creditSoFar;
 
+        //subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
     }
     if(dryerInUseTwo === 1 && dryerTwoBool === false){
        hamperList.add(hdryer2);
@@ -1025,10 +1035,14 @@ var addLoads = function(){
        if (payCon.container) {
         	mainContainer.remove(payCon);
         };
-        creditSoFar = creditSoFar - 2;
+
+        if (creditSoFar - 2 >= 0) {
+        	creditSoFar = creditSoFar - 2;
+        }
+
         creditsCon.omg.wtf.string = "Credits: $" + creditSoFar;
         addCreditsCon.creditsCol1.creditsCol2.creditsLine1.lefty.string = "$"+creditSoFar;
-
+        //subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
     }
     if (washerInUseOne === 0 && washerOneBool === true){
         hamperList.remove(hwasher1);
