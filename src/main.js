@@ -7,23 +7,25 @@ var SCREEN = require('mobile/screen');
 var SCROLLER = require('mobile/scroller');
 
 //image assets
-var tutorialGif1 = new Texture("nfc-1.gif");
-var tutorialGif2 = new Texture("nfc-2.gif");
-var tutorialGif3 = new Texture("nfc-3.gif");
-var nfcLogo = new Texture("nfc12.gif");
+//var tutorialGif1 = new Texture("nfc-1.gif");
+//var tutorialGif2 = new Texture("nfc-2.gif");
+//var tutorialGif3 = new Texture("nfc-3.gif");
+//var nfcLogo = new Texture("nfc12.gif");
+var frame = 1;
+var gifContent1 = new Picture({name: "gif", top:5, left:0, right:0, url: "nfc-1.gif"});
+//var gifContent2 = new Picture({name: "gif2", left:0, right:0, url: "nfc-2.gif"});
+//var gifContent3 = new Picture({name: "gif3", left:0, right:0, url: "nfc-3.gif"});
 
 //skins
 var whiteSkin = new Skin( { fill:"white" } );
 var greenSkin = new Skin( { fill:"green" } );
 var lightBlueSkin = new Skin({ 
 	fill:"#14affa", 
-	borders:{bottom:2}, 
-	stroke:"gray" 
 });
 var lightBlueSkinWithRightBorder = new Skin({ 
 	fill:"#14affa", 
-	borders:{bottom:2, right:2}, 
-	stroke:"gray" 
+//	borders:{bottom:2, right:2}, 
+//	stroke:"gray" 
 });
 var graySkin = new Skin({fill: "gray"});
 var cancelSkin = new Skin({fill: "#5c5c5c"});
@@ -73,6 +75,7 @@ var greyRightBorder = new Skin({
 	borders: {right: 2},
 	stroke: "gray"
 });
+/*
 var nfcSkin = new Skin ({
 	width: 80, height: 60, 
 	texture: nfcLogo, fill: "red"
@@ -89,6 +92,7 @@ var tutorialSkin3 = new Skin ({
 	width: 288, height: 180, 
 	texture: tutorialGif3, fill: "white"
 });
+*/
 //styles
 var labelStyle = new Style( { font: "25px", color:"gray" } );
 var whiteTextStyle = new Style({font: "30px", color:"white"});
@@ -98,7 +102,7 @@ var subSubLabelStyle = new Style( { font: "17px", color:"gray" } );
 var greyStyle = new Style( { font: "18px", color:"#545454" } );
 var alertStyle = new Style( { font: "20px", color:"gray" } );
 var alertStyleTwo = new Style( { font: "17px", color:"gray" } );
-var textLabelStyle = new Style( { font: "15px", color:"black" } );
+var textLabelStyle = new Style( { font: "bold 15px", color:"gray" } );
 var tabStyle = new Style( { font: "bold 15px", color:"white" } );
 var bottomTabStyle = new Style( { font: "12px", color:"white" } );
 var washerText = new Style( { font: "bold 15px", color:"gray" } );
@@ -106,6 +110,7 @@ var creditStyle = new Style( { font: "bold 15px", color:"black" } );
 var titleStyle = new Style({font: "bold 30px", color:"black"});
 var redStyle = new Style( { font: "bold 20px", color:"red" } );
 var previewStyle = new Style( { font: "bold 20px", color:"gray" } );
+var hintStyle = new Style({font: "bold 20px", color: "#14affa"});
 
 
 
@@ -402,7 +407,7 @@ var emptyHamper = Column.template(function($){return{
 
 //containers
 
-var washersCon = new Column({left: 0, right: 0, top:90, skin:blackSkin});
+var washersCon = new Column({left: 10, right: 10, top:90, skin:blackSkin});
 //RIGHT HERE
 var alertTemplate = Container.template(function($) { return {
     left: 20, right: 20, top: 140, bottom: 160, skin: whiteAllBorderSkin, active: true, contents:[
@@ -452,7 +457,7 @@ var washer_1 = BUTTONS.Button.template(function($){ return{
 					name = "Washer 1";
 				} else if ($.sname == "w2") {
 					name = "Washer 2";
-				} else if ($.sname = "d1") {
+				} else if ($.sname == "d1") {
 					name = "Dryer 1";
 				} else {
 					name = "Dryer 2";
@@ -460,14 +465,18 @@ var washer_1 = BUTTONS.Button.template(function($){ return{
             if ((name == "Washer 1" && washerInUseOne == 0) || (name == "Washer 2" && washerInUseTwo == 0) || (name == "Dryer 1" && dryerInUseOne == 0) || (name == "Dryer 2" && dryerInUseTwo == 0)) {
 				if (!useCon.container) {
 					mainContainer.add(useCon);
+					subNfcCont.machineUse.string = name;
+					if (name.indexOf("Washer") > -1){
+						subNfcCont.icon.url = "000washr.png";
+					} else {
+						subNfcCont.icon.url = "000dryer.png";
+					};
+					if (creditSoFar < 2) {
+						subNfcCont.payPreview.string = "Not Enough Credits";
+					} else {
+						subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
+					}
 				}
-				subNfcCont.machineUse.string = name;
-				if (name.indexOf("Washer") > -1){
-					subNfcCont.icon.url = "000washr.png";
-				} else {
-					subNfcCont.icon.url = "000dryer.png";
-				};
-				subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
 			} else if ((name == "Washer 1" && washerInUseOne == 1 && washerTimeOne == 0) || (name == "Washer 2" && washerInUseTwo == 1 && washerTimeTwo == 0) || (name == "Dryer 1" && dryerInUseOne == 1 && dryerTimeOne == 0) || (name == "Dryer 2" && dryerInUseTwo == 1 && dryerTimeTwo == 0)) {
 				if (!preNudgeConfirmCon.container) {
 					mainContainer.add(preNudgeConfirmCon);
@@ -485,7 +494,7 @@ var washer1 = new washer_1({sname:"w1", yurl:"00washr.png", text:"Available"});
 var washer2 = new washer_1({sname: "w2", yurl:"00washr.png", text:"Available"});
 
 var dryer1 = new washer_1({ sname: "d1", yurl:"00dryer.png", text:"Available"});
-var dryer2 = new washer_1({sname: "d2", yurl:"00dryer.png", text:"Available"});
+var dryer2 = new washer_1({ sname: "d2", yurl:"00dryer.png", text:"Available"});
 
 var nudge_w1 = new pictureButtonTemplate({leftPos:260, width:30, top:10, bottom:10, textForLabel:"Nudge", url: "nudge.png",skin: whiteSkin, style: tabStyle});
 var nudge_w2 = new pictureButtonTemplate({leftPos:260, width:30, top:10, bottom:10, textForLabel:"Nudge", url: "nudge.png",skin: whiteSkin, style: tabStyle});
@@ -521,7 +530,7 @@ var machinesCon = new containerTemplate({top:0, bottom: 45, left:0, right:0,skin
 
 
 
-var hamperList = new Column({left: 0, right: 0, top:90, height:200, skin:whiteSkin});
+var hamperList = new Column({left: 10, right: 10, top:90, height:200, skin:whiteSkin});
 
 var hamperCon = new containerTemplate({bottom:45, top:0, left:0, right:0, skin: whiteSkin,
     contents:[
@@ -557,45 +566,43 @@ var subNfcCont = new containerTemplate({top: 0, bottom: 50, left:0, right:0, ski
 		},
 		onTimeChanged: {
 			value: function(gifCont) {
-				/*
-				if (FRAME == 1) {
-					trace(FRAME);
-					FRAME = 2;
-					gifContent.url = "nfc-2.gif";
+			/*	
+				if (frame > 3) {
+					//payCon.gifCont.remove(gifContent1);
+					payCon.gifCont.add(gifContent2);
 				}
-				if (FRAME == 2) {
-					trace(FRAME);
-					FRAME = 3;
-					gifContent.url = "nfc-3.gif";
+				if (frame > 6) {
+					//payCon.gifCont.remove(gifContent2);
+					payCon.gifCont.add(gifContent3);
 				}
-				if (FRAME == 3) {
-					trace(FRAME);
-					FRAME = 1;
-					gifContent.url = "nfc-1.gif"
-				}*/
-				//gifContent.url = "nfc-3.gif";
+				if (frame > 9) {
+					frame = -1;
+					//payCon.gifCont.remove(gifContent3);
+					payCon.gifCont.add(gifContent1);
+				}
+				frame++;
+			*/
 			}
 		}
 	})
 	
-	var FRAME = 1;
-	var gifContent = new Picture({name: "gif", left:0, right:0, url: "nfc-1.gif"});
 	
-	var gifCont = new containerTemplate({top: 0, bottom: 50, left:0, right:0, skin:whiteAllBorderSkin,
-		contents: [
-			gifContent
-				],
-		behavior: new GifBehavior(gifContent)
-	});
+var gifCont = new containerTemplate({top: 0, bottom: 50, left:0, right:0, skin:whiteAllBorderSkin,
+	contents: [
+		gifContent1, 
+		new Text({name: "hint", string: "Tap Against Device To Pay", left:50, right:20, top: 190, style: hintStyle}),
+			],
+	behavior: new GifBehavior(gifContent1)
+});
 
-var payCon = new containerTemplate({ top:80, bottom: 120, left:0, right:0, skin:whiteAllBorderSkin,
+var payCon = new containerTemplate({ top:70, bottom: 120, left:0, right:0, skin:whiteAllBorderSkin,
 	contents: [
 	    gifCont,
-		new buttonTemplate({leftPos:110, width:108, bottom:15, textForLabel: "Cancel", skin: redSkin, style: tabStyle}),
+		new buttonTemplate({leftPos:105, width:108, bottom:15, textForLabel: "Cancel", skin: cancelSkin, style: tabStyle}),
 	],
 });
 
-var useCon = new containerTemplate({ top:80, bottom: 120, left:0, right:0, skin:whiteAllBorderSkin,
+var useCon = new containerTemplate({ top:70, bottom: 120, left:0, right:0, skin:whiteAllBorderSkin,
 	contents: [
 	    subNfcCont,
 	    new buttonTemplate({leftPos:160, width:108, bottom:15, textForLabel: "Continue", skin: lightBlueSkin, style: tabStyle}),
@@ -625,7 +632,7 @@ var addCardButtonTemplate = BUTTONS.Button.template(function($){ return{
 
 // Button for returning to credits screen
 var cancelAddCardButtonTemplate = BUTTONS.Button.template(function($){ return{
-	left: $.leftPos,right:$.right, width:$.width, bottom:$.bottom, height:30, name:$.name, skin:redSkin,
+	left: $.leftPos,right:$.right, width:$.width, bottom:$.bottom, height:30, name:$.name, skin:cancelSkin,
 	contents: [
 		new Label({left:0, right:0, height:20, string:$.textForLabel, style: tabStyle}),
 		],
@@ -655,7 +662,7 @@ var addCreditsButtonTemplate = BUTTONS.Button.template(function($){ return{
 
 // Button for returning to credits screen
 var cancelAddCreditsButtonTemplate = BUTTONS.Button.template(function($){ return{
-    left: $.leftPos, right:$.right, width:$.width, bottom:$.bottom, height:30, name:$.name, skin:redSkin,
+    left: $.leftPos, right:$.right, width:$.width, bottom:$.bottom, height:30, name:$.name, skin:cancelSkin,
     contents: [
         new Label({left:0, right:0, height:20, string:$.textForLabel, style: tabStyle})
         ],
