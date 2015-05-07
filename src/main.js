@@ -17,13 +17,11 @@ var whiteSkin = new Skin( { fill:"white" } );
 var greenSkin = new Skin( { fill:"green" } );
 var lightBlueSkin = new Skin({ 
 	fill:"#14affa", 
-	borders:{bottom:2}, 
-	stroke:"gray" 
 });
 var lightBlueSkinWithRightBorder = new Skin({ 
 	fill:"#14affa", 
-	borders:{bottom:2, right:2}, 
-	stroke:"gray" 
+//	borders:{bottom:2, right:2}, 
+//	stroke:"gray" 
 });
 var graySkin = new Skin({fill: "gray"});
 var cancelSkin = new Skin({fill: "#5c5c5c"});
@@ -98,7 +96,7 @@ var subSubLabelStyle = new Style( { font: "17px", color:"gray" } );
 var greyStyle = new Style( { font: "18px", color:"#545454" } );
 var alertStyle = new Style( { font: "20px", color:"gray" } );
 var alertStyleTwo = new Style( { font: "17px", color:"gray" } );
-var textLabelStyle = new Style( { font: "15px", color:"black" } );
+var textLabelStyle = new Style( { font: "bold 15px", color:"gray" } );
 var tabStyle = new Style( { font: "bold 15px", color:"white" } );
 var bottomTabStyle = new Style( { font: "12px", color:"white" } );
 var washerText = new Style( { font: "bold 15px", color:"gray" } );
@@ -387,7 +385,7 @@ var emptyHamper = Column.template(function($){return{
 
 //containers
 
-var washersCon = new Column({left: 0, right: 0, top:90, skin:blackSkin});
+var washersCon = new Column({left: 10, right: 10, top:90, skin:blackSkin});
 //RIGHT HERE
 var alertTemplate = Container.template(function($) { return {
     left: 20, right: 20, top: 140, bottom: 160, skin: whiteAllBorderSkin, active: true, contents:[
@@ -506,7 +504,7 @@ var machinesCon = new containerTemplate({top:0, bottom: 45, left:0, right:0,skin
 
 
 
-var hamperList = new Column({left: 0, right: 0, top:90, height:200, skin:whiteSkin});
+var hamperList = new Column({left: 10, right: 10, top:90, height:200, skin:whiteSkin});
 
 var hamperCon = new containerTemplate({bottom:45, top:0, left:0, right:0, skin: whiteSkin,
     contents:[
