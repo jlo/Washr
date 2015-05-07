@@ -732,6 +732,7 @@ var confirmCreditsButtonTemplate = BUTTONS.Button.template(function($){ return{
             //mainContainer.add(creditsCon);
             addCreditsCon.creditsCol1.creditsCol2.creditsLine1.lefty.string = "$"+creditSoFar;
             addCreditsCon.creditsCol1.creditsCol2.creditsLine2.right.string = "$0";
+            buttonCredits =0;
             subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
             //otherField.moreScroller.more.string = "";
         }},
@@ -952,7 +953,8 @@ var addLoads = function(){
         	mainContainer.remove(payCon);
         };
         creditSoFar = creditSoFar - 2;
-        subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
+        creditsCon.omg.wtf.string = "Credits: $" + creditSoFar;
+        addCreditsCon.creditsCol1.creditsCol2.creditsLine1.lefty.string = "$"+creditSoFar;
     }
     if(washerInUseTwo === 1 && washerTwoBool === false){
         hamperList.add(hwasher2);
@@ -961,6 +963,9 @@ var addLoads = function(){
         	mainContainer.remove(payCon);
         };
         creditSoFar = creditSoFar - 2;
+        creditsCon.omg.wtf.string = "Credits: $" + creditSoFar;
+        addCreditsCon.creditsCol1.creditsCol2.creditsLine1.lefty.string = "$"+creditSoFar;
+        
 
         //subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
     }
@@ -971,6 +976,8 @@ var addLoads = function(){
         	mainContainer.remove(payCon);
         };
         creditSoFar = creditSoFar - 2;
+        creditsCon.omg.wtf.string = "Credits: $" + creditSoFar;
+        addCreditsCon.creditsCol1.creditsCol2.creditsLine1.lefty.string = "$"+creditSoFar;
 
         //subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
     }
@@ -981,6 +988,8 @@ var addLoads = function(){
         	mainContainer.remove(payCon);
         };
         creditSoFar = creditSoFar - 2;
+        creditsCon.omg.wtf.string = "Credits: $" + creditSoFar;
+        addCreditsCon.creditsCol1.creditsCol2.creditsLine1.lefty.string = "$"+creditSoFar;
         //subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
     }
     if (washerInUseOne === 0 && washerOneBool === true){
