@@ -255,58 +255,73 @@ var tabTemplate = BUTTONS.Button.template(function($){ return{
 		],
 	behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
 		onTap: { value: function(content){
+			var alerts = false;
+			if (!nudgeCon.container && !preNudgeConfirmCon.container && !inUseCon.container && !useCon.container && !notificationCon.container && !payCon.container) {
+				alerts = false;
+			} else {
+				alerts = true;
+			}
+			
 			trace("tapped");
 			trace($.textForLabel);
 			if (oldPic == null) {
 				oldPic = content;
 			} else {
 				trace("\n" + oldPic.last.url)
-				if (oldPic.last.url.indexOf("hamper") > -1) {
+				if (oldPic.last.url.indexOf("hamper") > -1 && !alerts) {
 					oldPic.remove(oldPic.last);
 					oldPic.add(new Picture({left:0, right:0, width:$.picWidth, height:$.picHeight, url:"hamper_gray.png"}));
-				} else if (oldPic.last.url.indexOf("washer") > -1) {
+				} else if (oldPic.last.url.indexOf("washer") > -1 && !alerts) {
 					oldPic.remove(oldPic.last);
 					oldPic.add(new Picture({left:0, right:0, width:$.picWidth, height:$.picHeight, url:"washer_gray.png"}));
-				} else if (oldPic.last.url.indexOf("credit") > -1) {
+				} else if (oldPic.last.url.indexOf("credit") > -1 && !alerts) {
 					oldPic.remove(oldPic.last);
 					oldPic.add(new Picture({left:0, right:0, width:$.picWidth, height:$.picHeight, url:"credit_gray.png"}));
 				}
 				oldPic = content;
 			}
 			if ($.textForLabel == "Hamper") {
-				if (machinesCon.container) {
-					mainContainer.remove(machinesCon);
-				} else if (creditsCon.container) {
-					mainContainer.remove(creditsCon);
+				if (!nudgeCon.container && !preNudgeConfirmCon.container && !inUseCon.container && !useCon.container && !notificationCon.container && !payCon.container) {
+					if (machinesCon.container) {
+						mainContainer.remove(machinesCon);
+					} else if (creditsCon.container) {
+						mainContainer.remove(creditsCon);
+					}
+					if (!hamperCon.container) {
+						mainContainer.add(hamperCon);
+					}
+					content.remove(content.last);
+					content.add(new Picture({left:0, right:0, width:$.picWidth, height:$.picHeight, url:"hamper_blue.png"}));
 				}
-				if (!hamperCon.container) {
-					mainContainer.add(hamperCon);
-				}
-				content.remove(content.last);
-				content.add(new Picture({left:0, right:0, width:$.picWidth, height:$.picHeight, url:"hamper_blue.png"}));
 			} else if ($.textForLabel == "Machines") {
-				if (hamperCon.container) {
-					mainContainer.remove(hamperCon);
-				} else if (creditsCon.container) {
-					mainContainer.remove(creditsCon);
+				if (!nudgeCon.container && !preNudgeConfirmCon.container && !inUseCon.container && !useCon.container && !notificationCon.container && !payCon.container) {
+				
+					if (hamperCon.container) {
+						mainContainer.remove(hamperCon);
+					} else if (creditsCon.container) {
+						mainContainer.remove(creditsCon);
+					}
+					if (!machinesCon.container) {
+						//trace("!!!");
+						mainContainer.add(machinesCon);
+					}
+					content.remove(content.last);
+					content.add(new Picture({left:0, right:0, width:$.picWidth, height:$.picHeight, url:"washer_blue.png"}));
 				}
-				if (!machinesCon.container) {
-					//trace("!!!");
-					mainContainer.add(machinesCon);
-				}
-				content.remove(content.last);
-				content.add(new Picture({left:0, right:0, width:$.picWidth, height:$.picHeight, url:"washer_blue.png"}));
 			}else if ($.textForLabel == "Credits") {
-				if (hamperCon.container) {
-					mainContainer.remove(hamperCon);
-				} else if (machinesCon.container) {
-					mainContainer.remove(machinesCon);
+				if (!nudgeCon.container && !preNudgeConfirmCon.container && !inUseCon.container && !useCon.container && !notificationCon.container && !payCon.container) {
+				
+					if (hamperCon.container) {
+						mainContainer.remove(hamperCon);
+					} else if (machinesCon.container) {
+						mainContainer.remove(machinesCon);
+					}
+					if (!creditsCon.container) {
+						mainContainer.add(creditsCon);
+					}
+					content.remove(content.last);
+					content.add(new Picture({left:0, right:0, width:$.picWidth, height:$.picHeight, url:"credit_blue.png"}));
 				}
-				if (!creditsCon.container) {
-					mainContainer.add(creditsCon);
-				}
-				content.remove(content.last);
-				content.add(new Picture({left:0, right:0, width:$.picWidth, height:$.picHeight, url:"credit_blue.png"}));
 			}
 		}},
 	})
