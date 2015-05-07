@@ -222,11 +222,21 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 				}
 				machineToUse = "";
 			} else if ($.textForLabel == "Continue") {
-				mainContainer.remove(useCon);
-				mainContainer.add(payCon);
-				payCon.behavior = new GifBehavior();
-			} 
-			
+				if (creditSoFar < 2) {
+					mainContainer.remove(useCon);
+					if (machinesCon.container) {
+						mainContainer.remove(machinesCon);
+					}	
+					if (!creditsCon.container) {
+						mainContainer.add(creditsCon);
+					}
+					credits.delegate("onTap");
+				} else {
+					mainContainer.remove(useCon);
+					mainContainer.add(payCon);
+					payCon.behavior = new GifBehavior();
+				}
+			}
 		}},
 	})
 }});
@@ -473,8 +483,10 @@ var washer_1 = BUTTONS.Button.template(function($){ return{
 					};
 					if (creditSoFar < 2) {
 						subNfcCont.payPreview.string = "Not Enough Credits";
+						useCon.continueToPay.first.string = "Add Credits";
 					} else {
 						subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
+						useCon.continueToPay.first.string = "Continue";
 					}
 				}
 			} else if ((name == "Washer 1" && washerInUseOne == 1 && washerTimeOne == 0) || (name == "Washer 2" && washerInUseTwo == 1 && washerTimeTwo == 0) || (name == "Dryer 1" && dryerInUseOne == 1 && dryerTimeOne == 0) || (name == "Dryer 2" && dryerInUseTwo == 1 && dryerTimeTwo == 0)) {
@@ -605,7 +617,7 @@ var payCon = new containerTemplate({ top:70, bottom: 120, left:0, right:0, skin:
 var useCon = new containerTemplate({ top:70, bottom: 120, left:0, right:0, skin:whiteAllBorderSkin,
 	contents: [
 	    subNfcCont,
-	    new buttonTemplate({leftPos:160, width:108, bottom:15, textForLabel: "Continue", skin: lightBlueSkin, style: tabStyle}),
+	    new buttonTemplate({name: "continueToPay", leftPos:160, width:108, bottom:15, textForLabel: "Continue", skin: lightBlueSkin, style: tabStyle}),
 		new buttonTemplate({leftPos:45, width:108, bottom:15, textForLabel: "Cancel", skin: cancelSkin, style: tabStyle}),
 	]
 });
@@ -952,7 +964,6 @@ var addLoads = function(){
         	mainContainer.remove(payCon);
         };
         creditSoFar = creditSoFar - 2;
-        subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
     }
     if(washerInUseTwo === 1 && washerTwoBool === false){
         hamperList.add(hwasher2);
@@ -962,7 +973,6 @@ var addLoads = function(){
         };
         creditSoFar = creditSoFar - 2;
 
-        //subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
     }
     if(dryerInUseOne === 1 && dryerOneBool === false){
         hamperList.add(hdryer1);
@@ -972,7 +982,6 @@ var addLoads = function(){
         };
         creditSoFar = creditSoFar - 2;
 
-        //subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
     }
     if(dryerInUseTwo === 1 && dryerTwoBool === false){
        hamperList.add(hdryer2);
@@ -981,7 +990,6 @@ var addLoads = function(){
         	mainContainer.remove(payCon);
         };
         creditSoFar = creditSoFar - 2;
-        //subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
     }
     if (washerInUseOne === 0 && washerOneBool === true){
         hamperList.remove(hwasher1);
