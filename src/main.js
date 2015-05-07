@@ -951,7 +951,9 @@ var addLoads = function(){
         if (payCon.container) {
         	mainContainer.remove(payCon);
         };
-        creditSoFar = creditSoFar - 2;
+        if (creditSoFar - 2 >= 0) {
+        	creditSoFar = creditSoFar - 2;
+        }
         subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
     }
     if(washerInUseTwo === 1 && washerTwoBool === false){
@@ -960,7 +962,9 @@ var addLoads = function(){
         if (payCon.container) {
         	mainContainer.remove(payCon);
         };
-        creditSoFar = creditSoFar - 2;
+        if (creditSoFar - 2 >= 0) {
+        	creditSoFar = creditSoFar - 2;
+        }
 
         //subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
     }
@@ -970,7 +974,9 @@ var addLoads = function(){
         if (payCon.container) {
         	mainContainer.remove(payCon);
         };
-        creditSoFar = creditSoFar - 2;
+        if (creditSoFar - 2 >= 0) {
+        	creditSoFar = creditSoFar - 2;
+        }
 
         //subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
     }
@@ -980,7 +986,9 @@ var addLoads = function(){
        if (payCon.container) {
         	mainContainer.remove(payCon);
         };
-        creditSoFar = creditSoFar - 2;
+        if (creditSoFar - 2 >= 0) {
+        	creditSoFar = creditSoFar - 2;
+        }
         //subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
     }
     if (washerInUseOne === 0 && washerOneBool === true){
