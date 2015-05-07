@@ -103,6 +103,7 @@ var greyStyle = new Style( { font: "18px", color:"#545454" } );
 var alertStyle = new Style( { font: "20px", color:"gray" } );
 var alertStyleTwo = new Style( { font: "17px", color:"gray" } );
 var textLabelStyle = new Style( { font: "bold 15px", color:"gray" } );
+var textLabelStyleRed = new Style( { font: "bold 15px", color:"red" } );
 var tabStyle = new Style( { font: "bold 15px", color:"white" } );
 var bottomTabStyle = new Style( { font: "12px", color:"white" } );
 var washerText = new Style( { font: "bold 15px", color:"gray" } );
@@ -434,9 +435,9 @@ var alertYesNoTemplate = Container.template(function($) { return {
 
 
 notificationCon = new alertTemplate({name: "notifText", string: ""});
-var preNudgeConfirmCon = new alertYesNoTemplate({name: "preconfirmNudge", string: "Are you sure you want to nudge this user?"});
-var nudgeCon = new alertTemplate({name: "nudgeCon", string: "You have successfully nudged this user!"});
-var inUseCon = new alertTemplate({name: "inUseCon", string: "Sorry! This machine is currently in use!"});
+var preNudgeConfirmCon = new alertYesNoTemplate({name: "preconfirmNudge", string: "          Are you sure you want \n             to nudge this user?"});
+var nudgeCon = new alertTemplate({name: "nudgeCon", string: "         You have successfully \n             nudged this user!"});
+var inUseCon = new alertTemplate({name: "inUseCon", string: "                      Sorry!\n         This machine is in use!"});
 
 /*var nudgeCon = new containerTemplate({ top:195, bottom:220, left:0, right:0, skin:greyWithBlackBorders,
 	contents: [
@@ -732,6 +733,7 @@ var confirmCreditsButtonTemplate = BUTTONS.Button.template(function($){ return{
             //mainContainer.add(creditsCon);
             addCreditsCon.creditsCol1.creditsCol2.creditsLine1.lefty.string = "$"+creditSoFar;
             addCreditsCon.creditsCol1.creditsCol2.creditsLine2.right.string = "$0";
+            buttonCredits =0;
             subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
             //otherField.moreScroller.more.string = "";
         }},
@@ -739,20 +741,20 @@ var confirmCreditsButtonTemplate = BUTTONS.Button.template(function($){ return{
     })
 }});
 
-
-
+var creditCards = [{number:"None"}];
+var defaultCard = 0;
 
 var addCreditsCon = new containerTemplate({left:0, right:0, top:0, bottom:45, skin: whiteSkin,
     contents:[
-        new Column({top:0, left:0, right:0,height:40, skin:lightBlueSkin, contents:[
+        new Column({top:0, left:0, right:0,height:40, skin:lightBlueSkinWithRightBorder, contents:[
             new Label({left:100, top:5, height: 30, string: "Add Credits", style: topTitleStyle}), 
         ]}),
         new Column({name:"creditsCol1",top:60,left:5, right:5, skin:whiteSkin, contents:[
             new Line({top:10, left:20, right:20, skin:whiteAllBorderSkin, contents: [
-                new Label({left:20,right:20, height:40, string: "Default Payment                 Visa *1234", style: textLabelStyle}),
+                new Label({left:20,right:20, height:40, string: "Default Payment: " + creditCards[defaultCard].number, style: textLabelStyle}),
                 ]
             }),
-            new Line({top:30,horizontal:"center", contents: [
+            new Line({top:30, horizontal:"center", contents: [
                 new creditsButtonTemplate({leftPos:0, width:50, bottom:10, textForLabel:"$1"}),
                 new creditsButtonTemplate({leftPos:10, width:50, bottom:10, textForLabel:"$5"}),
                 new creditsButtonTemplate({leftPos:10, width:50, bottom:10, textForLabel:"$10"}),
@@ -796,11 +798,11 @@ var creditsCon = new containerTemplate({top:0, bottom:45, left:0, right:0, skin:
                     contents: [
                        	new Line({left:0, right:0, skin:whiteSkin, 
                     		contents:[
-                            	new addCardButtonTemplate({leftPos:60, width:200, bottom:20, name:"add card", textForLabel:"+ Add Credit Card"}),
+                    			new addCardButtonTemplate({leftPos:60, width:200, bottom:20, name:"add card", textForLabel:"+ Add Credit Card"})
                            	]
-                       	}),
+                       	})
                  	]
-             	}),
+             	})
             ]
         }),
 
@@ -853,6 +855,10 @@ var myField_deets = Container.template(function($) { return {
 				 		onEdited: { value: function(label){
 				 			var data = this.data;
 							data.name = label.string;
+							trace(data.name.length);
+							// if (data.name.length == 2) {
+							// 	label.string.concat('/');
+							// }
 							label.container.hint.visible = ( data.name.length == 0 );	
 				 		}}
 				 	}),
@@ -874,12 +880,26 @@ var saveCardButtonTemplate = BUTTONS.Button.template(function($){ return{
 	behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
 		onTap: { value: function(content){
 			trace("Button was tapped.\n");
-			trace(field_num.first.first.string + "\n");
-			creditsCon.cards.cardscol.add(new Label({left:0, right:0, height:30, string: " •••• •••• •••• " + field_num.first.first.string.substring(12,16), style: 
-Text, skin: whiteBorderSkin}));
+			var numberLength = field_num.first.first.string.length;
+			if (numberLength > 16 || numberLength < 16) {
+				addCardCon.first.next.first.next.first.style = textLabelStyleRed;
+				return;
+			}
+			var cardNumber = field_num.first.first.string.substring(12,16);
+			creditCards.push({name: field_name.first.first.string, number: cardNumber, details: field_deets.first.first.string});
+			// trace(creditCards);
+			// " •••• •••• •••• " + 
+			creditsCon.cards.cardscol.add(new Label({left:10, right:10, height:30, string: field_cardLabel.first.first.string + " *" + cardNumber, style: washerText, skin: whiteBorderSkin}));
+			defaultCard += 1
+			addCreditsCon.first.next.first.first.string = "Default Payment: " + field_cardLabel.first.first.string + " *" + cardNumber
+
+			// trace(field_num.first.first.string + "\n");
+			// creditsCon.cards.cardscol.add(new Label({left:0, right:0, height:30, string: " •••• •••• •••• " + field_num.first.first.string.substring(12,16), style: 
+
 			field_name.first.first.string = ""
 			field_num.first.first.string = ""
 			field_deets.first.first.string = ""
+			field_cardLabel.first.first.string = ""
 			creditsCon.remove(addCardCon);
 			//mainContainer.add(creditsCon);
 		} },
@@ -889,12 +909,13 @@ Text, skin: whiteBorderSkin}));
 var field_name = new myField({ name: "" });
 var field_num = new myField({ name: "" });
 var field_deets = new myField_deets({ name: "" });
+var field_cardLabel = new myField({ name: ""});
 var addCardCon = new containerTemplate({top:0, bottom:45, left:0, right:0,  skin: whiteSkin,
 	contents:[
         new Column({top:0, left:0, right:0,height:40, skin:lightBlueSkin, contents:[
             new Label({left:100, top:5, height: 30, string: "Add Payment", style: topTitleStyle}), 
         ]}),
-		new Column({name: "cardinfo", top:70, left: 0, right: 0, skin:whiteSkin,
+		new Column({name: "cardinfo", top:50, left: 0, right: 0, skin:whiteSkin,
           	contents: [
             	new Line({left:0, right:0, skin:whiteSkin, contents:[
                   		new Label({left:10, right:0, height:50, string: " Name: ", style: textLabelStyle, skin: noBorderSkin}),
@@ -911,9 +932,17 @@ var addCardCon = new containerTemplate({top:0, bottom:45, left:0, right:0,  skin
                   		field_deets,
                   	]
                	}),
-                new saveCardButtonTemplate({leftPos:110, width:100, bottom:10, textForLabel:"Save"}),
-                new cancelAddCardButtonTemplate({leftPos:110, width:100, bottom:10, textForLabel:"Cancel"}),
-                
+               	new Line({left:0, right:0, skin:whiteSkin, contents:[
+                  		new Label({left:10, right:0, height:50, string: " Card Label: ", style: textLabelStyle, skin: noBorderSkin}),
+                  		field_cardLabel,
+                  	]
+               	}),
+               	new Line({height:10}),
+               	new Line({left:0, right:0, skin:whiteSkin, contents:[
+               			new saveCardButtonTemplate({leftPos:40, width:100, bottom:0, textForLabel:"Save"}),
+                		new cancelAddCardButtonTemplate({leftPos:30, width:100, bottom:0, textForLabel:"Cancel"}),
+                	]
+                }),
           	] 
      	}),
 	]
@@ -954,7 +983,8 @@ var addLoads = function(){
         if (creditSoFar - 2 >= 0) {
         	creditSoFar = creditSoFar - 2;
         }
-        subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
+        creditsCon.omg.wtf.string = "Credits: $" + creditSoFar;
+        addCreditsCon.creditsCol1.creditsCol2.creditsLine1.lefty.string = "$"+creditSoFar;
     }
     if(washerInUseTwo === 1 && washerTwoBool === false){
         hamperList.add(hwasher2);
@@ -962,9 +992,13 @@ var addLoads = function(){
         if (payCon.container) {
         	mainContainer.remove(payCon);
         };
+
         if (creditSoFar - 2 >= 0) {
         	creditSoFar = creditSoFar - 2;
         }
+        creditsCon.omg.wtf.string = "Credits: $" + creditSoFar;
+        addCreditsCon.creditsCol1.creditsCol2.creditsLine1.lefty.string = "$"+creditSoFar;
+        
 
         //subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
     }
@@ -974,9 +1008,14 @@ var addLoads = function(){
         if (payCon.container) {
         	mainContainer.remove(payCon);
         };
+
         if (creditSoFar - 2 >= 0) {
         	creditSoFar = creditSoFar - 2;
         }
+
+        creditsCon.omg.wtf.string = "Credits: $" + creditSoFar;
+        addCreditsCon.creditsCol1.creditsCol2.creditsLine1.lefty.string = "$"+creditSoFar;
+
 
         //subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
     }
@@ -986,9 +1025,14 @@ var addLoads = function(){
        if (payCon.container) {
         	mainContainer.remove(payCon);
         };
+
         if (creditSoFar - 2 >= 0) {
         	creditSoFar = creditSoFar - 2;
         }
+
+        creditsCon.omg.wtf.string = "Credits: $" + creditSoFar;
+        addCreditsCon.creditsCol1.creditsCol2.creditsLine1.lefty.string = "$"+creditSoFar;
+
         //subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
     }
     if (washerInUseOne === 0 && washerOneBool === true){
