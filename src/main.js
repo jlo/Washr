@@ -434,9 +434,9 @@ var alertYesNoTemplate = Container.template(function($) { return {
 
 
 notificationCon = new alertTemplate({name: "notifText", string: ""});
-var preNudgeConfirmCon = new alertYesNoTemplate({name: "preconfirmNudge", string: "Are you sure you want to nudge this user?"});
-var nudgeCon = new alertTemplate({name: "nudgeCon", string: "You have successfully nudged this user!"});
-var inUseCon = new alertTemplate({name: "inUseCon", string: "Sorry! This machine is currently in use!"});
+var preNudgeConfirmCon = new alertYesNoTemplate({name: "preconfirmNudge", string: "          Are you sure you want \n             to nudge this user?"});
+var nudgeCon = new alertTemplate({name: "nudgeCon", string: "         You have successfully \n             nudged this user!"});
+var inUseCon = new alertTemplate({name: "inUseCon", string: "                      Sorry!\n         This machine is in use!"});
 
 /*var nudgeCon = new containerTemplate({ top:195, bottom:220, left:0, right:0, skin:greyWithBlackBorders,
 	contents: [
