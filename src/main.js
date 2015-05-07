@@ -7,23 +7,25 @@ var SCREEN = require('mobile/screen');
 var SCROLLER = require('mobile/scroller');
 
 //image assets
-var tutorialGif1 = new Texture("nfc-1.gif");
-var tutorialGif2 = new Texture("nfc-2.gif");
-var tutorialGif3 = new Texture("nfc-3.gif");
-var nfcLogo = new Texture("nfc12.gif");
+//var tutorialGif1 = new Texture("nfc-1.gif");
+//var tutorialGif2 = new Texture("nfc-2.gif");
+//var tutorialGif3 = new Texture("nfc-3.gif");
+//var nfcLogo = new Texture("nfc12.gif");
+var frame = 1;
+var gifContent1 = new Picture({name: "gif", top:5, left:0, right:0, url: "nfc-1.gif"});
+//var gifContent2 = new Picture({name: "gif2", left:0, right:0, url: "nfc-2.gif"});
+//var gifContent3 = new Picture({name: "gif3", left:0, right:0, url: "nfc-3.gif"});
 
 //skins
 var whiteSkin = new Skin( { fill:"white" } );
 var greenSkin = new Skin( { fill:"green" } );
 var lightBlueSkin = new Skin({ 
 	fill:"#14affa", 
-	borders:{bottom:2}, 
-	stroke:"gray" 
 });
 var lightBlueSkinWithRightBorder = new Skin({ 
 	fill:"#14affa", 
-	borders:{bottom:2, right:2}, 
-	stroke:"gray" 
+//	borders:{bottom:2, right:2}, 
+//	stroke:"gray" 
 });
 var graySkin = new Skin({fill: "gray"});
 var cancelSkin = new Skin({fill: "#5c5c5c"});
@@ -68,6 +70,12 @@ var greyWithBlackBorders = new Skin({
   borders:{bottom:2, top:2, right:2, left:2}, 
   stroke:"black"
 });
+var greyRightBorder = new Skin({
+	fill: "white",
+	borders: {right: 2},
+	stroke: "gray"
+});
+/*
 var nfcSkin = new Skin ({
 	width: 80, height: 60, 
 	texture: nfcLogo, fill: "red"
@@ -84,16 +92,18 @@ var tutorialSkin3 = new Skin ({
 	width: 288, height: 180, 
 	texture: tutorialGif3, fill: "white"
 });
+*/
 //styles
 var labelStyle = new Style( { font: "25px", color:"gray" } );
 var whiteTextStyle = new Style({font: "30px", color:"white"});
 var topTitleStyle = new Style( { font: "bold 25px", color:"white" } );
-var subLabelStyle = new Style( { font: "bold 20px", color:"black" } );
+var subLabelStyle = new Style( { font: "20px", color:"gray" } );
 var subSubLabelStyle = new Style( { font: "17px", color:"gray" } );
 var greyStyle = new Style( { font: "18px", color:"#545454" } );
 var alertStyle = new Style( { font: "20px", color:"gray" } );
 var alertStyleTwo = new Style( { font: "17px", color:"gray" } );
-var textLabelStyle = new Style( { font: "15px", color:"black" } );
+var textLabelStyle = new Style( { font: "bold 15px", color:"gray" } );
+var textLabelStyleRed = new Style( { font: "bold 15px", color:"red" } );
 var tabStyle = new Style( { font: "bold 15px", color:"white" } );
 var bottomTabStyle = new Style( { font: "12px", color:"white" } );
 var washerText = new Style( { font: "bold 15px", color:"gray" } );
@@ -101,6 +111,7 @@ var creditStyle = new Style( { font: "bold 15px", color:"black" } );
 var titleStyle = new Style({font: "bold 30px", color:"black"});
 var redStyle = new Style( { font: "bold 20px", color:"red" } );
 var previewStyle = new Style( { font: "bold 20px", color:"gray" } );
+var hintStyle = new Style({font: "bold 20px", color: "#14affa"});
 
 
 
@@ -191,9 +202,19 @@ var buttonTemplate = BUTTONS.Button.template(function($){ return{
 			trace("tapped");
 			trace($.textForLabel);
 			if ($.textForLabel == "Okay") {
-				application.remove(notificationCon);
-				notifConShowing = false;
-			
+				if (notificationCon.container) {
+					application.remove(notificationCon);
+					notifConShowing = false;
+				} else if (nudgeCon.container) {
+					mainContainer.remove(nudgeCon);
+				} else if (inUseCon.container) {
+					mainContainer.remove(inUseCon);
+				}
+			} else if ($.textForLabel == "No") {
+				mainContainer.remove(preNudgeConfirmCon);
+			} else if ($.textForLabel == "Yes") {
+				mainContainer.remove(preNudgeConfirmCon);
+				mainContainer.add(nudgeCon);
 			} else if ($.textForLabel == "Cancel") {
 				if (useCon.container) {
 					mainContainer.remove(useCon);
@@ -220,10 +241,10 @@ var pictureButtonTemplate = BUTTONS.Button.template(function($){ return{
 	behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
 		onTap: { value: function(content){
 
-		if ($.textForLabel == "Nudge" && content.last.opacity == 1) {
+		if ($.textForLabel == "Nudge") {
 				//trace("in nudge");
-				if (!nudgeCon.container) {
-					mainContainer.add(nudgeCon);
+				if (!preNudgeConfirmCon.container) {
+					mainContainer.add(preNudgeConfirmCon);
 				}
 			}
 			
@@ -240,58 +261,73 @@ var tabTemplate = BUTTONS.Button.template(function($){ return{
 		],
 	behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
 		onTap: { value: function(content){
+			var alerts = false;
+			if (!nudgeCon.container && !preNudgeConfirmCon.container && !inUseCon.container && !useCon.container && !notificationCon.container && !payCon.container) {
+				alerts = false;
+			} else {
+				alerts = true;
+			}
+			
 			trace("tapped");
 			trace($.textForLabel);
 			if (oldPic == null) {
 				oldPic = content;
 			} else {
 				trace("\n" + oldPic.last.url)
-				if (oldPic.last.url.indexOf("hamper") > -1) {
+				if (oldPic.last.url.indexOf("hamper") > -1 && !alerts) {
 					oldPic.remove(oldPic.last);
 					oldPic.add(new Picture({left:0, right:0, width:$.picWidth, height:$.picHeight, url:"hamper_gray.png"}));
-				} else if (oldPic.last.url.indexOf("washer") > -1) {
+				} else if (oldPic.last.url.indexOf("washer") > -1 && !alerts) {
 					oldPic.remove(oldPic.last);
 					oldPic.add(new Picture({left:0, right:0, width:$.picWidth, height:$.picHeight, url:"washer_gray.png"}));
-				} else if (oldPic.last.url.indexOf("credit") > -1) {
+				} else if (oldPic.last.url.indexOf("credit") > -1 && !alerts) {
 					oldPic.remove(oldPic.last);
 					oldPic.add(new Picture({left:0, right:0, width:$.picWidth, height:$.picHeight, url:"credit_gray.png"}));
 				}
 				oldPic = content;
 			}
 			if ($.textForLabel == "Hamper") {
-				if (machinesCon.container) {
-					mainContainer.remove(machinesCon);
-				} else if (creditsCon.container) {
-					mainContainer.remove(creditsCon);
+				if (!nudgeCon.container && !preNudgeConfirmCon.container && !inUseCon.container && !useCon.container && !notificationCon.container && !payCon.container) {
+					if (machinesCon.container) {
+						mainContainer.remove(machinesCon);
+					} else if (creditsCon.container) {
+						mainContainer.remove(creditsCon);
+					}
+					if (!hamperCon.container) {
+						mainContainer.add(hamperCon);
+					}
+					content.remove(content.last);
+					content.add(new Picture({left:0, right:0, width:$.picWidth, height:$.picHeight, url:"hamper_blue.png"}));
 				}
-				if (!hamperCon.container) {
-					mainContainer.add(hamperCon);
-				}
-				content.remove(content.last);
-				content.add(new Picture({left:0, right:0, width:$.picWidth, height:$.picHeight, url:"hamper_blue.png"}));
 			} else if ($.textForLabel == "Machines") {
-				if (hamperCon.container) {
-					mainContainer.remove(hamperCon);
-				} else if (creditsCon.container) {
-					mainContainer.remove(creditsCon);
+				if (!nudgeCon.container && !preNudgeConfirmCon.container && !inUseCon.container && !useCon.container && !notificationCon.container && !payCon.container) {
+				
+					if (hamperCon.container) {
+						mainContainer.remove(hamperCon);
+					} else if (creditsCon.container) {
+						mainContainer.remove(creditsCon);
+					}
+					if (!machinesCon.container) {
+						//trace("!!!");
+						mainContainer.add(machinesCon);
+					}
+					content.remove(content.last);
+					content.add(new Picture({left:0, right:0, width:$.picWidth, height:$.picHeight, url:"washer_blue.png"}));
 				}
-				if (!machinesCon.container) {
-					//trace("!!!");
-					mainContainer.add(machinesCon);
-				}
-				content.remove(content.last);
-				content.add(new Picture({left:0, right:0, width:$.picWidth, height:$.picHeight, url:"washer_blue.png"}));
 			}else if ($.textForLabel == "Credits") {
-				if (hamperCon.container) {
-					mainContainer.remove(hamperCon);
-				} else if (machinesCon.container) {
-					mainContainer.remove(machinesCon);
+				if (!nudgeCon.container && !preNudgeConfirmCon.container && !inUseCon.container && !useCon.container && !notificationCon.container && !payCon.container) {
+				
+					if (hamperCon.container) {
+						mainContainer.remove(hamperCon);
+					} else if (machinesCon.container) {
+						mainContainer.remove(machinesCon);
+					}
+					if (!creditsCon.container) {
+						mainContainer.add(creditsCon);
+					}
+					content.remove(content.last);
+					content.add(new Picture({left:0, right:0, width:$.picWidth, height:$.picHeight, url:"credit_blue.png"}));
 				}
-				if (!creditsCon.container) {
-					mainContainer.add(creditsCon);
-				}
-				content.remove(content.last);
-				content.add(new Picture({left:0, right:0, width:$.picWidth, height:$.picHeight, url:"credit_blue.png"}));
 			}
 		}},
 	})
@@ -312,9 +348,6 @@ var containerTemplate = Container.template(function($) { return {
 	left: $.left, right: $.right, top: $.top, bottom: $.bottom, skin: $.skin, active: true, contents:$.contents,
 	behavior: Object.create(Container.prototype, {
 		onTouchEnded: { value: function(content){
-			if (nudgeCon.container) {
-				mainContainer.remove(nudgeCon);
-			}
 			KEYBOARD.hide();
 			content.focus();
 		}}
@@ -376,21 +409,41 @@ var emptyHamper = Column.template(function($){return{
 //containers
 
 var washersCon = new Column({left: 10, right: 10, top:90, skin:blackSkin});
-//var notifText = new Text({name: "notifText", string: "", left:20, right:20, top:80, bottom:30, style: alertStyle});
-notificationCon = new containerTemplate({bottom:160, top:140, left: 20, right: 20,  skin:whiteAllBorderSkin,
-    contents:[
-    	new Label({string: "Alert", left:110, top: 10, skin:whiteSkin, style: labelStyle}),
-    	//new buttonTemplate({leftPos:0, width:320, top:10,  textForLabel: "Alert", skin: thinBorderSkin, style: labelStyle}),
-		new Text({name: "notifText", string: "", left:25, right:5, top:70, bottom:10, style: alertStyleTwo}),
-		new buttonTemplate({leftPos:8, width:265, bottom:5,  textForLabel: "Okay", skin: blackTopBorder, style: subSubLabelStyle}),
-		
-]});
+//RIGHT HERE
+var alertTemplate = Container.template(function($) { return {
+    left: 20, right: 20, top: 140, bottom: 160, skin: whiteAllBorderSkin, active: true, contents:[
+        new Column({top:2, left:2, right:2,height:40, skin:lightBlueSkin, contents:[
+            new Label({left:110, top:5, height: 30, string: "Alert", style: topTitleStyle}), 
+        ]}),
+        new Text({name:$.name, string:$.string, left:25, right:5, top:70, bottom:10, style: alertStyleTwo}),
+        new Line({left:0, right:0, top:130, bottom:28, skin: graySkin}),
+        new buttonTemplate({leftPos:8, width:265, bottom:5,  textForLabel: "Okay",  style: subSubLabelStyle}),
+    
+    ]}})
+    
+var alertYesNoTemplate = Container.template(function($) { return {
+    left: 20, right: 20, top: 140, bottom: 160, skin: whiteAllBorderSkin, active: true, contents:[
+        new Column({top:2, left:2, right:2,height:40, skin:lightBlueSkin, contents:[
+            new Label({left:110, top:5, height: 30, string: "Alert", style: topTitleStyle}), 
+        ]}),
+        new Text({name:$.name, string:$.string, left:20, right:10, top:70, bottom:10, style: alertStyleTwo}),
+        new Line({left:0, right:0, top:130, bottom:28, skin: graySkin}),
+        new buttonTemplate({leftPos:142, width:132, bottom:5,  textForLabel: "Yes",  style: subSubLabelStyle}),
+    	new buttonTemplate({leftPos:5, width:132, bottom:5, height:20,  textForLabel: "No",  style: subSubLabelStyle, skin: greyRightBorder}),
+    	
+    ]}})
 
-var nudgeCon = new containerTemplate({ top:195, bottom:220, left:0, right:0, skin:greyWithBlackBorders,
+
+notificationCon = new alertTemplate({name: "notifText", string: ""});
+var preNudgeConfirmCon = new alertYesNoTemplate({name: "preconfirmNudge", string: "Are you sure you want to nudge this user?"});
+var nudgeCon = new alertTemplate({name: "nudgeCon", string: "You have successfully nudged this user!"});
+var inUseCon = new alertTemplate({name: "inUseCon", string: "Sorry! This machine is currently in use!"});
+
+/*var nudgeCon = new containerTemplate({ top:195, bottom:220, left:0, right:0, skin:greyWithBlackBorders,
 	contents: [
 		new Text({name: "nudgeText", string: "You have successfully nudged this user!", left:0, right:0, top:10, style: alertStyle}),
 	]
-});
+});*/
 
 var washer_1 = BUTTONS.Button.template(function($){ return{
      left:0, right:0, skin:whiteSkin,
@@ -400,25 +453,39 @@ var washer_1 = BUTTONS.Button.template(function($){ return{
     behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
         onTap: { value: function(content){
         	trace("line item tap");
-            if (washerInUseOne == 0 || washerInUseTwo == 0|| dryerInUseOne==0 || dryerInUseTwo==0) {
-				mainContainer.add(useCon);
-				var name = "";
-				if ($.sname == "w1") {
+        	var name = "";
+        	if ($.sname == "w1") {
 					name = "Washer 1";
 				} else if ($.sname == "w2") {
 					name = "Washer 2";
-				} else if ($.sname = "d1") {
+				} else if ($.sname == "d1") {
 					name = "Dryer 1";
 				} else {
 					name = "Dryer 2";
 				}
-				subNfcCont.machineUse.string = name;
-				if (name.indexOf("Washer") > -1){
-					subNfcCont.icon.url = "000washr.png";
-				} else {
-					subNfcCont.icon.url = "000dryer.png";
-				};
-				subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
+            if ((name == "Washer 1" && washerInUseOne == 0) || (name == "Washer 2" && washerInUseTwo == 0) || (name == "Dryer 1" && dryerInUseOne == 0) || (name == "Dryer 2" && dryerInUseTwo == 0)) {
+				if (!useCon.container) {
+					mainContainer.add(useCon);
+					subNfcCont.machineUse.string = name;
+					if (name.indexOf("Washer") > -1){
+						subNfcCont.icon.url = "000washr.png";
+					} else {
+						subNfcCont.icon.url = "000dryer.png";
+					};
+					if (creditSoFar < 2) {
+						subNfcCont.payPreview.string = "Not Enough Credits";
+					} else {
+						subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
+					}
+				}
+			} else if ((name == "Washer 1" && washerInUseOne == 1 && washerTimeOne == 0) || (name == "Washer 2" && washerInUseTwo == 1 && washerTimeTwo == 0) || (name == "Dryer 1" && dryerInUseOne == 1 && dryerTimeOne == 0) || (name == "Dryer 2" && dryerInUseTwo == 1 && dryerTimeTwo == 0)) {
+				if (!preNudgeConfirmCon.container) {
+					mainContainer.add(preNudgeConfirmCon);
+				}
+			} else if ((name == "Washer 1" && washerInUseOne == 1 && washerTimeOne !=0) || (name == "Washer 2" && washerInUseTwo == 1 && washerTimeTwo != 0) ||  (name == "Dryer 1" && dryerInUseOne == 1 && dryerTimeOne != 0) || (name == "Dryer 2" && dryerInUseTwo == 1 && dryerTimeTwo == 0)) {
+				if (!inUseCon.container) {
+					mainContainer.add(inUseCon);
+				}
 			}
             
         } },
@@ -428,7 +495,7 @@ var washer1 = new washer_1({sname:"w1", yurl:"00washr.png", text:"Available"});
 var washer2 = new washer_1({sname: "w2", yurl:"00washr.png", text:"Available"});
 
 var dryer1 = new washer_1({ sname: "d1", yurl:"00dryer.png", text:"Available"});
-var dryer2 = new washer_1({sname: "d2", yurl:"00dryer.png", text:"Available"});
+var dryer2 = new washer_1({ sname: "d2", yurl:"00dryer.png", text:"Available"});
 
 var nudge_w1 = new pictureButtonTemplate({leftPos:260, width:30, top:10, bottom:10, textForLabel:"Nudge", url: "nudge.png",skin: whiteSkin, style: tabStyle});
 var nudge_w2 = new pictureButtonTemplate({leftPos:260, width:30, top:10, bottom:10, textForLabel:"Nudge", url: "nudge.png",skin: whiteSkin, style: tabStyle});
@@ -464,14 +531,14 @@ var machinesCon = new containerTemplate({top:0, bottom: 45, left:0, right:0,skin
 
 
 
-var hamperList = new Column({left: 0, right: 0, top:120, height:200, skin:whiteSkin});
+var hamperList = new Column({left: 10, right: 10, top:90, height:200, skin:whiteSkin});
 
 var hamperCon = new containerTemplate({bottom:45, top:0, left:0, right:0, skin: whiteSkin,
     contents:[
         new Column({top:0, left:0, right:0,height:40, skin:lightBlueSkin, contents:[
             new Picture({right:0, left:0, top:5, height:30, url: "./washr_allwhite.png"}),   
         ]}),
-        new Label({left:10, right:10, top: 90, height: 30, string: "My Hamper", style: labelStyle, skin: whiteBorderSkin}),
+        new Label({left:10, right:10, top: 60, height: 30, string: "My Hamper", style: labelStyle, skin: whiteBorderSkin}),
         
 ]});
 
@@ -500,45 +567,43 @@ var subNfcCont = new containerTemplate({top: 0, bottom: 50, left:0, right:0, ski
 		},
 		onTimeChanged: {
 			value: function(gifCont) {
-				/*
-				if (FRAME == 1) {
-					trace(FRAME);
-					FRAME = 2;
-					gifContent.url = "nfc-2.gif";
+			/*	
+				if (frame > 3) {
+					//payCon.gifCont.remove(gifContent1);
+					payCon.gifCont.add(gifContent2);
 				}
-				if (FRAME == 2) {
-					trace(FRAME);
-					FRAME = 3;
-					gifContent.url = "nfc-3.gif";
+				if (frame > 6) {
+					//payCon.gifCont.remove(gifContent2);
+					payCon.gifCont.add(gifContent3);
 				}
-				if (FRAME == 3) {
-					trace(FRAME);
-					FRAME = 1;
-					gifContent.url = "nfc-1.gif"
-				}*/
-				//gifContent.url = "nfc-3.gif";
+				if (frame > 9) {
+					frame = -1;
+					//payCon.gifCont.remove(gifContent3);
+					payCon.gifCont.add(gifContent1);
+				}
+				frame++;
+			*/
 			}
 		}
 	})
 	
-	var FRAME = 1;
-	var gifContent = new Picture({name: "gif", left:0, right:0, url: "nfc-1.gif"});
 	
-	var gifCont = new containerTemplate({top: 0, bottom: 50, left:0, right:0, skin:whiteAllBorderSkin,
-		contents: [
-			gifContent
-				],
-		behavior: new GifBehavior(gifContent)
-	});
+var gifCont = new containerTemplate({top: 0, bottom: 50, left:0, right:0, skin:whiteAllBorderSkin,
+	contents: [
+		gifContent1, 
+		new Text({name: "hint", string: "Tap Against Device To Pay", left:50, right:20, top: 190, style: hintStyle}),
+			],
+	behavior: new GifBehavior(gifContent1)
+});
 
-var payCon = new containerTemplate({ top:80, bottom: 120, left:0, right:0, skin:whiteAllBorderSkin,
+var payCon = new containerTemplate({ top:70, bottom: 120, left:0, right:0, skin:whiteAllBorderSkin,
 	contents: [
 	    gifCont,
-		new buttonTemplate({leftPos:110, width:108, bottom:15, textForLabel: "Cancel", skin: redSkin, style: tabStyle}),
+		new buttonTemplate({leftPos:105, width:108, bottom:15, textForLabel: "Cancel", skin: cancelSkin, style: tabStyle}),
 	],
 });
 
-var useCon = new containerTemplate({ top:80, bottom: 120, left:0, right:0, skin:whiteAllBorderSkin,
+var useCon = new containerTemplate({ top:70, bottom: 120, left:0, right:0, skin:whiteAllBorderSkin,
 	contents: [
 	    subNfcCont,
 	    new buttonTemplate({leftPos:160, width:108, bottom:15, textForLabel: "Continue", skin: lightBlueSkin, style: tabStyle}),
@@ -568,7 +633,7 @@ var addCardButtonTemplate = BUTTONS.Button.template(function($){ return{
 
 // Button for returning to credits screen
 var cancelAddCardButtonTemplate = BUTTONS.Button.template(function($){ return{
-	left: $.leftPos,right:$.right, width:$.width, bottom:$.bottom, height:30, name:$.name, skin:redSkin,
+	left: $.leftPos,right:$.right, width:$.width, bottom:$.bottom, height:30, name:$.name, skin:cancelSkin,
 	contents: [
 		new Label({left:0, right:0, height:20, string:$.textForLabel, style: tabStyle}),
 		],
@@ -598,7 +663,7 @@ var addCreditsButtonTemplate = BUTTONS.Button.template(function($){ return{
 
 // Button for returning to credits screen
 var cancelAddCreditsButtonTemplate = BUTTONS.Button.template(function($){ return{
-    left: $.leftPos, right:$.right, width:$.width, bottom:$.bottom, height:30, name:$.name, skin:redSkin,
+    left: $.leftPos, right:$.right, width:$.width, bottom:$.bottom, height:30, name:$.name, skin:cancelSkin,
     contents: [
         new Label({left:0, right:0, height:20, string:$.textForLabel, style: tabStyle})
         ],
@@ -636,7 +701,7 @@ var otherField = Container.template(function($) { return {
     ]
 }});
 var creditsButtonTemplate = BUTTONS.Button.template(function($){ return{
-    left: $.leftPos, width:$.width, bottom:$.bottom, height:25, name:$.name, skin:lightBlueSkin,
+    left: $.leftPos, width:$.width, bottom:$.bottom, height:25, name:$.name, skin:lightBlueSkinWithRightBorder,
     contents: [
         new Label({left:0, right:0, height:30, string:$.textForLabel, style: tabStyle})
         ],
@@ -645,13 +710,13 @@ var creditsButtonTemplate = BUTTONS.Button.template(function($){ return{
                 buttonCredits = parseInt($.textForLabel.substring(1));
                 trace(buttonCredits);
                 var temp = creditSoFar + buttonCredits;
-                addCreditsCon.creditsCol.creditsLine.right.string = "$"+temp;
+                addCreditsCon.creditsCol1.creditsCol2.creditsLine2.right.string = "$"+temp;
         }},
         
     })
 }});
 var confirmCreditsButtonTemplate = BUTTONS.Button.template(function($){ return{
-    top:30,left: $.leftPos, right:$.right,width:$.width, bottom:$.bottom, height:30, name:$.name, skin:lightBlueSkin,
+    top:30,left: $.leftPos, right:$.right,width:$.width, bottom:$.bottom, height:30, name:$.name, skin:lightBlueSkinWithRightBorder,
     contents: [
         new Label({left:10, right:10, height:20, string:$.textForLabel, style: tabStyle})
         ],
@@ -666,8 +731,8 @@ var confirmCreditsButtonTemplate = BUTTONS.Button.template(function($){ return{
             creditsCon.omg.wtf.string = "Credits: $" + creditSoFar;
             creditsCon.remove(addCreditsCon);
             //mainContainer.add(creditsCon);
-            addCreditsCon.creditsCol.creditsLine.lefty.string = "$"+creditSoFar;
-            addCreditsCon.creditsCol.creditsLine.right.string = "$0";
+            addCreditsCon.creditsCol1.creditsCol2.creditsLine1.lefty.string = "$"+creditSoFar;
+            addCreditsCon.creditsCol1.creditsCol2.creditsLine2.right.string = "$0";
             subNfcCont.payPreview.string = "Available Credits: " + creditSoFar;
             //otherField.moreScroller.more.string = "";
         }},
@@ -683,7 +748,7 @@ var addCreditsCon = new containerTemplate({left:0, right:0, top:0, bottom:45, sk
         new Column({top:0, left:0, right:0,height:40, skin:lightBlueSkinWithRightBorder, contents:[
             new Label({left:100, top:5, height: 30, string: "Add Credits", style: topTitleStyle}), 
         ]}),
-        new Column({name:"creditsCol",top:60,left:5, right:5, skin:whiteSkin, contents:[
+        new Column({name:"creditsCol1",top:60,left:5, right:5, skin:whiteSkin, contents:[
             new Line({top:10, left:20, right:20, skin:whiteAllBorderSkin, contents: [
                 new Label({left:20,right:20, height:40, string: "Default Payment: " + creditCards[defaultCard].number, style: textLabelStyle}),
                 ]
@@ -693,16 +758,17 @@ var addCreditsCon = new containerTemplate({left:0, right:0, top:0, bottom:45, sk
                 new creditsButtonTemplate({leftPos:10, width:50, bottom:10, textForLabel:"$5"}),
                 new creditsButtonTemplate({leftPos:10, width:50, bottom:10, textForLabel:"$10"}),
                 new creditsButtonTemplate({leftPos:10, width:50, bottom:10, textForLabel:"$20"}),
-                //new creditsButtonTemplate({leftPos:10, width:50, bottom:10, textForLabel:"Other"}),
-                //new otherField({name:""}),
                 ]
             }),
             
-            new Line({name:"creditsLine",top:30, left:0, right:0, contents: [
-                new Label({left:30, top:0, height:40, string: "Current Balance", style: labelStyle}),
-                new Label({name:"lefty",left:30, top:0, height:40, string: "$0", style: labelStyle}),
-                new Label({left:30, top:0, height:40, string: "New Balance", style: labelStyle}),
-                new Label({name:"right",left:30, top:0,  height:40, string: "$0", style: labelStyle}),
+            new Column({name:"creditsCol2", top:30, left:0, right:0, contents: [
+                new Line({name:"creditsLine1",left:0, contents:[
+                    new Label({top:0, left:40, height:40, string: "Current Balance", style: labelStyle}),
+                    new Label({name:"lefty",left:40, top:0, height:40, string: "$0", style: labelStyle}),]}),
+                
+                new Line({name:"creditsLine2", left:0, contents:[
+                    new Label({ top:0, left:40, height:40, string: "New Balance", style: labelStyle}),
+                    new Label({name:"right",left:70, top:0,  height:40, string: "$0", style: labelStyle}),]}),
                 ]
             }),
             new confirmCreditsButtonTemplate({leftPos:100,right:100, width:100, bottom:10, textForLabel:"Confirm"}),
@@ -788,6 +854,10 @@ var myField_deets = Container.template(function($) { return {
 				 		onEdited: { value: function(label){
 				 			var data = this.data;
 							data.name = label.string;
+							trace(data.name.length);
+							// if (data.name.length == 2) {
+							// 	label.string.concat('/');
+							// }
 							label.container.hint.visible = ( data.name.length == 0 );	
 				 		}}
 				 	}),
@@ -802,13 +872,18 @@ var myField_deets = Container.template(function($) { return {
 
 // Button for saving add card page
 var saveCardButtonTemplate = BUTTONS.Button.template(function($){ return{
-	left: $.leftPos, width:$.width, bottom:$.bottom, height:30, name:$.name, skin:greenSkin,
+	left: $.leftPos, width:$.width, bottom:$.bottom, height:30, name:$.name, skin:lightBlueSkin,
 	contents: [
 		new Label({left:0, right:0, height:20, string:$.textForLabel, style: tabStyle})
 		],
 	behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
 		onTap: { value: function(content){
 			trace("Button was tapped.\n");
+			var numberLength = field_num.first.first.string.length;
+			if (numberLength > 16 || numberLength < 16) {
+				addCardCon.first.next.first.next.first.style = textLabelStyleRed;
+				return;
+			}
 			var cardNumber = field_num.first.first.string.substring(12,16);
 			creditCards.push({name: field_name.first.first.string, number: cardNumber, details: field_deets.first.first.string});
 			// trace(creditCards);
@@ -816,6 +891,10 @@ var saveCardButtonTemplate = BUTTONS.Button.template(function($){ return{
 			creditsCon.cards.cardscol.add(new Label({left:10, right:10, height:30, string: field_cardLabel.first.first.string + " *" + cardNumber, style: washerText, skin: whiteBorderSkin}));
 			defaultCard += 1
 			addCreditsCon.first.next.first.first.string = "Default Payment: " + field_cardLabel.first.first.string + " *" + cardNumber
+
+			// trace(field_num.first.first.string + "\n");
+			// creditsCon.cards.cardscol.add(new Label({left:0, right:0, height:30, string: " •••• •••• •••• " + field_num.first.first.string.substring(12,16), style: 
+
 			field_name.first.first.string = ""
 			field_num.first.first.string = ""
 			field_deets.first.first.string = ""
