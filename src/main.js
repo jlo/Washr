@@ -112,6 +112,7 @@ var textLabelStyleRed = new Style( { font: "bold 15px", color:"red" } );
 var tabStyle = new Style( { font: "bold 15px", color:"white" } );
 var bottomTabStyle = new Style( { font: "12px", color:"white" } );
 var washerText = new Style( { font: "bold 15px", color:"gray" } );
+var blueWasherText = new Style( { font: "bold 15px", color:"#14affa" } );
 var creditStyle = new Style( { font: "bold 15px", color:"black" } );
 var titleStyle = new Style({font: "bold 30px", color:"black"});
 var redStyle = new Style( { font: "bold 20px", color:"red" } );
@@ -389,9 +390,10 @@ var scrollableCon = new scroller({ name: "comicScroller", left: 0, right: 0,
 
 var loadsOne = Line.template(function($){return{
     name:$.name,left:0, right:0, height:60, skin:whiteSkinWithBorders, contents:[
-     	//Label($,{
-          //  left:5, width:7, height: 40, string:$.text1, style:washerText,
-       //}),
+     	Label($,{
+            name: "myId", left:5,  height: 40, string:$.id, style:washerText,
+       }),
+       
         Picture($,{
             name: "myPic", left:-20, width:100, height:50, url:$.yurl
         }),
@@ -463,7 +465,7 @@ var inUseCon = new alertTemplate({name: "inUseCon", string: "                   
 var washer_1 = BUTTONS.Button.template(function($){ return{
      left:0, right:0, skin:whiteSkin,
     contents: [
-       	new loadsOne({name:$.sname, yurl:$.yurl, text:$.text})
+       	new loadsOne({name:$.sname, yurl:$.yurl, text:$.text, id:$.id})
         ],
     behavior: Object.create(BUTTONS.ButtonBehavior.prototype, {
         onTap: { value: function(content){
@@ -508,11 +510,18 @@ var washer_1 = BUTTONS.Button.template(function($){ return{
         } },
     })
 }});
-var washer1 = new washer_1({sname:"w1", yurl:"00washr.png", text:"Available"});
-var washer2 = new washer_1({sname: "w2", yurl:"00washr.png", text:"Available"});
-
-var dryer1 = new washer_1({ sname: "d1", yurl:"00dryer.png", text:"Available"});
-var dryer2 = new washer_1({ sname: "d2", yurl:"00dryer.png", text:"Available"});
+var washer1 = new washer_1({sname:"w1", yurl:"00washr.png", text:"Available", id: "#01"});
+washer1.first.myTime.style = blueWasherText;
+washer1.first.myId.style = blueWasherText;
+var washer2 = new washer_1({sname: "w2", yurl:"00washr.png", text:"Available", id: "#02"});
+washer2.first.myTime.style = blueWasherText;
+washer2.first.myId.style = blueWasherText;
+var dryer1 = new washer_1({ sname: "d1", yurl:"00dryer.png", text:"Available", id: "#01"});
+dryer1.first.myTime.style = blueWasherText;
+dryer1.first.myId.style = blueWasherText;
+var dryer2 = new washer_1({ sname: "d2", yurl:"00dryer.png", text:"Available", id: "#02"});
+dryer2.first.myTime.style = blueWasherText;
+dryer2.first.myId.style = blueWasherText;
 
 var nudge_w1 = new pictureButtonTemplate({leftPos:260, width:30, top:10, bottom:10, textForLabel:"Nudge", url: "nudge.png",skin: whiteSkin, style: tabStyle});
 var nudge_w2 = new pictureButtonTemplate({leftPos:260, width:30, top:10, bottom:10, textForLabel:"Nudge", url: "nudge.png",skin: whiteSkin, style: tabStyle});
@@ -979,10 +988,10 @@ var addCardCon = new containerTemplate({top:0, bottom:45, left:0, right:0,  skin
 })
 
 	
-var hwasher1 = new loadsOne({yurl:"./red.jpeg", text:washerTimeOne});
-var hwasher2 = new loadsOne({yurl:"./red.jpeg", text:washerTimeOne});
-var hdryer1 = new loadsOne({yurl:"./red.jpeg", text:washerTimeOne});
-var hdryer2 = new loadsOne({yurl:"./red.jpeg", text:washerTimeOne});
+var hwasher1 = new loadsOne({yurl:"./red.jpeg", text:washerTimeOne, id: "#01"});
+var hwasher2 = new loadsOne({yurl:"./red.jpeg", text:washerTimeOne, id: "#02"});
+var hdryer1 = new loadsOne({yurl:"./red.jpeg", text:washerTimeOne, id: "#01"});
+var hdryer2 = new loadsOne({yurl:"./red.jpeg", text:washerTimeOne, id: "#02"});
 
 var hamperBool = false;
 
@@ -1083,26 +1092,44 @@ var timeChange = function(){
     if(washerInUseOne === 0){
         washer1.w1.myTime.string = "Available";
         washerTimeOne = 0;
+        washer1.first.myTime.style = blueWasherText;
+		washer1.first.myId.style = blueWasherText;
+        
     } else{
         washer1.w1.myTime.string =  washerTimeOne + " mins left";
+        washer1.first.myTime.style = washerText;
+		washer1.first.myId.style = washerText;
     }
     if(washerInUseTwo === 0){
         washer2.w2.myTime.string = "Available";
         washerTimeTwo = 0;
+        washer2.first.myTime.style = blueWasherText;
+		washer2.first.myId.style = blueWasherText;
     } else {
         washer2.w2.myTime.string = washerTimeTwo + " mins left";
+        washer2.first.myTime.style = washerText;
+		washer2.first.myId.style = washerText;
+        
     }
     if(dryerInUseOne === 0){
         dryer1.d1.myTime.string = "Available";
         dryerTimeOne = 0;
+        dryer1.first.myTime.style = blueWasherText;
+		dryer1.first.myId.style = blueWasherText;
     } else{
         dryer1.d1.myTime.string = dryerTimeOne + " mins left";
+        dryer1.first.myTime.style = washerText;
+		dryer1.first.myId.style = washerText;
     }
     if(dryerInUseTwo === 0){
         dryer2.d2.myTime.string = "Available";
         dryerTimeTwo = 0;
+        dryer2.first.myTime.style = blueWasherText;
+		dryer2.first.myId.style = blueWasherText;
     } else {
         dryer2.d2.myTime.string = dryerTimeTwo + " mins left";
+        dryer2.first.myTime.style = washerText;
+		dryer2.first.myId.style = washerText;
     }
     hwasher1.myTime.string = washer1.first.myTime.string;
     hwasher2.myTime.string = washer2.first.myTime.string;
